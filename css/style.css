@@ -1,0 +1,34 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #222;
+}
+
+header {
+  position: absolute;
+  top: 0;
+  height: 10vh;
+  margin: 0;
+  padding: 0;
+  color: white;
+}
+
+#main-menu {
+  position: absolute;
+  top: 10vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 90vh;
+}
+
+button {
+  background-color: yellowgreen;
+  border-radius: 16px;
+  border: none;
+  font-size: 25px;
+  width: 80%;
+  height: 100px;
+}
