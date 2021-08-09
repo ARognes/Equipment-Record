@@ -11,15 +11,6 @@
   <!-- <link rel="icon" href="./images/icon.png"> -->
   <link href="accountStyle.css" rel="stylesheet">
 
-  <!-- Not all of these are currently used! -->
-  <link href="https://fonts.googleapis.com/css?family=Inconsolata&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Baloo+Chettan+2&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Rubik+Mono+One&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Days+One&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Marmelad&display=swap" rel="stylesheet">
-
-
   <!-- The core Firebase JS SDK is always required and must be listed first -->
   <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-app.js"></script>
 
@@ -48,12 +39,15 @@
   </script>
 
 
+  <script type="text/javascript" defer src="sha256.min.js"></script>
   <script type="module" defer src="account.js"></script>
   <noscript>Your browser does not support JavaScript!</noscript>
 </head>
 
 <body>
-  <p id="title">Equipment Record</p>
+  <header>
+    <p id="title">Equipment Record</p>
+  </header>
 
   <section id="signedOut" class="middle-panel">
     <span id="p-sign-up">Need an account? <span id="div-sign-up">Sign up</span></span>
@@ -79,19 +73,23 @@
       <button id="btn-add-business">Add my business</button>
     </div>
 
-    <div id="main-menu">
+    <div id="main-menu" class="menu">
       <button name="main settings" class="btn-top-right" >*</button>
       <button name="main project" class="btn-menu" >Projects</button>
       <button name="main equipment" class="btn-menu">Equipment</button>
-      <button name="main user" class="btn-menu">Users</button>
       <button name="main history" class="btn-menu">History</button>
     </div>
 
-    <div id="project-menu" hidden="true">
+    <div id="project-menu" class="menu" hidden="true">
       <button name="project main" class="btn-top-left"><</button>
+      <div id="div-project-container">
+        <div class="div-project">
+          
+        </div>
+      </div>
     </div>
 
-    <div id="equipment-menu" hidden="true">
+    <div id="equipment-menu" class="menu" hidden="true">
       <button name="equipment main" class="btn-top-left"><</button>
       <div id="div-equipment-container">
         <div class="div-equipment">
@@ -113,7 +111,7 @@
       <button name="equipment equipment-add" id="btn-equipment-add">+</button>
     </div>
 
-    <div id="equipment-add-menu" hidden="true">
+    <div id="equipment-add-menu" class="menu" hidden="true">
       <button name="equipment-add equipment" class="btn-top-left"><</button>
       <input type="text" placeholder="name" >
       <input type="text" placeholder="description">
@@ -127,34 +125,33 @@
       <button id="btn-add-equipment-firestore">Add</button>
 
     </div>
-    
 
-    <div id="user-menu" hidden="true">
-      <button name="user main" class="btn-top-left"><</button>
-      
-    </div>
-
-    <div id="history-menu" hidden="true">
+    <div id="history-menu" class="menu" hidden="true">
       <button name="history main" class="btn-top-left"><</button>
       
     </div>
 
-    <div id="settings-menu">
+    <div id="settings-menu" class="menu">
       <button name="settings main" class="btn-top-left"><</button>
       <button name="settings account" class="btn-menu">Manage account</button>
-      <button class="btn-menu">Change</button>
-      <button class="btn-menu">arst</button>
-      <button class="btn-menu">arst</button>
+      <button name="settings user" class="btn-menu">Users</button>
+      <button class="btn-menu">blank</button>
+      <button class="btn-menu">blank</button>
       <button id="btn-sign-out" class="btn-menu">Sign out</button>
     </div>
 
-    <div id="account-menu">
+    <div id="account-menu" class="menu">
       <button name="account settings" class="btn-top-left"><</button>
       <p style="color: white">Information about your account</p>
       <button class="btn-menu">Change</button>
-      <button class="btn-menu">arst</button>
-      <button class="btn-menu">arst</button>
+      <button class="btn-menu">blank</button>
+      <button class="btn-menu">blank</button>
       <button id="btn-delete-account" class="btn-menu">Delete account</button>
+    </div>
+
+    <div id="user-menu" class="menu" hidden="true">
+      <button name="user settings" class="btn-top-left"><</button>
+      
     </div>
   </section>
 

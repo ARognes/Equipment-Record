@@ -2,6 +2,7 @@
 
 import { validatePassword } from './helpers.js';
 
+
 const auth = firebase.auth();
 
 const pSignUp = document.getElementById('p-sign-up');
@@ -112,6 +113,7 @@ const divMainMenu = document.getElementById('main-menu');
 let userRef;
 auth.onAuthStateChanged(user => {
   if (user) {
+    //window.location = '/public/index.html';
     divSignedIn.hidden = false;
     divSignedOut.hidden = true;
     userRef = db.collection('users').doc(user.uid);
@@ -314,15 +316,35 @@ const btnAddEquipmentFirestore = document.getElementById('btn-add-equipment-fire
 
 // Send request to firebase function, which will handle database itself
 btnAddEquipmentFirestore.onclick = () => {
-  const name = 'test';
-  const business = 'start';
-  db.collection('equipment').where('business', '==', business).where('name', '==', name).get()
-    .then(querySnapshot => {
-      if (querySnapshot.length > 0) {
-        // Name already in use
+  const name = 'test', eid = sha256(name);
+  const business = 'start', bid = sha256(business), businessRef = db.collection('businesses').doc(bid);
+
+  db.collection('equipment').doc(eid).get()
+    .then(docSnapshot => {
+      if (docSnapshot.exists) {
+        console.log('name already exists');
+        return;
       }
+      db.collection('equipment').doc(eid).set({
+        name: name,
+        desc: '',
+        photo: null,
+        price: 10,
+        purchaseDate: null,
+        project: null,
+        business: businessRef,
+        checkedOut: null,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      })
+      .then(() => {
+        console.log('success');
+      })
+      .catch(error => {
+        console.log(error);
+      });
     })
     .catch(error => {
-
+      console.log(error);
+      return;
     });
 }
