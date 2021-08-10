@@ -1,0 +1,56 @@
+html, body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  background-color: #222;
+  overflow: hidden;
+  position: relative;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+header {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: calc(10% - 10px);
+  background-color: #bbb;
+}
+
+#title {
+  margin: 0; padding: 0; text-align: center;
+  position: absolute;
+  top: 20px;
+  width: 100vw;
+  height: 10vh;
+  font-size: 30px;
+  font-weight: bold;
+  color: black;
+}
+
+.btn-top-left {
+  margin: 0;
+  padding: 0;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  width: 40px;
+  height: 40px;
+}
+
+.btn-top-right {
+  margin: 0;
+  padding: 0;
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+}
+
+.btn-menu {
+  width: 200px;
+  height: 40px;
+}
