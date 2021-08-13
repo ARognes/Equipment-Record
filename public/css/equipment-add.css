@@ -1,0 +1,49 @@
+
+#div-images {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: absolute;
+  left: 2%;
+  top: 0;
+  width: 96%;
+  height: 220px;
+}
+
+#div-images img {
+  height: 100%;
+}
+
+#name {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: absolute;
+  left: 2%;
+  top: 230px;
+  width: 96%;
+  height: 40px;
+}
+
+#desc {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: absolute;
+  left: 2%;
+  top: 280px;
+  width: 96%;
+  height: 120px;
+  overflow-wrap: break-word;
+}
+
+#btn-add-equipment-firestore {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: absolute;
+  left: 2%;
+  top: 420px;
+  width: 96%;
+  height: 40px;
+}

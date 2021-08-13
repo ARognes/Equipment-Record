@@ -1,7 +1,7 @@
 'use strict';
 
 const MAIN_MENU_PATH = '/public/menus/main.html';
-const MAIN_BUSINESS_PATH = '/public/menus/business.html';
+const BUSINESS_MENU_PATH = '/public/menus/business-key.html';
 
 const auth = firebase.auth();
 
@@ -56,7 +56,7 @@ async function signIn() {
     await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     await auth.signInWithEmailAndPassword(email.value, password.value);
   } 
-  catch (error) { errorLog.innerHTML = error.code }
+  catch (error) { errorLog.innerHTML = error }
 }
 
 btnSignIn.onclick = () => signIn();
@@ -78,7 +78,7 @@ btnGoogle.onclick = async () => {
     const result = await auth.signInWithPopup(provider);
     username = result.additionalUserInfo.profile.name;
   } 
-  catch (error) { errorLog.innerHTML = error.code }
+  catch (error) { errorLog.innerHTML = error }
 }
 
 auth.onAuthStateChanged(async (user) => {
@@ -89,15 +89,18 @@ auth.onAuthStateChanged(async (user) => {
 
   const db = firebase.firestore();
   const userRef = db.collection('users').doc(user.uid);
-  
+  window.localStorage.setItem('username', user.name);
+
   try {
     // Check if user exists in firestore
     const userDoc = await userRef.get();
+    const userData = userDoc.data();
 
     // Add user to firestore
     if (!userDoc.exists) {  
       await userRef.set({
-        business: '',
+        businessID: '',
+        businessName: '',
         name: username,
         phone: null,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -108,14 +111,14 @@ auth.onAuthStateChanged(async (user) => {
     
     // TODO This should be a firebase function, don't show user the business information
     // Check if a business on firestore is associated with this user
-    const businessID = userDoc.data().business;
+    const businessID = userData.businessID;
     let businessDoc = null;
-    if (businessID !== '') businessDoc = await db.collection('businesses').doc(businessID).get();
+    if (typeof businessID === 'string' && businessID !== '') businessDoc = await db.collection('businesses').doc(businessID).get();
     if (!businessDoc || !businessDoc.exists) window.location = BUSINESS_MENU_PATH;
-
-    window.location = MAIN_MENU_PATH;
+    else window.location = MAIN_MENU_PATH;
+    window.localStorage.setItem('businessName', userData.businessName);
   } 
-  catch (error) { errorLog.innerHTML = error.code };
+  catch (error) { errorLog.innerHTML = error };
 });
 
 function validatePassword(username, email, p, cp) {

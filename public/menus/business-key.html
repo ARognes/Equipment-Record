@@ -10,9 +10,9 @@
   <meta name="author" content="Austin Rognes">
   <!-- <link rel="icon" href="./images/icon.png"> -->
   <link href="../css/style.css" rel="stylesheet">
-  <link href="../css/business.css" rel="stylesheet">
+  <link href="../css/business-key.css" rel="stylesheet">
   <script type="text/javascript" defer src="../js/sha256.min.js"></script>
-  <script type="module" defer src="../js/business.js"></script>
+  <script type="module" defer src="../js/business-key.js"></script>
   <!-- The core Firebase JS SDK is always required and must be listed first -->
   <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-app.js"></script>
 
@@ -41,18 +41,18 @@
   </script>
   <noscript>Your browser does not support JavaScript!</noscript>
 </head>
-
 <body>
   <header>
     <p id="title">Equipment Record</p>
   </header>
 
-  <div id="find-business" hidden="true">
-    <button id="btn-sign-out" class="btn-top-left">Sign out</button>
-    <input type="text" id="business-code" placeholder="business code">
-    <button id="btn-business-code">Enter</button>
-
-    <button id="btn-add-business">Add my business</button>
+  <div id="find-business" class="menu">
+    <div class="middle-panel">
+      <button id="btn-sign-out" class="btn-top-left">Sign out</button>
+      <input type="text" id="business-code" placeholder="business code">
+      <button id="btn-business-code">Enter</button>
+      <button id="btn-business-add">Add my business</button> <!-- TODO -->
+    </div>
   </div>
 </body>
 </html>

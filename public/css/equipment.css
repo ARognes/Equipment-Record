@@ -108,6 +108,9 @@
   height: auto;
   color: #fff;
   overflow-y: hidden;
+  overflow-x: hidden;
+  overflow-wrap: break-word;
+
 }
 
 #btn-equipment-add {
