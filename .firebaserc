@@ -1,5 +1,17 @@
 {
   "projects": {
     "default": "equipment-manager-d01eb"
+  },
+  "targets": {
+    "equipment-manager-d01eb": {
+      "hosting": {
+        "app": [
+          "equipment-manager-d01eb"
+        ],
+        "web": [
+          "equipment-record"
+        ]
+      }
+    }
   }
 }
