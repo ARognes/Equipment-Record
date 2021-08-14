@@ -1,6 +1,6 @@
 'use strict';
 
-const MAIN_MENU_PATH = '/public/menus/main.html';
+const MAIN_MENU_PATH = 'main.html';
 
 const auth = firebase.auth();
 const db = firebase.firestore();

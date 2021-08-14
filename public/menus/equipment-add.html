@@ -12,6 +12,7 @@
   <link href="../css/style.css" rel="stylesheet">
   <link href="../css/equipment-add.css" rel="stylesheet">
   <script type="text/javascript" defer src="../js/sha256.min.js"></script>
+  <script type="text/javascript" defer src="../js/compressor.min.js"></script>
   <script type="module" defer src="../js/equipment-add.js"></script>
 
   <!-- The core Firebase JS SDK is always required and must be listed first -->
@@ -49,10 +50,10 @@
   </header>
 
   <div id="equipment-add-menu" class="menu">
-    <button onclick="window.location='/public/menus/equipment.html'" class="btn-top-left"><</button>
-    <div id="div-images">
-      <input type="file" accept="image/*" capture="environment" multiple="true">
-    </div>
+    <button onclick="window.location='equipment.html'" class="btn-top-left"><</button>
+    <div id="div-images"></div>
+    <label for="images">Add pictures</label>
+    <input type="file" id="images" accept="image/*" multiple="true">
     <input type="text" id="name" placeholder="name">
     <textarea id="desc" placeholder="description"></textarea>
     <button id="btn-add-equipment-firestore">Add</button>

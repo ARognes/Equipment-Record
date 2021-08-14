@@ -1,7 +1,7 @@
 'use strict';
 
-const MAIN_MENU_PATH = '/public/menus/main.html';
-const BUSINESS_MENU_PATH = '/public/menus/business-key.html';
+const MAIN_MENU_PATH = 'main.html';
+const BUSINESS_MENU_PATH = 'business-key.html';
 
 const auth = firebase.auth();
 

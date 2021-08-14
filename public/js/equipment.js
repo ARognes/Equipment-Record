@@ -1,6 +1,6 @@
 'use strict';
 
-const LOGIN_MENU_PATH = '/public/menus/login.html';
+const LOGIN_MENU_PATH = 'login.html';
 const auth = firebase.auth();
 const db = firebase.firestore();
 
@@ -18,11 +18,35 @@ async function loadEquipment() {
   try {
     const userDoc = await db.collection('users').doc(auth.currentUser.uid).get();
     const businessID = userDoc.data().businessID;
+    const storageRef = firebase.storage().ref(businessID + '/equipment/');
     const query = await db.collection('equipment').where('businessID', '==', businessID).get();
     
-    const docs = query.docs.map(doc => doc.data());
+    // Map and sort query
+    const docs = query.docs.map(doc => {
+      let data = doc.data();
+      data.id = doc.id;
+      return data;
+    });
     docs.sort((a, b) => a.name.localeCompare(b.name));
 
+    // Download image urls
+    for (let i = 0; i < docs.length; i++) {
+      docs[i].imageURLs = [];
+
+      for (let j = 0; j < docs[i].imageCount; j++) {
+        try {
+          const url = await storageRef.child(docs[i].id + '/tiny_img_' + j).getDownloadURL();
+          docs[i].imageURLs.push(url);
+        }
+        catch (error) {
+          if (error.code === 'storage/object-not-found') j = docs[i].imageCount;
+          else throw error;
+        }
+      }
+      if (!docs[i].imageURLs.length) docs[i].imageURLs.push('../images/temp.png');
+    }
+
+    // Display and setup equipment
     docs.forEach(displayEquipment);
     const divEquipment = [...document.getElementsByClassName('div-equipment')];
     divEquipment.forEach(setupEquipment);
@@ -31,13 +55,17 @@ async function loadEquipment() {
 }
 
 function displayEquipment(data) {
-  console.log(data.name);
-  const photoSRC = '../images/temp.png';
-  divEquipmentContainer.innerHTML += 
+  let div = 
   `<div class="div-equipment">
-    <div class="div-equipment-images">
-      <img src="${ photoSRC }">
-    </div>
+    <div class="div-equipment-images">`;
+  
+  data.imageURLs.forEach(url => {
+    div += `<img src="${ url }">`;
+    
+  });
+
+  div += 
+    `</div>
     <p class="div-equipment-name">${ data.name }</p>
     <div class="div-equipment-desc">
       <p>${ data.desc }</p>
@@ -46,6 +74,7 @@ function displayEquipment(data) {
     <button class="btn-equipment-history">History</button>
     <button class="btn-equipment-edit">Edit</button>
   </div>`;
+  divEquipmentContainer.innerHTML += div;
 }
 
 function setupEquipment(div) {
