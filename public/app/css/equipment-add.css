@@ -1,3 +1,14 @@
+#name {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: absolute;
+  top: 10px;
+  left: 60px;
+  width: calc(100% - 70px);
+  height: 40px;
+  font-size: 30px;
+}
 
 #div-images {
   margin: 0;
@@ -7,12 +18,38 @@
   left: 2%;
   top: 0;
   width: 96%;
-  height: 180px;
-  overflow: hidden;
+  height: 220px;
+  overflow-y: hidden;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
-#div-images img {
-  height: 100%;
+.div-image {
+  margin:  0;
+  padding: 0;
+  border: 0;
+  position: relative;
+  display: inline-block;
+  top: 0;
+  left: 0;
+  width: 220px;
+  height: 220px;
+}
+
+.div-image img {
+  margin:  0;
+  padding: 0;
+  border: 0;
+  width: 220px;
+  height: 220px;
+}
+
+.div-image button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
 }
 
 label {
@@ -22,9 +59,10 @@ label {
   border: 0;
   position: absolute;
   left: 2%;
-  top: 180px;
+  top: 230px;
   width: 96%;
   height: 40px;
+  line-height: 40px;
   text-align: center;
   background-color: aqua;
 }
@@ -35,17 +73,6 @@ label {
   z-index: -1;
 }
 
-#name {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  position: absolute;
-  left: 2%;
-  top: 230px;
-  width: 96%;
-  height: 40px;
-}
-
 #desc {
   margin: 0;
   padding: 0;
@@ -54,17 +81,35 @@ label {
   left: 2%;
   top: 280px;
   width: 96%;
-  height: 120px;
+  height: 200px;
   overflow-wrap: break-word;
+  font-size: large;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+#price {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: absolute;
+  left: 2%;
+  top: 490px;
+  width: 96%;
+  height: 40px;
+  overflow-wrap: break-word;
+  font-size: large;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
 #btn-add-equipment-firestore {
   margin: 0;
   padding: 0;
   border: 0;
-  position: absolute;
-  left: 2%;
-  top: 420px;
-  width: 96%;
+  border-radius: 10px;
+  position: fixed;
+  bottom: 70px;
+  left: 0;
+  width: 100vw;
   height: 40px;
+  background-color: lime;
 }

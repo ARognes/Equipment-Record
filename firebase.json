@@ -5,13 +5,11 @@
   },
   "hosting": [ 
     {
-      "redirects":[ 
-        {
-          "source": "/",
-          "destination": "/menus/login.html",
-          "type": 301
-        }
-      ],
+      "redirects": [ {
+        "source": "/",
+        "destination": "/menus/login.html",
+        "type": 301
+      } ],
       "target": "app",
       "public": "public/app",
       "cleanUrls": true,

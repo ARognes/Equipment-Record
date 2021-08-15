@@ -1,5 +1,6 @@
 'use strict';
 
+
 const SMALL_COMPRESSION_PERCENTAGE = 0.9;
 const SMALL_COMPRESSION_MAX_SIZE = 800;
 
@@ -12,6 +13,7 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 const divImages = document.getElementById('div-images');
 const btnImages = document.getElementById('images');
+const labelImage = document.querySelector('label');
 let images = [], smallImages = [], tinyImages = [];
 
 
@@ -28,6 +30,7 @@ auth.onAuthStateChanged(async (user) => {
     btnAddEquipmentFirestore.onclick = async () => {
       const name = document.getElementById('name').value;
       const desc = document.getElementById('desc').value;
+      const price = document.getElementById('price').value || 0;
 
       if (!name.length) return;
 
@@ -44,8 +47,8 @@ auth.onAuthStateChanged(async (user) => {
         const docRef = await db.collection('equipment').add({
           name: name,
           desc: desc,
-          imageCount: images.length,
-          price: 10,
+          imageCount: smallImages.length,
+          price: price,
           purchaseDate: null,
           project: null,
           businessID: businessID,
@@ -79,13 +82,18 @@ auth.onAuthStateChanged(async (user) => {
 });
 
 // Make user wait until this is complete to add to firestore!
-btnImages.onchange = () => {
-  const files = [...btnImages.files];
+btnImages.addEventListener('input', async () => {
+  let files = [...btnImages.files];
   if (!files.length) return;
+  const remainingImages = 5 - divImages.childNodes.length;
+  if (files.length >= remainingImages) {
+    files = files.slice(0, remainingImages);
+    labelImage.hidden = true;
+  }
 
   // Compress images to small and tiny versions
   files.forEach(async (file, i) => {
-    const j = i + images.length;
+    const j = i + smallImages.length;
     let blob = null;
     try {
       const img = await blobToImage(file);
@@ -106,9 +114,21 @@ btnImages.onchange = () => {
       async success(result) {
         smallImages[j] = result;
         try {
-          const resultImage = await blobToImage(result);
-          images[j] = resultImage;
-          divImages.append(resultImage);
+          const resultImg = await blobToImage(result);
+          const divImg = document.createElement('div');
+          divImg.setAttribute('class', 'div-image');
+          const btnRemove = document.createElement('button');
+          divImg.appendChild(resultImg);
+          divImg.appendChild(btnRemove);
+          divImages.appendChild(divImg);
+          images[j] = resultImg;
+          btnRemove.onclick = () => {
+            images.splice(j, 1);
+            smallImages.splice(j, 1);
+            tinyImages.splice(j, 1);
+            divImg.remove();
+            labelImage.hidden = false;
+          }
         }
         catch (error) { console.error(error) }
       },
@@ -124,7 +144,7 @@ btnImages.onchange = () => {
       error(error) { console.error(error); }
     });
   });
-}
+});
 
 function blobToImage(blob) {
   return new Promise(resolve => {

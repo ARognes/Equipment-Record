@@ -10,9 +10,9 @@
   <meta name="author" content="Austin Rognes">
   <!-- <link rel="icon" href="./images/icon.png"> -->
   <link href="../css/style.css" rel="stylesheet">
-  <link href="../css/settings.css" rel="stylesheet">
-  <script type="text/javascript" defer src="../js/sha256.min.js"></script>
-  <script type="module" defer src="../js/settings.js"></script>
+  <link href="../css/scanner.css" rel="stylesheet">
+  <script type="module" defer src="../js/jsqr.js"></script>
+  <script type="module" defer src="../js/scanner.js"></script>
 
   <!-- The core Firebase JS SDK is always required and must be listed first -->
   <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-app.js"></script>
@@ -45,24 +45,22 @@
 
 <body>
   <header>
-    <p id="title">Equipment Record</p>
+    <p id="title">Scanner</p>
   </header>
 
-  <div id="settings-menu" class="menu">
-    <button onclick="window.location='account.html'" class="btn-top-left"><</button>
-    <button onclick="window.location='account.html'" class="btn-menu">Manage account</button>
-    <button onclick="window.location='users.html'" class="btn-menu">Users</button>
-    <button class="btn-menu">blank</button>
-    <button class="btn-menu">blank</button>
-    <button id="btn-delete-account" class="btn-menu">Delete account</button>
+  <div id="main-menu" class="menu">
+    <button onclick="window.location='main.html'" class="btn-top-left"><</button>
+    <canvas id="canvas"></canvas>
+    <p id="loading-message">loading-message</p>
+    <p id="output-data">output-data#</p>
   </div>
 
-  <div id="div-confirmation" hidden="true">
-    <h1>Are you sure?</h1>
-    <p>This is a permanent action</p>
-    <button id="btn-confirm">Yes</button>
-    <button id="btn-deny">No</button>
-  </div>  
-
+  <div id="base-menu">
+    <button onclick="window.location='projects.html'" class="btn-base-menu" >Projects</button>
+    <button onclick="window.location='equipment.html'" class="btn-base-menu">Equipment</button>
+    <button onclick="window.location='main.html'" class="btn-base-menu">Home</button>
+    <button onclick="window.location='history.html'" class="btn-base-menu">History</button>
+    <button onclick="window.location='account.html'" class="btn-base-menu">Account</button>
+  </div>
 </body>
 </html>

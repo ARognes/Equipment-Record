@@ -45,16 +45,15 @@
 
 <body>
   <header>
-    <p id="title">Equipment Record</p>
+    <p id="title">Account</p>
   </header>
 
   <div id="account-menu" class="menu">
-    <button onclick="window.location='settings.html'" class="btn-top-left"><</button>
     <p style="color: white">Information about your account</p>
     <button class="btn-menu">Change</button>
     <button class="btn-menu">blank</button>
     <button class="btn-menu">blank</button>
-    <button id="btn-delete-account" class="btn-menu">Delete account</button>
+    <button id="btn-sign-out" class="btn-menu">Sign out</button>
   </div>
 
   <div id="div-confirmation" hidden="true">
@@ -64,5 +63,14 @@
     <button id="btn-deny">No</button>
   </div>  
 
+  <button onclick="window.location='settings.html'" class="btn-top-right" >*</button>
+
+  <div id="base-menu">
+    <button onclick="window.location='projects.html'" class="btn-base-menu" >Projects</button>
+    <button onclick="window.location='equipment.html'" class="btn-base-menu">Equipment</button>
+    <button onclick="window.location='main.html'" class="btn-base-menu">Home</button>
+    <button onclick="window.location='history.html'" class="btn-base-menu">History</button>
+    <p class="btn-base-menu">Account</p>
+  </div>
 </body>
 </html>

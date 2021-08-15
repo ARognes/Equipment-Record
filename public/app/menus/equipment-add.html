@@ -46,17 +46,27 @@
 
 <body>
   <header>
-    <p id="title">Add Equipment</p>
+    <!-- <p id="title">Add Equipment</p> -->
+    <input type="text" id="name" placeholder="name">
+
   </header>
 
   <div id="equipment-add-menu" class="menu">
     <button onclick="window.location='equipment.html'" class="btn-top-left"><</button>
     <div id="div-images"></div>
     <label for="images">Add pictures</label>
-    <input type="file" id="images" accept="image/*" multiple="true">
-    <input type="text" id="name" placeholder="name">
+    <input type="file" id="images" accept="image/*" capture="environment" multiple="true">
     <textarea id="desc" placeholder="description"></textarea>
+    <input type="number" id="price" placeholder="price">
     <button id="btn-add-equipment-firestore">Add</button>
+  </div>
+
+  <div id="base-menu">
+    <button onclick="window.location='projects.html'" class="btn-base-menu" >Projects</button>
+    <p class="btn-base-menu">Equipment</p>
+    <button onclick="window.location='main.html'" class="btn-base-menu">Home</button>
+    <button onclick="window.location='history.html'" class="btn-base-menu">History</button>
+    <button onclick="window.location='account.html'" class="btn-base-menu">Account</button>
   </div>
 </body>
 </html>
