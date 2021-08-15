@@ -1,12 +1,15 @@
 'use strict';
 
+import { local, session } from './storage-factory.js';
+
+console.log(local, session);
+
 const LOGIN_MENU_PATH = 'login.html';
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 const divEquipmentContainer = document.getElementById('div-equipment-container');
 
-const equipmentDivs = [];
 
 auth.onAuthStateChanged(async (user) => {
   if (!user) { window.location = LOGIN_MENU_PATH; return; }
@@ -34,9 +37,20 @@ async function loadEquipment() {
       docs[i].imageURLs = [];
 
       for (let j = 0; j < docs[i].imageCount; j++) {
-        try {
-          const url = await storageRef.child(docs[i].id + '/tiny_img_' + j).getDownloadURL();
+        const imageName = docs[i].id + '/tiny_img_' + j;
+
+        // Check localstorage
+        const url = local.getItem(imageName);
+        if (url) {
           docs[i].imageURLs.push(url);
+          continue;
+        }
+
+        try {
+          console.log('pinged firebase');
+          const url = await storageRef.child(imageName).getDownloadURL();
+          docs[i].imageURLs.push(url);
+          local.setItem(imageName, url);
         }
         catch (error) {
           if (error.code === 'storage/object-not-found') j = docs[i].imageCount;
@@ -61,7 +75,6 @@ function displayEquipment(data) {
   
   data.imageURLs.forEach(url => {
     div += `<img src="${ url }">`;
-    
   });
 
   div += 
