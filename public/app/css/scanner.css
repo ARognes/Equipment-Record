@@ -9,35 +9,69 @@
   height: 100vw;
 }
 
+#change-camera {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  left: 2%;
+  bottom: 100px;
+  width: 96%;
+  height: 40px;
+}
+
 #loading-message {
   margin: 0;
   padding: 0;
   position: absolute;
   left: 0;
-  top: 100vw;
+  top: 50%;
   width: 100vw;
   height: 40px;
 }
 
-#output-message {
+#div-found-equipment {
   margin: 0;
   padding: 0;
   position: absolute;
-  left: 0;
-  top: 120vw;
-  width: 100vw;
-  height: 40px;
-}
-
-#output-data {
-  margin: 0;
-  padding: 0;
-  position: absolute;
-  left: 0;
-  bottom: 10px;
-  width: 100vw;
+  left: 2%;
+  top: 40%;
+  width: 96%;
   height: 120px;
   font-size: 40px;
   text-align: center;
-  color: #fff;
+  background-color: azure;
+}
+
+#title-found-equipment {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  left: 2%;
+  top: 10px;
+  width: 96%;
+  height: 120px;
+  font-size: 40px;
+  text-align: center;
+}
+
+#btn-confirm-found-equipment {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  right: 2%;
+  bottom: 10px;
+  width: 46%;
+  height: 40px;
+  text-align: center;
+}
+
+#btn-deny-found-equipment {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  left: 2%;
+  bottom: 10px;
+  width: 46%;
+  height: 40px;
+  text-align: center;
 }

@@ -12,8 +12,10 @@ const EQUIPMENT_MENU_PATH = 'equipment.html';
 const auth = firebase.auth();
 const db = firebase.firestore();
 const divImages = document.getElementById('div-images');
+const btnCamera = document.getElementById('camera');
 const btnImages = document.getElementById('images');
-const labelImage = document.querySelector('label');
+const labelCamera = document.getElementById('label-camera');
+const labelImages = document.getElementById('label-images');
 let images = [], smallImages = [], tinyImages = [];
 
 
@@ -82,13 +84,16 @@ auth.onAuthStateChanged(async (user) => {
 });
 
 // Make user wait until this is complete to add to firestore!
-btnImages.addEventListener('input', async () => {
-  let files = [...btnImages.files];
+btnCamera.addEventListener('input', () => loadImages(btnCamera.files));
+btnImages.addEventListener('input', () => loadImages(btnImages.files));
+async function loadImages(btnFiles) {
+  let files = [...btnFiles];
   if (!files.length) return;
   const remainingImages = 5 - divImages.childNodes.length;
   if (files.length >= remainingImages) {
     files = files.slice(0, remainingImages);
-    labelImage.hidden = true;
+    labelImages.hidden = true;
+    labelCamera.hidden = true;
   }
 
   // Compress images to small and tiny versions
@@ -127,7 +132,8 @@ btnImages.addEventListener('input', async () => {
             smallImages.splice(j, 1);
             tinyImages.splice(j, 1);
             divImg.remove();
-            labelImage.hidden = false;
+            labelImages.hidden = false;
+            labelCamera.hidden = false;
           }
         }
         catch (error) { console.error(error) }
@@ -144,7 +150,7 @@ btnImages.addEventListener('input', async () => {
       error(error) { console.error(error); }
     });
   });
-});
+};
 
 function blobToImage(blob) {
   return new Promise(resolve => {

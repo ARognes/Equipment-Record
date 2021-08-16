@@ -87,3 +87,7 @@ header {
   font-size: large;
   background-color: aqua;
 }
+
+.hidden {
+  display: none;
+}

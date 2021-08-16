@@ -54,8 +54,11 @@
   <div id="equipment-add-menu" class="menu">
     <button onclick="window.location='equipment.html'" class="btn-top-left"><</button>
     <div id="div-images"></div>
-    <label for="images">Add pictures</label>
-    <input type="file" id="images" accept="image/*" capture="environment" multiple="true">
+    <label for="camera" id="label-camera">Camera</label>
+    <input type="file" id="camera" accept="image/*" capture="application" multiple="true">
+
+    <label for="images" id="label-images">Gallery</label>
+    <input type="file" id="images" accept="image/*" multiple="true">
     <textarea id="desc" placeholder="description"></textarea>
     <input type="number" id="price" placeholder="price">
     <button id="btn-add-equipment-firestore">Add</button>
