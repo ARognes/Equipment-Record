@@ -12,6 +12,7 @@
   <link href="../css/style.css" rel="stylesheet">
   <link href="../css/scanner.css" rel="stylesheet">
   <script type="module" defer src="../js/jsqr.js"></script>
+  <script type="text/javascript" defer src="../js/quagga.min.js"></script>
   <script type="module" defer src="../js/scanner.js"></script>
 
   <!-- The core Firebase JS SDK is always required and must be listed first -->
@@ -52,8 +53,8 @@
   <div class="menu">
     <canvas id="canvas"></canvas>
     <button id="change-camera">Change Camera</button>
-    <p id="test" style="position: absolute; left: 10px; right: 10px; height: 40px; bottom: 20px; color: white;"></p>
-    <p id="loading-message">loading-message</p>
+    <p id="test" style="position: absolute; left: 10px; right: 10px; height: 80px; bottom: 20px; color: white;"></p>
+    <p id="loading-message">⌛ Loading video...</p>
     <div id="div-found-equipment" class="hidden">
       <p id="title-found-equipment"></p>
       <button id="btn-confirm-found-equipment">Confirm</button>

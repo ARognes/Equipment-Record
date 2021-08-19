@@ -45,6 +45,10 @@ auth.onAuthStateChanged(async (user) => {
           return;
         }
 
+        const randomValues = new Uint32Array(1);
+        window.crypto.getRandomValues(randomValues);
+        const barcode = (Date.now() * 100000 + randomValues[0]) % 1000000000000;
+
         // Add equipment to firestore
         const docRef = await db.collection('equipment').add({
           name: name,
@@ -55,6 +59,7 @@ auth.onAuthStateChanged(async (user) => {
           project: null,
           businessID: businessID,
           checkedOut: null,
+          barcode: barcode,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 

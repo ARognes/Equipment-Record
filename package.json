@@ -1,0 +1,23 @@
+{
+  "name": "equipment-record",
+  "version": "1.0.0",
+  "description": "This is a web-app that keeps records of where equipment has gone, who has them, and more.",
+  "main": "index.js",
+  "dependencies": {
+    "zbar.wasm": "^2.0.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ARognes/Equipment-Record.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ARognes/Equipment-Record/issues"
+  },
+  "homepage": "https://github.com/ARognes/Equipment-Record#readme"
+}
