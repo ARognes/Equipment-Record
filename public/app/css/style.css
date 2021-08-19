@@ -2,10 +2,11 @@ html, body {
   height: 100vh;
   margin: 0;
   padding: 0;
-  background-color: #222;
+  background-color: #fff;
   overflow: hidden;
   position: relative;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-family: 'Varela Round', sans-serif;
+  /* font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; */
 }
 
 header {
@@ -15,8 +16,13 @@ header {
   left: 0;
   top: 0;
   right: 0;
-  height: calc(10% - 10px);
+  height: 10%;
   background-color: #bbb;
+}
+
+button {
+  font-family : inherit;
+  font-size: 1em;
 }
 
 #title {

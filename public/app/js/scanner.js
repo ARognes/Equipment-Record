@@ -1,14 +1,20 @@
 
+const EQUIPMENT_MENU_PATH = 'equipment.html';
+
 const video = document.createElement('video');
 const canvas = document.getElementById('canvas'), ctx = canvas.getContext('2d');
 const loadingMessage = document.getElementById('loading-message');
 const outputData = document.getElementById('output-data');
 const divFoundEquipment = document.getElementById('div-found-equipment');
 const titleFoundEquipment = document.getElementById('title-found-equipment');
+const btnConfirmFoundEquipment = document.getElementById('btn-confirm-found-equipment');
+const btnDenyFoundEquipment = document.getElementById('btn-deny-found-equipment');
 
 const auth = firebase.auth();
 const db = firebase.firestore();
 let businessID;
+let username = null;
+let foundEquipment = null;
 let barcodeReady = true;
 let lastBarcode = null;
 let lastQRCode = null;
@@ -18,6 +24,7 @@ auth.onAuthStateChanged(async (user) => {
   try {
     const userDoc = await db.collection('users').doc(auth.currentUser.uid).get();
     businessID = userDoc.data().businessID;
+    username = userDoc.data().name;
   }
   catch(error) { console.error(error); }
 
@@ -186,6 +193,8 @@ async function fetchBarcode(barcode) {
     const equipmentDoc = query.docs.find(doc => doc.data().businessID === businessID);
     if (!equipmentDoc) return;
     const equipmentData = equipmentDoc.data();
+    equipmentData.id = equipmentDoc.id;
+    foundEquipment = equipmentData;
     cancelAnimationFrame(requestAnim);
     requestAnim = undefined;
 
@@ -208,6 +217,8 @@ async function fetchQRCode(QRCode) {
     if (!equipmentDoc) return;
     const equipmentData = equipmentDoc.data();
     if (equipmentData.businessID !== businessID) return;
+    equipmentData.id = equipmentDoc.id;
+    foundEquipment = equipmentData;
     cancelAnimationFrame(requestAnim);
     requestAnim = undefined;
 
@@ -248,6 +259,16 @@ function drawBox(box, color) {
   drawLine(box.topRightCorner, box.bottomRightCorner, color);
   drawLine(box.bottomRightCorner, box.bottomLeftCorner, color);
   drawLine(box.bottomLeftCorner, box.topLeftCorner, color);
+}
+
+btnConfirmFoundEquipment.onclick = async () => {
+  if (!foundEquipment) location.reload();
+  await db.collection('equipment').doc(foundEquipment.id).update({checkedOutID: auth.currentUser.uid, checkedOutName: username});
+  window.location = EQUIPMENT_MENU_PATH;
+}
+
+btnDenyFoundEquipment.onclick = () => {
+  location.reload();
 }
 
 /*

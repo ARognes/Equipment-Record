@@ -21,15 +21,19 @@
 }
 
 .div-equipment {
+  margin: 6px 0 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
   position: relative;
-  width: 100%;
+  left: 6px;
+  width: calc(100% - 12px);
   max-height: 100px;
   min-height: 100px;
   height: fit-content;
-  background-color: #666;
-  margin-bottom: 4px;
   overflow-y: hidden;
   transition: min-height 0.2s, max-height 0.2s cubic-bezier(0.5, 0.75, 0.9, 1);
+  background-color: #ddd;
 }
 
 .div-equipment-active {
@@ -61,19 +65,36 @@
 .btn-equipment-check-out {
   margin: 0;
   padding: 0;
+  border: 0;
+  border-radius: 8px;
   position: absolute;
-  top: 2px;
-  right: 2px;
+  top: 4px;
+  right: 4px;
   width: 100px;
   height: 44px;
+}
+
+.btn-equipment-check-in {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 100px;
+  height: 44px;
+  background-color: lightblue;
 }
 
 .btn-equipment-history {
   margin: 0;
   padding: 0;
+  border: 0;
+  border-radius: 8px;
   position: absolute;
-  top: 52px;
-  right: 2px;
+  top: 53px;
+  right: 4px;
   width: 100px;
   height: 44px;
 }
@@ -81,9 +102,11 @@
 .btn-equipment-edit {
   margin: 0;
   padding: 0;
+  border: 0;
+  border-radius: 8px;
   position: absolute;
   top: 102px;
-  right: 2px;
+  right: 4px;
   width: 100px;
   height: 44px;
 }
@@ -95,9 +118,10 @@
   top: 2px;
   left: 110px;
   right: 110px;
-  color: #fff;
+  color: #000;
   overflow-y: hidden;
   font-size: 20px;
+  font-weight: bold;
 }
 
 .div-equipment-desc {
@@ -108,7 +132,7 @@
   left: 110px;
   width: calc(100% - 220px);
   height: auto;
-  color: #fff;
+  color: #000;
   overflow-y: hidden;
   overflow-x: hidden;
   overflow-wrap: break-word;

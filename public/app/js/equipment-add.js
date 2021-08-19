@@ -58,7 +58,8 @@ auth.onAuthStateChanged(async (user) => {
           purchaseDate: null,
           project: null,
           businessID: businessID,
-          checkedOut: null,
+          checkedOutID: null,
+          checkedOutName: null,
           barcode: barcode,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
