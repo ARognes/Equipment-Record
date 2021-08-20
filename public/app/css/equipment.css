@@ -1,10 +1,10 @@
-.menu {
+#equipment-menu {
   margin: 0;
   padding: 0;
   position: absolute;
   top: 10%;
   width: 100%;
-  height: 90%;
+  height: 100%;
 }
 
 #div-equipment-container {
@@ -38,8 +38,9 @@
 
 .div-equipment-active {
   max-height: 400px;
-  min-height: 150px;  /* TODO This should be 100 if edit permission is not granted */
+  min-height: 150px;
   transition: min-height 0.2s, max-height 0.5s ease;
+
 }
 
 .div-equipment-images {
@@ -62,41 +63,17 @@
   object-fit: cover;
 }
 
-.btn-equipment-check-out {
+.div-equipment-assignment {
   margin: 0;
   padding: 0;
   border: 0;
-  border-radius: 8px;
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 0;
+  right: 0;
   width: 100px;
-  height: 44px;
-}
-
-.btn-equipment-check-in {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 8px;
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 100px;
-  height: 44px;
-  background-color: lightblue;
-}
-
-.btn-equipment-history {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 8px;
-  position: absolute;
-  top: 53px;
-  right: 4px;
-  width: 100px;
-  height: 44px;
+  height: 100%;
+  color: #66f;
+  text-align: center;
 }
 
 .btn-equipment-edit {

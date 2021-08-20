@@ -3,6 +3,7 @@
 import { local, session } from './storage-factory.js';
 
 const LOGIN_MENU_PATH = 'login.html';
+const EQUIPMENT_INFO_MENU = 'equipment-info.html';
 const auth = firebase.auth();
 const db = firebase.firestore();
 let username = null;
@@ -28,7 +29,7 @@ async function loadEquipment() {
     const storageRef = firebase.storage().ref(businessID + '/equipment/');
     const query = await db.collection('equipment').where('businessID', '==', businessID).get();
     
-    // Map and sort query
+    // Map and sort query alphabetically
     const docs = query.docs.map(doc => {
       let data = doc.data();
       data.id = doc.id;
@@ -89,13 +90,13 @@ function displayEquipment(data) {
       <p>${ data.desc }</p>
     </div>`;
   
-  if (!data.checkedOutID) div += `<button class="btn-equipment-check-out">Check out</button>`;
-  else if (data.checkedOutID === auth.currentUser.uid) div += `<button class="btn-equipment-check-in">Check in</button>`;
-  else div += `<div class="btn-equipment-check-out">${ data.checkedOutName }</div>`;
+  if (data.checkedOutID) div += `<div class="div-equipment-assignment">${ data.checkedOutName }</div>`;
+  //if (!data.checkedOutID) div += `<button class="btn-equipment-check-out">Check out</button>`;
+  //else if (data.checkedOutID === auth.currentUser.uid) div += `<button class="btn-equipment-check-in">Check in</button>`;
+  //else div += `<div class="btn-equipment-checked-out-by">${ data.checkedOutName }</div>`;
 
   div += 
-    `<button class="btn-equipment-history">History</button>
-    <button class="btn-equipment-edit">Edit</button>
+    `<button class="btn-equipment-edit">Edit</button>
   </div>`;
   divEquipmentContainer.innerHTML += div;
 }
@@ -108,16 +109,20 @@ function setupEquipment(data) {
   const btnHistory = div.getElementsByClassName('btn-equipment-history')[0];
   const btnEdit = div.getElementsByClassName('btn-equipment-edit')[0];
   
-  div.onclick = () => {
+  /*div.onclick = () => {
     if (div.classList.contains('div-equipment-active')) {
       div.classList.remove('div-equipment-active');
       divImages.style.overflow = 'hidden';
       divImages.scrollTop = 0;
     } else {
       div.classList.add('div-equipment-active');
+      // divEquipmentContainer.scrollTop = div.scrollTop;
       divImages.style.overflow = 'auto';
+      window.location = 'equipment-info.html?test=true';
     }
-  }
+  }*/
+
+  div.onclick = () => window.location = EQUIPMENT_INFO_MENU + `?id=${ data.id }&name=${ data.name }`;
 
   if (btnCheckOut) btnCheckOut.onclick = async () => {
     stopProp();

@@ -39,6 +39,8 @@ button {
 .btn-top-left {
   margin: 0;
   padding: 0;
+  border: 0;
+  border-radius: 8px;
   position: fixed;
   top: 10px;
   left: 10px;
@@ -49,6 +51,8 @@ button {
 .btn-top-right {
   margin: 0;
   padding: 0;
+  border: 0;
+  border-radius: 8px;
   position: fixed;
   top: 10px;
   right: 10px;
