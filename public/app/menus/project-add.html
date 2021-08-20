@@ -10,9 +10,10 @@
   <meta name="author" content="Austin Rognes">
   <!-- <link rel="icon" href="./images/icon.png"> -->
   <link href="../css/style.css" rel="stylesheet">
-  <link href="../css/projects.css" rel="stylesheet">
+  <link href="../css/project-add.css" rel="stylesheet">
   <script type="text/javascript" defer src="../js/sha256.min.js"></script>
-  <script type="module" defer src="../js/projects.js"></script>
+  <script type="text/javascript" defer src="../js/compressor.min.js"></script>
+  <script type="module" defer src="../js/project-add.js"></script>
 
   <!-- The core Firebase JS SDK is always required and must be listed first -->
   <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-app.js"></script>
@@ -45,21 +46,19 @@
 
 <body>
   <header>
-    <p id="title">Projects</p>
+    <!-- <p id="title">Add Equipment</p> -->
+    <input type="text" id="name" placeholder="name">
+
   </header>
 
-  <div id="project-menu" class="menu">
-    <div id="div-project-container">
-      <div class="div-project">
-        
-      </div>
-    </div>
-    <button onclick="window.location='project-add.html'" id="btn-project-add">+</button>
-
+  <div id="project-add-menu" class="menu">
+    <button onclick="window.location='projects.html'" class="btn-top-left"><</button>
+    <textarea id="desc" placeholder="description"></textarea>
+    <button id="btn-add-project-firestore">Add</button>
   </div>
 
   <div id="base-menu">
-    <p class="btn-base-menu">Projects</p>
+    <button onclick="window.location='projects.html'" class="btn-base-menu" >Projects</button>
     <button onclick="window.location='equipment.html'" class="btn-base-menu">Equipment</button>
     <button onclick="window.location='main.html'" class="btn-base-menu">Home</button>
     <button onclick="window.location='history.html'" class="btn-base-menu">History</button>

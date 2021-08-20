@@ -1,11 +1,10 @@
 'use strict';
 
-
 const SMALL_COMPRESSION_PERCENTAGE = 0.9;
 const SMALL_COMPRESSION_MAX_SIZE = 800;
 
 const TINY_COMPRESSION_PERCENTAGE = 0.8;
-const TINY_COMPRESSION_MAX_SIZE = 400;
+const TINY_COMPRESSION_MAX_SIZE = 100;
 
 const EQUIPMENT_MENU_PATH = 'equipment.html';
 
@@ -29,62 +28,7 @@ auth.onAuthStateChanged(async (user) => {
     const userData = userDoc.data();
     const businessID = userData.businessID;
 
-    btnAddEquipmentFirestore.onclick = async () => {
-      const name = document.getElementById('name').value;
-      const desc = document.getElementById('desc').value;
-      const price = document.getElementById('price').value || 0;
-
-      if (!name.length) return;
-
-      try {
-
-        // Check if equipment already exists
-        const query = await db.collection('equipment').where('name', '==', name).get();
-        if (query.docs.length > 0) {
-          console.log('name already exists');
-          return;
-        }
-
-        const randomValues = new Uint32Array(1);
-        window.crypto.getRandomValues(randomValues);
-        const barcode = (Date.now() * 100000 + randomValues[0]) % 1000000000000;
-
-        // Add equipment to firestore
-        const docRef = await db.collection('equipment').add({
-          name: name,
-          desc: desc,
-          imageCount: smallImages.length,
-          price: price,
-          purchaseDate: null,
-          project: null,
-          businessID: businessID,
-          checkedOutID: null,
-          checkedOutName: null,
-          barcode: barcode,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        // Add images to firebase storage
-        for (let i = 0; i < images.length; i++) {
-          await uploadImage(smallImages[i], docRef.id + '/img_' + i);
-          await uploadImage(tinyImages[i], docRef.id + '/tiny_img_' + i);
-        }
-
-        window.location = EQUIPMENT_MENU_PATH;
-      }
-      catch (error) { console.error(error); }
-    }
-
-    const storageRef = firebase.storage().ref(businessID + '/equipment/');
-    function uploadImage(image, imageName) {
-      return new Promise((resolve, reject) => {
-        const task = storageRef.child(imageName).put(image);
-        task.on('state_changed', snapshot => {
-          const percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log(percentage);
-        }, error => reject(error), () => resolve());
-      });
-    }
+    btnAddEquipmentFirestore.onclick = () => submitEquipmentFirestore(businessID);
   }
   catch (error) { console.error(error); }
 });
@@ -174,4 +118,61 @@ function canvasToBlob(canvas) {
   return new Promise(resolve => {
     canvas.toBlob(resolve);
   });
+}
+
+// TODO: Submit this to a fb function that makes sure everything or nothing goes through
+async function submitEquipmentFirestore(businessID, ) {
+  const name = document.getElementById('name').value;
+  const desc = document.getElementById('desc').value;
+  const price = document.getElementById('price').value || 0;
+
+  if (!name.length) return;
+
+  try {
+
+    // Check if equipment already exists
+    const query = await db.collection('equipment').where('name', '==', name).get();
+    if (query.docs.length > 0) {
+      console.log('name already exists');
+      return;
+    }
+
+    const randomValues = new Uint32Array(1);
+    window.crypto.getRandomValues(randomValues);
+    const barcode = (Date.now() * 100000 + randomValues[0]) % 1000000000000;
+
+    // Add equipment to firestore
+    const docRef = await db.collection('equipment').add({
+      name: name,
+      desc: desc,
+      imageCount: smallImages.length,
+      price: price,
+      purchaseDate: null,
+      project: null,
+      businessID: businessID,
+      checkedOutID: null,
+      checkedOutName: null,
+      barcode: barcode,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    // Add images to firebase storage
+    for (let i = 0; i < images.length; i++) {
+      await uploadImage(smallImages[i], `${businessID}/equipment/${docRef.id}/img_${i}`);
+      await uploadImage(tinyImages[i], `${businessID}/equipment/${docRef.id}/tiny_img_${i}`);
+    }
+    
+    function uploadImage(image, storageRef) {
+      return new Promise((resolve, reject) => {
+        const task = firebase.storage().ref(storageRef).put(image);
+        task.on('state_changed', snapshot => {
+          const percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(percentage);
+        }, error => reject(error), () => resolve());
+      });
+    }
+
+    window.location = EQUIPMENT_MENU_PATH;
+  }
+  catch (error) { console.error(error); }
 }

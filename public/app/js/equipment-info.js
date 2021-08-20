@@ -23,7 +23,7 @@ images.forEach((url, i) => {
   const img = document.createElement('img');
   divImages.appendChild(img);
   img.src = url;
-  img.style.filter = "blur(12px)";
+  img.style.filter = "blur(16px)";
   if (images.length === 1) return;
   const btnImage = document.createElement('div');
   btnImage.classList.add('btn-image-inactive');
@@ -66,7 +66,9 @@ auth.onAuthStateChanged(async (user) => {
     [...divImages.children].forEach((img, i) => {
       if (i < images.length) {
         img.src = images[i];
-        img.style.filter = null;
+        img.addEventListener('load', () => {
+          img.style.filter = null;
+        });
       }
     });
 

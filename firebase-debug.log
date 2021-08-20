@@ -1,0 +1,13 @@
+[debug] [2021-08-20T23:04:57.977Z] ----------------------------------------------------------------------
+[debug] [2021-08-20T23:04:57.979Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\aurog\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2021-08-20T23:04:57.979Z] CLI Version:   9.16.4
+[debug] [2021-08-20T23:04:57.979Z] Platform:      win32
+[debug] [2021-08-20T23:04:57.979Z] Node Version:  v10.16.3
+[debug] [2021-08-20T23:04:57.980Z] Time:          Fri Aug 20 2021 18:04:57 GMT-0500 (Central Daylight Time)
+[debug] [2021-08-20T23:04:57.980Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2021-08-20T23:04:58.053Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2021-08-20T23:04:58.053Z] > authorizing via signed-in user (aurognes@gmail.com)
+[debug] [2021-08-20T23:04:58.053Z] [iam] checking project equipment-manager-d01eb for permissions ["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]
+[debug] [2021-08-20T23:04:58.055Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/equipment-manager-d01eb:testIamPermissions  
+ {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]}

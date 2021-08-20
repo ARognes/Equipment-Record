@@ -16,7 +16,6 @@
   <script type="module" defer src="../js/storage-factory.js"></script>
   <script type="module" defer src="../js/equipment.js"></script>
   
-
   <!-- The core Firebase JS SDK is always required and must be listed first -->
   <script src="https://www.gstatic.com/firebasejs/8.9.0/firebase-app.js"></script>
 
@@ -48,10 +47,12 @@
 
 <body>
   <header>
-    <p id="title">Equipment</p>
+    <input type="text" id="search" placeholder="search">
+    <button id="filter">I</button>
+
   </header>
 
-  <div id="equipment-menu">
+  <div class="menu">
     <div id="div-equipment-container"></div>
     <button onclick="window.location='equipment-add.html'" id="btn-equipment-add">+</button>
   </div>
