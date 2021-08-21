@@ -1,5 +1,7 @@
 'use strict';
 
+import { local, session } from './storage-factory.js';
+
 const MAIN_MENU_PATH = 'main.html';
 const BUSINESS_MENU_PATH = 'business-key.html';
 
@@ -89,7 +91,7 @@ auth.onAuthStateChanged(async (user) => {
 
   const db = firebase.firestore();
   const userRef = db.collection('users').doc(user.uid);
-  window.localStorage.setItem('username', user.name);
+  local.setItem('username', user.name);
 
   try {
     // Check if user exists in firestore
@@ -116,7 +118,7 @@ auth.onAuthStateChanged(async (user) => {
     if (typeof businessID === 'string' && businessID !== '') businessDoc = await db.collection('businesses').doc(businessID).get();
     if (!businessDoc || !businessDoc.exists) window.location = BUSINESS_MENU_PATH;
     else window.location = MAIN_MENU_PATH;
-    window.localStorage.setItem('businessName', userData.businessName);
+    local.setItem('businessName', userData.businessName);
   } 
   catch (error) { errorLog.innerHTML = error };
 });

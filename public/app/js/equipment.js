@@ -13,13 +13,13 @@ let equipmentResults = [];
 const divEquipmentContainer = document.getElementById('div-equipment-container');
 const search = document.getElementById('search');
 
-
 auth.onAuthStateChanged(async (user) => {
   if (!user) { window.location = LOGIN_MENU_PATH; return; }
   try {
     const userDoc = await db.collection('users').doc(auth.currentUser.uid).get();
     businessID = userDoc.data().businessID;
     username = userDoc.data().name;
+    search.value = '';
 
     equipmentResults = await loadEquipment();
 
@@ -132,3 +132,17 @@ async function waitForValue() {
     })();
   });
 }
+
+const baseMenu = document.getElementById('base-menu');
+const btnEquipmentAdd = document.getElementById('btn-equipment-add');
+
+// Remove base menu if keyboard is up
+// search.onfocus = () => {
+//   baseMenu.style.height = 0;
+//   btnEquipmentAdd.hidden = true;
+// }
+
+// search.onblur = () => {
+//   baseMenu.style.height = 'auto';
+//   btnEquipmentAdd.hidden = false;
+// }

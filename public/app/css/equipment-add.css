@@ -1,14 +1,15 @@
 #name {
-  margin: 0;
-  padding: 0;
-  border: 0;
+  margin: 0; 
+  padding: 6px; 
+  border: 0; 
+  border-radius: 8px;
   position: absolute;
-  top: 10px;
-  left: 60px;
-  width: calc(100% - 70px);
-  height: 40px;
-  font-size: 30px;
+  top: 6px;
+  left: 48px;
+  width: calc(100% - 66px);
+  height: 24px;
   font-family: 'Varela Round', sans-serif;
+  font-size: 24px;
 }
 
 #div-images {

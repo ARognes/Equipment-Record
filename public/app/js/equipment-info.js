@@ -2,7 +2,8 @@
 
 import { local, session } from './storage-factory.js';
 
-const LOGIN_MENU_PATH = 'login.html';
+const LOGIN_MENU_PATH = 'login.html';   
+const EQUIPMENT_IMAGES_MAX = 10;
 const auth = firebase.auth();
 const db = firebase.firestore();
 let username = null;
@@ -19,32 +20,14 @@ const desc = document.getElementById('desc');
 
 
 let images = checkCachedImages();
-images.forEach((url, i) => {
-  const img = document.createElement('img');
-  divImages.appendChild(img);
-  img.src = url;
-  img.style.filter = "blur(16px)";
-  if (images.length === 1) return;
-  const btnImage = document.createElement('div');
-  btnImage.classList.add('btn-image-inactive');
-  divImageBtns.appendChild(btnImage);
-  btnImage.onclick = () => {
-    img.scrollIntoView({ behavior: 'smooth' });
-    btnImage.classList.add('btn-image-active');
-  }
-});
-[...document.getElementsByClassName('btn-image-inactive')][0]?.classList.add('btn-image-active');
+populateImages(images);
 
-
-let lastScrollLeft = 0;
 divImages.addEventListener('scroll', () => {
   const index = Math.round(divImages.scrollLeft / window.innerWidth);
-  const dif = lastScrollLeft - divImages.scrollLeft;
-  lastScrollLeft = divImages.scrollLeft;
-
   const buttons = [...document.getElementsByClassName('btn-image-inactive')];
-  if (index > 0 && dif < 0) buttons[index - 1].classList.remove('btn-image-active');
-  if (index < buttons.length - 1 && dif > 0) buttons[index + 1].classList.remove('btn-image-active');
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].classList.remove('btn-image-active');
+  }
   buttons[index].classList.add('btn-image-active');
 });
 
@@ -53,16 +36,27 @@ document.body.addEventListener('scroll', () => {
   divImages.style.top = -document.body.scrollTop / 2 + 'px';
 });
 
+
 auth.onAuthStateChanged(async (user) => {
   if (!user) { window.location = LOGIN_MENU_PATH; return; }
   try {
     const userDoc = await db.collection('users').doc(auth.currentUser.uid).get();
     businessID = userDoc.data().businessID;
     username = userDoc.data().name;
-
     
     const equipmentData = await getEquipmentData();
-    images = await downloadImages(equipmentData.imageCount);
+    
+    // Download small blurred images
+    if (images.length !== equipmentData.imageCount) {
+      console.log('reloading tiny images');
+      images = await downloadImages(equipmentData.imageCount, 'tiny_img');
+      while (divImages.firstChild) divImages.removeChild(divImages.firstChild);
+      while (divImageBtns.firstChild) divImages.removeChild(divImageBtns.firstChild);
+      populateImages(images);
+    }
+    
+    // Download full sized images
+    images = await downloadImages(equipmentData.imageCount, 'img');
     [...divImages.children].forEach((img, i) => {
       if (i < images.length) {
         img.src = images[i];
@@ -89,10 +83,29 @@ async function getEquipmentData() {
   catch(error) { console.error(error); }
 }
 
+function populateImages(images) {
+  images.forEach((url, i) => {
+    const img = document.createElement('img');
+    divImages.appendChild(img);
+    img.src = url;
+    img.style.filter = "blur(16px)";
+    if (images.length === 1) return;
+    const btnImage = document.createElement('div');
+    btnImage.classList.add('btn-image-inactive');
+    divImageBtns.appendChild(btnImage);
+    btnImage.onclick = () => {
+      [...document.getElementsByClassName('btn-image-active')].forEach(btn => btn.classList.remove('btn-image-active'));
+      img.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+  [...document.getElementsByClassName('btn-image-inactive')][0]?.classList.add('btn-image-active');
+}
+
+
 function checkCachedImages() {
   const imageURLs = [];
   let j = 0;
-  while(j < 5) {
+  while(j < EQUIPMENT_IMAGES_MAX) {
     const imageName = `${equipmentID}/tiny_img_${j++}`;
 
     // Check localstorage
@@ -105,7 +118,9 @@ function checkCachedImages() {
   
 }
 
-async function downloadImages(count) {
+
+async function downloadImages(count, name) {
+  console.log('looking for images');
   try {
     const storageRef = firebase.storage().ref(`${ businessID }/equipment/`);
 
@@ -113,13 +128,13 @@ async function downloadImages(count) {
     const imageURLs = [];
     
     for (let j = 0; j < count; j++) {
-      const imageName = `${equipmentID}/img_${j}`;
+      const imageName = `${ equipmentID }/${ name }_${ j }`;
     
       // Check localstorage
       const url = local.getItem(imageName);
       if (url) imageURLs.push(url);
       else {
-        console.log('downloaded image urls');
+        console.log('downloaded image url');
         const url = await storageRef.child(imageName).getDownloadURL();
         imageURLs.push(url);
         local.setItem(imageName, url);

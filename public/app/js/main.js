@@ -1,11 +1,13 @@
 'use strict';
 
+import { local, session } from './storage-factory.js';
+
 const LOGIN_MENU_PATH = 'login.html';
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 const pTitle = document.getElementById('title');
-document.getElementById('title').innerHTML = localStorage.getItem('businessName') || 'Equipment Record';
+document.getElementById('title').innerHTML = local.getItem('businessName') || '';
 
 
 auth.onAuthStateChanged(async (user) => {
@@ -14,7 +16,9 @@ auth.onAuthStateChanged(async (user) => {
   try {
     const userDoc = await db.collection('users').doc(user.uid).get();
     const userData = userDoc.data();
+    local.setItem('businessName', userData.businessName);
     document.getElementById('title').innerHTML = userData.businessName;
+    console.log(userData);
   }
   catch (error) {
     console.error(error);

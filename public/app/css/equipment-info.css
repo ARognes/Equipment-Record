@@ -15,15 +15,15 @@ body {
   flex-wrap: nowrap;
   justify-content: center;
   top: calc(100vw - 30px);
-  left: calc(50vw - 100px);
-  width: 200px;
+  left: calc(50vw - 140px);
+  width: 280px;
   height: 30px;
 }
 
 .btn-image-inactive {
   position: relative;
   top: 1px;
-  margin: 0 6px 0 6px;
+  margin: 6px 10px;
   padding: 0;
   border: 0;
   border-radius: 50%;
@@ -55,6 +55,7 @@ body {
   overflow-y: hidden;
   white-space: nowrap;
   scroll-snap-type: x mandatory;
+  /* pointer-events: none; */
 }
 
 #div-images img {
