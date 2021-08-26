@@ -1,7 +1,9 @@
 'use strict';
 
+import { compress, blobToImage, cropImage } from './helpers.js';
+
 const SMALL_COMPRESSION_PERCENTAGE = 0.9;
-const SMALL_COMPRESSION_MAX_SIZE = 800;
+const SMALL_COMPRESSION_MAX_SIZE = 1200;
 
 const TINY_COMPRESSION_PERCENTAGE = 0.6;
 const TINY_COMPRESSION_MAX_SIZE = 200;
@@ -20,7 +22,7 @@ let images = [], smallImages = [], tinyImages = [];
 
 const btnAddEquipmentFirestore = document.getElementById('btn-add-equipment-firestore');
 
-auth.onAuthStateChanged(async (user) => {
+auth.onAuthStateChanged(async user => {
   if (!user) { window.location = LOGIN_MENU_PATH; return; }
 
   try {
@@ -46,82 +48,44 @@ async function loadImages(btnFiles) {
     labelCamera.hidden = true;
   }
 
-  // Compress images to small and tiny versions
-  files.forEach(async (file, i) => {
-    const j = i + smallImages.length;
-    let blob = null;
-    try {
-      const img = await blobToImage(file);
-      const croppedImg = document.createElement('canvas');
-      const aspectRatio = img.naturalWidth / img.naturalHeight;
-      croppedImg.width = img.naturalWidth;
-      croppedImg.height = img.naturalHeight;
-      aspectRatio > 1 ? croppedImg.width = img.naturalHeight : croppedImg.height = img.naturalWidth;
-      croppedImg.getContext('2d').drawImage(img, (croppedImg.width - img.naturalWidth) / 2, (croppedImg.height - img.naturalHeight) / 2);
-      blob = await canvasToBlob(croppedImg);
-    }
-    catch (error) { console.error(error); }
+  // Display each image for user to crop
+  files.forEach(file => cropImage(file, callback));
+    
+    
+  async function callback(blob) {
+    const i = smallImages.length;
 
-    new Compressor(blob, {
-      quality: SMALL_COMPRESSION_PERCENTAGE,
-      maxWidth: SMALL_COMPRESSION_MAX_SIZE,
-      maxHeight: SMALL_COMPRESSION_MAX_SIZE,
-      async success(result) {
-        smallImages[j] = result;
-        try {
-          const resultImg = await blobToImage(result);
-          const divImg = document.createElement('div');
-          divImg.setAttribute('class', 'div-image');
-          const btnRemove = document.createElement('button');
-          divImg.appendChild(resultImg);
-          divImg.appendChild(btnRemove);
-          divImages.appendChild(divImg);
-          images[j] = resultImg;
-          btnRemove.onclick = () => {
-            images.splice(j, 1);
-            smallImages.splice(j, 1);
-            tinyImages.splice(j, 1);
-            divImg.remove();
-            labelImages.hidden = false;
-            labelCamera.hidden = false;
-          }
-        }
-        catch (error) { console.error(error) }
-      },
-      error(error) { console.error(error); }
-    });
-    new Compressor(blob, {
-      quality: TINY_COMPRESSION_PERCENTAGE,
-      maxWidth: TINY_COMPRESSION_MAX_SIZE,
-      maxHeight: TINY_COMPRESSION_MAX_SIZE,
-      success(result) {
-        tinyImages[j] = result;
-      },
-      error(error) { console.error(error); }
-    });
-  });
+    // Compress images to small and tiny versions
+    smallImages[i] = await compress(blob, SMALL_COMPRESSION_PERCENTAGE, SMALL_COMPRESSION_MAX_SIZE);
+
+    // Render image in HTML
+    try {
+      const resultImg = await blobToImage(smallImages[i]);
+      const divImg = document.createElement('div');
+      divImg.setAttribute('class', 'div-image');
+      const btnRemove = document.createElement('button');
+      divImg.appendChild(resultImg);
+      divImg.appendChild(btnRemove);
+      divImages.appendChild(divImg);
+      images[i] = resultImg;
+      btnRemove.onclick = () => {
+        images.splice(i, 1);
+        smallImages.splice(i, 1);
+        tinyImages.splice(i, 1);
+        divImg.remove();
+        labelImages.hidden = false;
+        labelCamera.hidden = false;
+      }
+    }
+    catch (error) { console.error(error) }
+
+    tinyImages[i] = await compress(blob, TINY_COMPRESSION_PERCENTAGE, TINY_COMPRESSION_MAX_SIZE);
+
+  }
 };
 
-function blobToImage(blob) {
-  return new Promise(resolve => {
-    const url = URL.createObjectURL(blob);
-    let img = new Image();
-    img.onload = function() {
-      URL.revokeObjectURL(this.src);
-      resolve(this);
-    }
-    img.src = url;
-  });
-}
-
-function canvasToBlob(canvas) {
-  return new Promise(resolve => {
-    canvas.toBlob(resolve);
-  });
-}
-
 // TODO: Submit this to a fb function that makes sure everything or nothing goes through
-async function submitEquipmentFirestore(businessID, ) {
+async function submitEquipmentFirestore(businessID) {
   const name = document.getElementById('name').value;
   const desc = document.getElementById('desc').value;
   const price = document.getElementById('price').value || 0;
