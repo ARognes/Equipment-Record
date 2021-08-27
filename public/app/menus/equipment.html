@@ -9,11 +9,14 @@
   <meta name="keywords" content="">
   <meta name="author" content="Austin Rognes">
   <!-- <link rel="icon" href="./images/icon.png"> -->
-  <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
+  <!-- <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet"> -->
+  <link rel="preconnect" href="http://fonts.googleapis.com" crossorigin>
+  <link rel="preload" as="style" href="http://fonts.googleapis.com/css?family=Poppins">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Poppins" media="print" onload="this.media='all'">
+  
   <link href="../css/style.css" rel="stylesheet">
   <link href="../css/equipment.css" rel="stylesheet">
-  <script type="text/javascript" defer src="../js/sha256.min.js"></script>
-  <script type="module" defer src="../js/storage-factory.js"></script>
+  <script type="module" defer src="../js/helpers.js"></script>
   <script type="module" defer src="../js/equipment.js"></script>
   
   <!-- The core Firebase JS SDK is always required and must be listed first -->
@@ -49,11 +52,10 @@
   <header>
     <input type="text" id="search" placeholder="search">
     <button id="filter">I</button>
-
   </header>
 
   <div class="menu">
-    <div id="div-equipment-container"></div>
+    <div class="item-container"></div>
     <button onclick="window.location='equipment-add.html'" id="btn-equipment-add">+</button>
   </div>
 

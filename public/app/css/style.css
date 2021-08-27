@@ -5,7 +5,7 @@ html, body {
   background-color: #fff;
   overflow: hidden;
   position: relative;
-  font-family: 'Varela Round', sans-serif;
+  font-family: 'Poppins', sans-serif;  
 }
 
 header {
@@ -100,4 +100,89 @@ button {
 
 .hidden {
   display: none;
+}
+
+.item-container {
+  margin: 0;
+  padding: 0 0 6px 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border-radius: 8px;
+}
+
+.item {
+  margin: 6px 0 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  position: relative;
+  left: 6px;
+  width: calc(100% - 12px);
+  height: 100px;
+  overflow-y: hidden;
+  background-color: #ddd;
+}
+
+
+.item img {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100px;
+  height: 100px;
+  overflow-y: hidden;
+  object-fit: cover;
+}
+
+.item-right {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100%;
+  color: #66f;
+  text-align: center;
+  pointer-events: none;
+}
+
+.item-name {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 2px;
+  left: 110px;
+  width: calc(100% - 220px);
+  color: #000;
+  font-size: 20px;
+  font-weight: bold;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.item-desc {
+  margin: 0;
+  padding: 0;
+  position: relative;
+  top: 10px;
+  bottom: 0;
+  left: 110px;
+  width: calc(100% - 220px);
+  color: #000;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  font-size: 15.5px;
 }

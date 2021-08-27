@@ -1,6 +1,6 @@
 'use strict';
 
-import { local, session } from './storage-factory.js';
+import { loadPreviewImage, getQueryData, searchForItem } from './helpers.js';
 
 const LOGIN_MENU_PATH = 'login.html';
 const EQUIPMENT_INFO_MENU = 'equipment-info.html';
@@ -10,10 +10,10 @@ let username = null;
 let businessID = null;
 let equipmentResults = [];
 
-const divEquipmentContainer = document.getElementById('div-equipment-container');
+const itemContainer = [...document.getElementsByClassName('item-container')][0];
 const search = document.getElementById('search');
 
-auth.onAuthStateChanged(async (user) => {
+auth.onAuthStateChanged(async user => {
   if (!user) { window.location = LOGIN_MENU_PATH; return; }
   try {
     const userDoc = await db.collection('users').doc(auth.currentUser.uid).get();
@@ -30,111 +30,46 @@ auth.onAuthStateChanged(async (user) => {
 // TODO: only load x amount of data at a time
 async function loadEquipment() {
   try {
-    const storageRef = firebase.storage().ref(businessID + '/equipment/');
     const query = await db.collection('equipment').where('businessID', '==', businessID).get();
     
     // Map and sort query alphabetically
-    const docs = query.docs.map(doc => {
-      let data = doc.data();
-      data.id = doc.id;
-      return data;
-    });
-    docs.sort((a, b) => a.name.localeCompare(b.name));
-
-    // Download image url
-    for (let i = 0; i < docs.length; i++) {
-      if (docs[i].imageCount <= 0) {
-        docs[i].imageURL = '../images/temp.png';
-        continue;
-      }
-
-      const imageName = `${docs[i].id}/tiny_img_0`;
-
-      // Check localstorage
-      docs[i].imageURL = local.getItem(imageName);
-      if (docs[i].imageURL) continue;
-
-      try {
-        console.log('downloaded image url');
-        docs[i].imageURL = await storageRef.child(imageName).getDownloadURL();
-        local.setItem(imageName, docs[i].imageURL);
-      }
-      catch (error) { console.error(error); }
-    }
-
-    // Display and setup equipment
-    docs.forEach(setupEquipment);
-    //return docs.map(setupEquipment);
-    return docs;
+    const data = getQueryData(query);
+    for (const d of data) await setupEquipment(d);
+    return data;
   }
   catch (error) { console.error(error); }
 }
 
-function setupEquipment(data) {
+async function setupEquipment(data) {
+
+  // Load icon image
+  const imageURL = await loadPreviewImage(data);
+
+  // Create DOM render
   let div = document.createElement('div');
   div.setAttribute('id', data.id);
-  div.classList.add('div-equipment');
-  //div.innerHTML = 
+  div.classList.add('item');
   let innerHTML = 
-  `<img src="${ data.imageURL }">
-    <p class="div-equipment-name">${ data.name }</p>
-    <div class="div-equipment-desc">
+  `<img src="${ imageURL }">
+    <p class="item-name">${ data.name }</p>
+    <div class="item-desc">
       <p>${ data.desc }</p>
     </div>`;
   
-  if (data.checkedOutID) innerHTML += `<div class="div-equipment-assignment">${ data.checkedOutName }</div>`;
+  if (data.checkedOutID) innerHTML += `<div class="item-right">${ data.checkedOutName }</div>`;
   innerHTML += `</div>`;
   div.innerHTML = innerHTML;
-  divEquipmentContainer.appendChild(div);
+  itemContainer.appendChild(div);
 
+  // Link div to info page
   const jsDiv = document.getElementById(data.id);
   jsDiv.onclick = () => window.location = EQUIPMENT_INFO_MENU + `?id=${ data.id }&name=${ data.name }`;
 }
 
-// Don't click through buttons and activate div-equipment
-function stopProp(event) {
-  if (!event) event = window.event;
-  event.stopPropagation();
-}
+search.onkeydown = () => searchForItem(search, equipmentResults);
 
-let searchMode = 'alphabetical';
-search.onkeydown = async e => {
-  if (e.code === 'Enter') console.log('search', search.value);
-
-  const value = await waitForValue();
-
-  if (value.length < 1) {
-    equipmentResults.forEach(data => {
-      const div = document.getElementById(data.id);
-      div.hidden = false;
-      div.getElementsByClassName('div-equipment-name')[0].innerText = data.name;
-    });
-  }
-  else {
-    equipmentResults.forEach(data => {
-      const div = document.getElementById(data.id);
-      if (!data.name.toUpperCase().includes(value)) div.hidden = true;
-      else {
-        div.hidden = false;
-        let name = div.getElementsByClassName('div-equipment-name')[0];
-        name.innerHTML = data.name.replace(new RegExp(value, "gi"), match => `<mark>${match}</mark>`);
-      }
-    });
-  }
-}
-
-async function waitForValue() {
-  return new Promise(resolve => {
-    let value = search.value;
-    (function wait() {
-    if (value !== search.value) return resolve(search.value.toUpperCase());
-    setTimeout(wait, 30);
-    })();
-  });
-}
-
-const baseMenu = document.getElementById('base-menu');
-const btnEquipmentAdd = document.getElementById('btn-equipment-add');
+// const baseMenu = document.getElementById('base-menu');
+// const btnEquipmentAdd = document.getElementById('btn-equipment-add');
 
 // Remove base menu if keyboard is up
 // search.onfocus = () => {

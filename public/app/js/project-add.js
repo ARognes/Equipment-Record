@@ -38,15 +38,14 @@ async function submitProjectFirestore() {
       return;
     }
 
-    const randomValues = new Uint32Array(1);
-    window.crypto.getRandomValues(randomValues);
-    const barcode = (Date.now() * 100000 + randomValues[0]) % 1000000000000;
-
     // Add project to firestore
-    const docRef = await db.collection('projects').add({
+    await db.collection('projects').add({
       name: name,
       desc: desc,
+      imageCount: 0,
+      color: null,
       businessID: businessID,
+      equipment: [],
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
