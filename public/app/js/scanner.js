@@ -213,6 +213,7 @@ async function fetchQRCode(QRCode) {
 
   // Fetch from db
   try {
+    console.log('Try fetch', code.data);
     const equipmentDoc = await db.collection('equipment').doc(QRCode).get();
     if (!equipmentDoc) return;
     const equipmentData = equipmentDoc.data();

@@ -1,49 +1,29 @@
 'use strict';
 
-const btnDeleteAccount = document.getElementById('btn-delete-account');
-const divConfirmation = document.getElementById('div-confirmation');
-const btnConfirm = document.getElementById('btn-confirm');
-const btnDeny = document.getElementById('btn-deny');
+const LOGIN_MENU_PATH = 'login.html';   
+const auth = firebase.auth();
+const db = firebase.firestore();
+let businessID = null;
+let username = null;
+const btnSignOut = document.getElementById('btn-sign-out');
 
-btnDeleteAccount.onclick = () => {
-  divConfirmation.hidden = false;
-}
-
-btnDeny.onclick = () => {
-  divConfirmation.hidden = true;
-}
-
-btnConfirm.onclick = async () => {
-  divConfirmation.hidden = true;
+auth.onAuthStateChanged(async user => {
+  if (!user) { window.location = LOGIN_MENU_PATH; return; }
   try {
+    const userDoc = await db.collection('users').doc(auth.currentUser.uid).get();
+    businessID = userDoc.data().businessID;
+    username = userDoc.data().name;
 
-    await auth.currentUser.delete();
-    console.log('user removed from auth');
-    
-  } 
-  catch (error) {
-    try {
+    btnSignOut.onclick = () => {
+      // divConfirmation.hidden = false;
+      // btnConfirm.onclick = () => {
+        auth.signOut();
+        // divConfirmation.hidden = true;
+      // }
+    }
 
-      //const credentials = promptForCredentials();
-      // Need a menu to login easily
-      await auth.currentUser.reauthenticateWithCredential(credential);
-      await auth.currentUser.delete();
-      console.log('user removed from auth');
-    }
-    catch (error2) {
-      console.log(error2);
-      return;
-    }
   }
+  catch(error) { console.error(error); }
+});
 
-  // TODO Delete user info from storage
 
-  // Delete user from firestore
-  userRef.delete().then(() => {
-    // User firestore account deleted
-    console.log('user removed from firestore');
-  })
-  .catch(error => {
-    console.log(error);
-  });
-}

@@ -40,25 +40,39 @@ async function loadEquipment() {
   catch (error) { console.error(error); }
 }
 
+let loadingList = [];
+let loadingListLoaded = 0;
+
 async function setupEquipment(data) {
 
   // Load icon image
   const imageURL = await loadPreviewImage(data);
 
   // Create DOM render
-  let div = document.createElement('div');
+  const div = document.createElement('div');
+  loadingList.push(div);
   div.setAttribute('id', data.id);
   div.classList.add('item');
+  div.classList.add('hidden');
+  const img = document.createElement('img');
+  img.onload = () => {
+    loadingListLoaded++;
+    if (loadingListLoaded >= loadingList.length) {
+      [...itemContainer.childNodes].forEach(item => item.classList.remove('hidden'));
+      itemContainer.getElementsByClassName('loader')[0].remove();
+    }
+  }
+  img.src = imageURL;
+  div.appendChild(img);
   let innerHTML = 
-  `<img src="${ imageURL }">
-    <p class="item-name">${ data.name }</p>
+   `<p class="item-name">${ data.name }</p>
     <div class="item-desc">
       <p>${ data.desc }</p>
     </div>`;
   
   if (data.checkedOutID) innerHTML += `<div class="item-right">${ data.checkedOutName }</div>`;
   innerHTML += `</div>`;
-  div.innerHTML = innerHTML;
+  div.innerHTML += innerHTML;
   itemContainer.appendChild(div);
 
   // Link div to info page

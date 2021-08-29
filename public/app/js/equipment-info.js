@@ -6,7 +6,6 @@ const LOGIN_MENU_PATH = 'login.html';
 const EQUIPMENT_IMAGES_MAX = 10;
 const auth = firebase.auth();
 const db = firebase.firestore();
-let username = null;
 let businessID = null;
 let parameters = new URLSearchParams(window.location.search);
 let equipmentID = parameters.get('id');
@@ -18,6 +17,7 @@ const divImages = document.getElementById('div-images');
 const divImageBtns = document.getElementById('div-images-buttons');
 const desc = document.getElementById('desc');
 
+document.body.scrollTop = window.innerWidth;
 
 let images = checkCachedImages();
 populateImages(images);
@@ -37,34 +37,45 @@ document.body.addEventListener('scroll', () => {
 });
 
 
-auth.onAuthStateChanged(async (user) => {
+auth.onAuthStateChanged(async user => {
   if (!user) { window.location = LOGIN_MENU_PATH; return; }
   try {
     const userDoc = await db.collection('users').doc(auth.currentUser.uid).get();
     businessID = userDoc.data().businessID;
-    username = userDoc.data().name;
+    // username = userDoc.data().name;
     
     const equipmentData = await getEquipmentData();
-    
-    // Download small blurred images
-    if (images.length !== equipmentData.imageCount) {
-      console.log('reloading tiny images');
-      images = await downloadImages(equipmentData.imageCount, 'tiny_img');
+
+    // Load temp
+    if (equipmentData.imageCount === 0) {
       while (divImages.firstChild) divImages.removeChild(divImages.firstChild);
       while (divImageBtns.firstChild) divImages.removeChild(divImageBtns.firstChild);
-      populateImages(images);
+      populateImages(null);
+    }
+    else {
+
+      // Download small blurred images
+      if (images.length !== equipmentData.imageCount) {
+        console.log('reloading tiny images');
+        images = await downloadImages(equipmentData.imageCount, 'tiny_img');
+        while (divImages.firstChild) divImages.removeChild(divImages.firstChild);
+        while (divImageBtns.firstChild) divImages.removeChild(divImageBtns.firstChild);
+        populateImages(images);
+      }
+
+      // Download full sized images
+      images = await downloadImages(equipmentData.imageCount, 'img');
+      [...divImages.children].forEach((img, i) => {
+        if (i < images.length) {
+          img.src = images[i];
+          img.addEventListener('load', () => {
+            img.style.filter = null;
+          });
+        }
+      });
     }
     
-    // Download full sized images
-    images = await downloadImages(equipmentData.imageCount, 'img');
-    [...divImages.children].forEach((img, i) => {
-      if (i < images.length) {
-        img.src = images[i];
-        img.addEventListener('load', () => {
-          img.style.filter = null;
-        });
-      }
-    });
+   
 
     desc.innerText = equipmentData.desc;
 
@@ -84,6 +95,18 @@ async function getEquipmentData() {
 }
 
 function populateImages(images) {
+  if (!images) {
+    const img = document.createElement('img');
+    divImages.appendChild(img);
+    img.src = '../images/temp.svg';
+    return;
+  }
+  if (!images.length) {
+    const loader = document.createElement('div');
+    loader.classList.add('loader');
+    divImages.appendChild(loader);
+    return;
+  }
   images.forEach((url, i) => {
     const img = document.createElement('img');
     divImages.appendChild(img);
@@ -105,7 +128,7 @@ function populateImages(images) {
 function checkCachedImages() {
   const imageURLs = [];
   let j = 0;
-  while(j < EQUIPMENT_IMAGES_MAX) {
+  while (j < EQUIPMENT_IMAGES_MAX) {
     const imageName = `${equipmentID}/tiny_img_${j++}`;
 
     // Check localstorage
@@ -113,9 +136,7 @@ function checkCachedImages() {
     if (url) imageURLs.push(url);
     else break;
   }
-  if (!imageURLs.length) imageURLs.push('../images/temp.png');
   return imageURLs;
-  
 }
 
 
@@ -140,7 +161,7 @@ async function downloadImages(count, name) {
         local.setItem(imageName, url);
       }
     }
-    if (!imageURLs.length) imageURLs.push('../images/temp.png');
+    if (!imageURLs.length) imageURLs.push('../images/temp.svg');
     return imageURLs;
   }
   catch(error) { console.error(error); }

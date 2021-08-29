@@ -15,7 +15,7 @@ export async function loadImage(ref) {
 }
 
 export function loadPreviewImage(data) {
-  if (!data.imageCount) return '../images/temp.png';
+  if (!data.imageCount) return '../images/temp.svg';
   return loadImage(`${ data.businessID }/equipment/${ data.id }/tiny_img_0`);
 }
 
@@ -160,42 +160,3 @@ export async function cropImage(file, callback) {
   }
 }
 
-
-/*
-
-let img;
-  try {
-    img = await blobToImage(file);
-    const aspectRatio = img.naturalWidth / img.naturalHeight;
-    canvas.width = window.innerWidth;
-    if (aspectRatio < 1) canvas.height = img.naturalHeight * window.innerWidth / img.naturalWidth;
-    else {
-      canvas.width = aspectRatio * window.innerWidth;
-      canvas.height = window.innerWidth;
-    }
-
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  }
-  catch (error) { console.error(error); }
-
-  // Submit button
-  const enter = document.createElement('button');
-  enter.innerText = 'Enter';
-  enter.style = 'position: fixed; left: 6px; width: calc(100% - 12px); bottom: 6px; height: 40px; background-color: #f00;';
-  background.append(enter);
-  enter.onclick = async () => {
-    let left = -cropBox.scrollLeft;
-    let top = -cropBox.scrollTop;
-    if (left > -6) left = 0;  // scrollbar width
-    if (top > -6) top = 0;
-    const width = canvas.width;
-    const height = canvas.height;
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerWidth;
-    ctx.drawImage(img, left, top, width, height);
-    const blob = await canvasToBlob(canvas);
-    callback(blob);
-    exitCropImage();
-  }
-
-*/

@@ -63,13 +63,19 @@ async function signIn() {
 
 btnSignIn.onclick = () => signIn();
 
-btnSignUp.onclick = () => {
+btnSignUp.onclick = async () => {
   if (!btnSignIn.hidden) return;
   username = name.value;
   errorLog.innerHTML = validatePassword(username, email.value, password.value, confirmPassword.value);
   if (errorLog.innerHTML) return;
 
-  signIn();
+  try {
+    await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    await auth.createUserWithEmailAndPassword(email.value, password.value);
+  }
+  catch (error) { errorLog.innerHTML = error }
+
+  // signIn();
 }
 
 // Google auth
@@ -83,7 +89,7 @@ btnGoogle.onclick = async () => {
   catch (error) { errorLog.innerHTML = error }
 }
 
-auth.onAuthStateChanged(async (user) => {
+auth.onAuthStateChanged(async user => {
   if (!user) {
     errorLog.innerHTML = 'Something went wrong... Please reload the page';
     return;
