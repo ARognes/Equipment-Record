@@ -59,7 +59,8 @@ async function setupEquipment(data) {
     loadingListLoaded++;
     if (loadingListLoaded >= loadingList.length) {
       [...itemContainer.childNodes].forEach(item => item.classList.remove('hidden'));
-      itemContainer.getElementsByClassName('loader')[0].remove();
+      const loader = itemContainer.getElementsByClassName('loader')[0];
+      if (loader) loader.remove();
     }
   }
   img.src = imageURL;
