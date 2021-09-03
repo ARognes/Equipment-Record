@@ -1,0 +1,17 @@
+{
+  "projects": {
+    "default": "equipment-record-7aed6"
+  },
+  "targets": {
+    "equipment-record-7aed6": {
+      "hosting": {
+        "app": [
+          "app-equipment-record"
+        ],
+        "web": [
+          "equipment-record-7aed6"
+        ]
+      }
+    }
+  }
+}

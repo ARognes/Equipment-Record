@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Equipment Record</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Equipment Management system using barcodes">
+  <meta name="keywords" content="">
+  <meta name="author" content="Austin Rognes">
+  <!-- <link rel="icon" href="./images/icon.png"> -->
+  <!-- <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet"> -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Poppins">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins" media="print" onload="this.media='all'">
+  
+  <link href="../css/style.css" rel="stylesheet">
+  <link href="../css/login.css" rel="stylesheet">
+  <script type="module" defer src="../js/storage-factory.js"></script>
+  <script type="module" defer src="../js/login.js"></script>
+  <noscript>Your browser does not support JavaScript!</noscript>
+</head>
+
+<body>
+  <header>
+    <p id="title">Equipment Record</p>
+  </header>
+
+  <div id="middle-panel">
+    <span id="p-sign-up">Need an account? <span id="div-sign-up">Sign up</span></span>
+    <span id="p-sign-in" hidden="true">Already have an account? <span id="div-sign-in">Sign in</span></span>
+    <div id="signed-out-flex">
+      <input type="text" id="name"placeholder="full name" hidden="true">
+      <input type="email" id="email"placeholder="email">
+      <input type="text" id="password" placeholder="password">
+      <input type="text" id="confirm-password" placeholder="confirm password" hidden="true">
+      <button id="btn-signIn">Sign in</button>
+      <button id="btn-signUp" hidden="true">Sign up</button>
+      <button id="btn-google">Sign in with Google</button>
+    </div>
+    <p id="errors"></p>
+  </div> 
+</body>
+</html>

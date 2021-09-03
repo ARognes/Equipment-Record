@@ -1,0 +1,16 @@
+{
+  "name": "equipment-record",
+  "version": "1.0.0",
+  "description": "This is a web-app that keeps records of where equipment has gone, who has them, and more.",
+  "main": "index.js",
+  "dependencies": {
+    "esbuild": "^0.12.25",
+    "firebase": "^9.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "build": "python build.py"
+  },
+  "author": "Austin Rognes",
+  "license": "MIT"
+}
