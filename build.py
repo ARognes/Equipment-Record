@@ -16,9 +16,9 @@ for folderName in os.listdir('./src/app'):
   if folderName != 'js':
      shutil.copytree('./src/app/' + folderName, './dist/app/' + folderName)
 
-# Esbuild bundle all js files in src/app/js
+# Esbuild bundle all js files in src/app/js  TODO When esbuild is updated use: --target=es2020,chrome58,firefox57,safari11,edge16,node12
 for fileName in os.listdir('./src/app/js'):
-  command = f'npx esbuild src/app/js/{ fileName } --bundle --target=es2020,chrome58,firefox57,safari11,edge16,node12 --format=esm --minify --outfile=dist/app/js/{ fileName }'
+  command = f'npx esbuild src/app/js/{ fileName } --bundle --format=esm --minify --outfile=dist/app/js/{ fileName }'
   os.system(command)
 
 end = time.time()

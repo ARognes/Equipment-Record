@@ -22,23 +22,34 @@
 </head>
 
 <body>
-  <header>
-    <p id="title">Equipment Record</p>
-  </header>
 
-  <div id="middle-panel">
-    <span id="p-sign-up">Need an account? <span id="div-sign-up">Sign up</span></span>
-    <span id="p-sign-in" hidden="true">Already have an account? <span id="div-sign-in">Sign in</span></span>
-    <div id="signed-out-flex">
-      <input type="text" id="name"placeholder="full name" hidden="true">
-      <input type="email" id="email"placeholder="email">
-      <input type="text" id="password" placeholder="password">
-      <input type="text" id="confirm-password" placeholder="confirm password" hidden="true">
-      <button id="btn-signIn">Sign in</button>
-      <button id="btn-signUp" hidden="true">Sign up</button>
-      <button id="btn-google">Sign in with Google</button>
+  <a href="https://www.equipment-record.com" id="top-link">Equipment-Record.com</p></a>
+
+  <div id="container">
+    <p id="header">Sign In</p>
+    <span id="p-sign-up">Need an account? <span id="link-sign-up">Register Here</span></span>
+    <span id="p-sign-in" hidden="true">Already have an account? <span id="link-sign-in">Sign In</span></span>
+    <div class="div-input" hidden="true">
+      <input type="text" id="username" placeholder="Username">
+      <img src="../images/account.svg">
     </div>
-    <p id="errors"></p>
+    <div class="div-input">
+      <input type="email" id="email"placeholder="Email">
+      <img src="../images/email.svg">
+    </div>
+    <div class="div-input">
+      <input type="password" spellcheck="false" id="password" placeholder="Password">
+      <img id="view" src="../images/view.svg">
+      <a href="equipment.html" id="forgot">Forgot</a>
+    </div>
+    <div class="div-input" hidden="true">
+      <input type="password" spellcheck="false" id="confirm-password" placeholder="confirm password">
+      <img id="view" src="../images/lock.svg">
+    </div>
+    <button id="btn-sign-in">Sign In</button>
+    <button id="btn-register" hidden="true">Register</button>
+    <button id="btn-google">Google Authentication</button>
   </div> 
+  <p id="errors"></p>
 </body>
 </html>

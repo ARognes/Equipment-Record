@@ -25,20 +25,36 @@ const db = getFirestore(app);
 const MAIN_MENU_PATH = 'main.html';
 const BUSINESS_MENU_PATH = 'business-key.html';
 
+const header = document.getElementById('header');
+const view = document.getElementById('view');
 const pSignUp = document.getElementById('p-sign-up');
-const divSignUp = document.getElementById('div-sign-up');
+const divSignUp = document.getElementById('link-sign-up');
 const pSignIn = document.getElementById('p-sign-in');
-const divSignIn = document.getElementById('div-sign-in');
-const btnSignIn = document.getElementById('btn-signIn');
-const btnSignUp = document.getElementById('btn-signUp');
+const divSignIn = document.getElementById('link-sign-in');
+const btnSignIn = document.getElementById('btn-sign-in');
+const btnSignUp = document.getElementById('btn-register');
 const btnGoogle = document.getElementById('btn-google');
-const name = document.getElementById('name');
+const username = document.getElementById('username');
 const email = document.getElementById('email');
 const password = document.getElementById('password');
 const confirmPassword = document.getElementById('confirm-password');
 const errorLog = document.getElementById('errors');
 
-let username = '';
+let usernameVal = '';
+
+view.onclick = () => setPasswordView(password.type === 'text');
+function setPasswordView(bool) {
+  if (bool) {
+    password.type = 'password';
+    confirmPassword.type = 'password';
+    view.src = '../images/view.svg';
+  }
+  else {
+    password.type = 'text';
+    confirmPassword.type = 'text';
+    view.src = '../images/hide.svg';
+  }
+}
 
 email.onkeydown = enterPassword;
 password.onkeydown = enterPassword;
@@ -52,23 +68,25 @@ function enterPassword(event) {
 }
 
 divSignUp.onclick = () => {
-    btnSignIn.hidden = true;
-    btnSignUp.hidden = false;
-    confirmPassword.hidden = false;
-    name.hidden = false;
-    btnGoogle.innerHTML = 'Sign up with Google';
-    pSignUp.hidden = true;
-    pSignIn.hidden = false;
+  btnSignIn.hidden = true;
+  btnSignUp.hidden = false;
+  header.innerText = 'Register';
+  confirmPassword.parentElement.hidden = false;
+  username.parentElement.hidden = false;
+  pSignUp.hidden = true;
+  pSignIn.hidden = false;
+  view.click(false);
 }
 
 divSignIn.onclick = () => {
   btnSignIn.hidden = false;
   btnSignUp.hidden = true;
-  confirmPassword.hidden = true;
-  name.hidden = true;
-  btnGoogle.innerHTML = 'Sign in with Google';
+  header.innerText = 'Sign In';
+  confirmPassword.parentElement.hidden = true;
+  username.parentElement.hidden = true;
   pSignUp.hidden = false;
   pSignIn.hidden = true;
+  view.click(true);
 }
 
 async function signIn() {
@@ -79,12 +97,12 @@ async function signIn() {
   catch (error) { errorLog.innerHTML = error }
 }
 
-btnSignIn.onclick = () => signIn();
+btnSignIn.onclick = signIn;
 
 btnSignUp.onclick = async () => {
   if (!btnSignIn.hidden) return;
-  username = name.value;
-  errorLog.innerHTML = validatePassword(username, email.value, password.value, confirmPassword.value);
+  usernameVal = username.value;
+  errorLog.innerHTML = validatePassword(usernameVal, email.value, password.value, confirmPassword.value);
   if (errorLog.innerHTML) return;
 
   try {
@@ -93,7 +111,7 @@ btnSignUp.onclick = async () => {
   }
   catch (error) { errorLog.innerHTML = error }
 
-  // signIn();
+  signIn();
 }
 
 // Google auth
@@ -102,16 +120,13 @@ btnGoogle.onclick = async () => {
     await setPersistence(auth, browserLocalPersistence);
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
-    username = result.additionalUserInfo.profile.name;
+    usernameVal = result.additionalUserInfo.profile.name;
   } 
   catch (error) { errorLog.innerHTML = error }
 }
 
 auth.onAuthStateChanged(async user => {
-  if (!user) {
-    errorLog.innerHTML = 'Something went wrong... Please reload the page';
-    return;
-  }
+  if (!user) return;
 
   const userRef = doc(db, 'users', user.uid);
   local.setItem('username', user.name);
@@ -152,7 +167,7 @@ function validatePassword(username, email, p, cp) {
   if (p.length < 8) return "Your password must be at least 8 characters"; 
   if (p.search(/[a-z]/i) < 0) return "Your password must contain at least one letter"; 
   if (p.search(/[0-9]/) < 0) return "Your password must contain at least one digit"; 
-  if (p.search(/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/) < 0) return "Your password must contain at least one special character"; 
+  //if (p.search(/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/) < 0) return "Your password must contain at least one special character"; 
   if (p !== cp) return "Your passwords do not match";
   return "";
 }
