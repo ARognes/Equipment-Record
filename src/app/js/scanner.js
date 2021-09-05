@@ -5,6 +5,8 @@ import { getAnalytics } from 'firebase/analytics';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, doc, getDoc, getDocs, collection } from 'firebase/firestore/lite';
 import { local, session } from './storage-factory.js';
+import jsQR from 'jsqr';
+import Quagga from 'quagga';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAH4i8ugZfZMlbBTruvXJa4DSKaj361U6c',

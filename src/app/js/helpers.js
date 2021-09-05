@@ -1,24 +1,19 @@
 'use strict';
 
 import { local, session } from './storage-factory.js';
+import Compressor from 'compressorjs';
 
-export async function loadImage(ref) {
+// export async function loadImage(refStr, storage, ref, getDownloadURL) {
 
-  // Check localstorage
-  let imageURL = local.getItem(ref);
-  if (imageURL) return imageURL;
+//   // Check localstorage
+//   let imageURL = local.getItem(refStr);
+//   if (imageURL) return imageURL;
 
-  console.log('downloaded image url', ref);
-  const url = await firebase.storage().ref(ref).getDownloadURL();
-  local.setItem(ref, url);
-  return url;
-}
-
-export function loadPreviewImage(data) {
-  if (!data.imageCount) return '../images/temp.svg';
-  return loadImage(`${ data.businessID }/equipment/${ data.id }/tiny_img_0`);
-}
-
+//   console.log('downloaded image url', refStr);
+//   const url = await getDownloadURL(storage, ref(refStr));
+//   local.setItem(ref, url);
+//   return url;
+// }
 
 export function getQueryData(query) {
   return query.docs.map(doc => {

@@ -15,11 +15,10 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins" media="print" onload="this.media='all'">
   
   <link href="../css/style.css" rel="stylesheet">
-  <link href="../css/login.css" rel="stylesheet">
+  <link href="../css/forgot-password.css" rel="stylesheet">
   
   <script type="module" defer src="../js/storage-factory.js"></script>
-  <script type="module" defer src="../js/login.js"></script>
-  <script defer src="https://www.google.com/recaptcha/api.js"></script>
+  <script type="module" defer src="../js/forgot-password.js"></script>
   <noscript>Your browser does not support JavaScript!</noscript>
 </head>
 
@@ -28,13 +27,10 @@
   <a href="https://www.equipment-record.com" id="top-link">Equipment-Record.com</p></a>
 
   <div class="container">
-    <p id="header">Sign In</p>
+    <p id="header">Recover Password</p>
     <span id="p-sign-up">Need an account? <span id="link-sign-up">Register Here</span></span>
     <span id="p-sign-in" hidden="true">Already have an account? <span id="link-sign-in">Sign In</span></span>
-    <div class="div-input" hidden="true">
-      <input type="text" id="username" placeholder="Username">
-      <img src="../images/account.svg">
-    </div>
+
     <div class="div-input">
       <input type="email" id="email"placeholder="Email">
       <img src="../images/email.svg">
@@ -47,9 +43,6 @@
     <div class="div-input" hidden="true">
       <input type="password" spellcheck="false" id="confirm-password" placeholder="confirm password">
       <img id="view" src="../images/lock.svg">
-    </div>
-    <div id="div-captcha" hidden="true">
-      <div class="g-recaptcha" data-sitekey="6LcRXkccAAAAABcm5OS8HkuDj9_Pi9A__dU_EeTx"></div>
     </div>
     <button id="btn-sign-in">Sign In</button>
     <button id="btn-register" hidden="true">Register</button>

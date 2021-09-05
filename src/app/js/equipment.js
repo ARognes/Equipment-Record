@@ -3,9 +3,11 @@
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
 import { getAuth} from 'firebase/auth';
-import { getFirestore, doc, getDoc, collection } from 'firebase/firestore/lite';
-import { getStorage, ref } from 'firebase/storage';
-import { loadPreviewImage, getQueryData, searchForItem } from './helpers.js';
+import { getFirestore, doc, getDoc, getDocs, collection, query, where } from 'firebase/firestore/lite';
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
+import { loadImage, getQueryData, searchForItem } from './helpers.js';
+import { local, session } from './storage-factory.js';
+i
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAH4i8ugZfZMlbBTruvXJa4DSKaj361U6c',
@@ -23,7 +25,6 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
-
 
 const LOGIN_MENU_PATH = 'login.html';
 const EQUIPMENT_INFO_MENU = 'equipment-info.html';
@@ -51,11 +52,16 @@ auth.onAuthStateChanged(async user => {
 // TODO: only load x amount of data at a time
 async function loadEquipment() {
   try {
-    const query = await getDocs(query(collection(db, 'equipment'), where('businessID', '==', businessID))); //db.collection('equipment').where('businessID', '==', businessID).get();
+    const queryEquipment = await getDocs(query(collection(db, 'equipment'), where('businessID', '==', businessID)));
     
     // Map and sort query alphabetically
-    const data = getQueryData(query);
+    const data = getQueryData(queryEquipment);
     for (const d of data) await setupEquipment(d);
+    if (!data.length) {
+      const loader = itemContainer.getElementsByClassName('loader')[0];
+      if (loader) loader.remove();
+      itemContainer.innerText = 'No equipment found';
+    }
     return data;
   }
   catch (error) { console.error(error); }
@@ -66,8 +72,19 @@ let loadingListLoaded = 0;
 
 async function setupEquipment(data) {
 
-  // Load icon image
-  const imageURL = await loadPreviewImage(data);
+  let imageURL = '../images/temp.svg';
+  if (data.imageCount) {
+    const refStr = `${ data.businessID }/equipment/${ data.id }/tiny_img_0`;
+
+    // Check localstorage
+    imageURL = local.getItem(refStr);
+    if (imageURL) return imageURL;
+  
+    console.log('downloaded image url', refStr);
+    const url = await getDownloadURL(storage, ref(refStr));
+    local.setItem(ref, url);
+    imageURL = url;
+  }
 
   // Create DOM render
   const div = document.createElement('div');

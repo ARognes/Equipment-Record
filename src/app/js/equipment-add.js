@@ -125,7 +125,7 @@ async function submitEquipmentFirestore(businessID) {
 
     // Send to firebase
     const addEquipment = httpsCallable(fun, 'addEquipment');
-    const equipmentID = await addEquipment({
+    const { equipmentID } = await addEquipment({
       name,
       desc,
       imageCount: smallImages.length,

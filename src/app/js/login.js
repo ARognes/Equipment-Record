@@ -3,7 +3,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence } from 'firebase/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore/lite';
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp} from 'firebase/firestore/lite';
 import { local, session } from './storage-factory.js';
 
 const firebaseConfig = {
@@ -28,16 +28,17 @@ const BUSINESS_MENU_PATH = 'business-key.html';
 const header = document.getElementById('header');
 const view = document.getElementById('view');
 const pSignUp = document.getElementById('p-sign-up');
-const divSignUp = document.getElementById('link-sign-up');
+const divRegister = document.getElementById('link-sign-up');
 const pSignIn = document.getElementById('p-sign-in');
 const divSignIn = document.getElementById('link-sign-in');
 const btnSignIn = document.getElementById('btn-sign-in');
-const btnSignUp = document.getElementById('btn-register');
+const btnRegister = document.getElementById('btn-register');
 const btnGoogle = document.getElementById('btn-google');
 const username = document.getElementById('username');
 const email = document.getElementById('email');
 const password = document.getElementById('password');
 const confirmPassword = document.getElementById('confirm-password');
+const divCaptcha = document.getElementById('div-captcha');
 const errorLog = document.getElementById('errors');
 
 let usernameVal = '';
@@ -62,31 +63,33 @@ confirmPassword.onkeydown = enterPassword;
 
 function enterPassword(event) {
   if (event.code === 'Enter') {
-    if (btnSignIn.hidden) btnSignUp.click();
+    if (btnSignIn.hidden) btnRegister.click();
     else btnSignIn.click();
   }
 }
 
-divSignUp.onclick = () => {
+divRegister.onclick = () => {
   btnSignIn.hidden = true;
-  btnSignUp.hidden = false;
+  btnRegister.hidden = false;
   header.innerText = 'Register';
+  divCaptcha.hidden = false;
   confirmPassword.parentElement.hidden = false;
   username.parentElement.hidden = false;
   pSignUp.hidden = true;
   pSignIn.hidden = false;
-  view.click(false);
+  setPasswordView(false);
 }
 
 divSignIn.onclick = () => {
   btnSignIn.hidden = false;
-  btnSignUp.hidden = true;
+  btnRegister.hidden = true;
   header.innerText = 'Sign In';
+  divCaptcha.hidden = true;
   confirmPassword.parentElement.hidden = true;
   username.parentElement.hidden = true;
   pSignUp.hidden = false;
   pSignIn.hidden = true;
-  view.click(true);
+  setPasswordView(true);
 }
 
 async function signIn() {
@@ -94,24 +97,25 @@ async function signIn() {
     await setPersistence(auth, browserLocalPersistence);
     await signInWithEmailAndPassword(auth, email.value, password.value);
   } 
-  catch (error) { errorLog.innerHTML = error }
+  catch (error) { errorLog.innerText = error }
 }
 
 btnSignIn.onclick = signIn;
 
-btnSignUp.onclick = async () => {
+btnRegister.onclick = async () => {
   if (!btnSignIn.hidden) return;
+  if (!gredivCaptcha.getResponse().length) return;
   usernameVal = username.value;
-  errorLog.innerHTML = validatePassword(usernameVal, email.value, password.value, confirmPassword.value);
-  if (errorLog.innerHTML) return;
+  errorLog.innerText = validatePassword(usernameVal, email.value, password.value, confirmPassword.value);
+  if (errorLog.innerText) return;
 
   try {
     await setPersistence(auth, browserLocalPersistence);
     await createUserWithEmailAndPassword(auth, email.value, password.value);
   }
-  catch (error) { errorLog.innerHTML = error }
+  catch (error) { errorLog.innerText = error; }
 
-  signIn();
+  // signIn();
 }
 
 // Google auth
@@ -122,7 +126,7 @@ btnGoogle.onclick = async () => {
     const result = await signInWithPopup(auth, provider);
     usernameVal = result.additionalUserInfo.profile.name;
   } 
-  catch (error) { errorLog.innerHTML = error }
+  catch (error) { errorLog.innerText = 'Unable to login with Google'; }
 }
 
 auth.onAuthStateChanged(async user => {
@@ -136,13 +140,13 @@ auth.onAuthStateChanged(async user => {
     const userDoc = await getDoc(userRef);
 
     // Add user to firestore
-    if (!userDoc.exists) {  
+    if (!userDoc.exists()) {  
       await setDoc(userRef, {
         businessID: '',
         businessName: '',
-        name: username,
+        name: usernameVal,
         phone: null,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        createdAt: serverTimestamp()
       });
       window.location = BUSINESS_MENU_PATH;
       return;
@@ -157,7 +161,10 @@ auth.onAuthStateChanged(async user => {
     else window.location = MAIN_MENU_PATH;
     local.setItem('businessName', userDoc.data().businessName);
   } 
-  catch (error) { errorLog.innerHTML = error };
+  catch (error) { 
+    console.error(error);
+    errorLog.innerText = 'Something went wrong... Please try again later';
+   };
 });
 
 function validatePassword(username, email, p, cp) {

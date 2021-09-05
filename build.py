@@ -18,7 +18,7 @@ for folderName in os.listdir('./src/app'):
 
 # Esbuild bundle all js files in src/app/js  TODO When esbuild is updated use: --target=es2020,chrome58,firefox57,safari11,edge16,node12
 for fileName in os.listdir('./src/app/js'):
-  command = f'npx esbuild src/app/js/{ fileName } --bundle --format=esm --minify --outfile=dist/app/js/{ fileName }'
+  command = f'npx esbuild src/app/js/{ fileName } --bundle --format=esm --minify-whitespace --minify-syntax --outfile=dist/app/js/{ fileName }'
   os.system(command)
 
 end = time.time()

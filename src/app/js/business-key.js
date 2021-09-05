@@ -3,7 +3,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
 import { getAuth} from 'firebase/auth';
-import { getFirestore, doc, setDoc, getDocs, query, where } from 'firebase/firestore/lite';
+import { getFirestore, doc, setDoc, getDocs, collection, query, where } from 'firebase/firestore/lite';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAH4i8ugZfZMlbBTruvXJa4DSKaj361U6c',
@@ -27,7 +27,7 @@ const businessCode = document.getElementById('business-code');
 const divFindBusiness = document.getElementById('find-business');
 const btnAddBusiness = document.getElementById('btn-business-add');
 
-auth.onAuthStateChanged(async (user) => {
+auth.onAuthStateChanged(async user => {
   if (!user) return;
   
   const userRef = doc(db, 'users', user.uid); //db.collection('users').doc(user.uid);
@@ -43,7 +43,7 @@ auth.onAuthStateChanged(async (user) => {
   
     try {
       
-      const queryBusinesses = await getDocs(query(collection('businesses'), where('code', '==', businessCode.value))); //await db.collection('businesses').where('code', '==', businessCode.value).get();
+      const queryBusinesses = await getDocs(query(collection(db, 'businesses'), where('code', '==', businessCode.value))); //await db.collection('businesses').where('code', '==', businessCode.value).get();
       if (queryBusinesses.docs.length > 0 && queryBusinesses.docs[0] !== null) {
         const businessName = queryBusinesses.docs[0].data().name;
         await setDoc(userRef, { 
@@ -62,7 +62,7 @@ auth.onAuthStateChanged(async (user) => {
   }
   
   btnAddBusiness.onclick = () => {
-    console.log('create new business menu');
+    console.log('Show create new business menu');
   }
 
 });

@@ -5,7 +5,7 @@ import { getAnalytics } from 'firebase/analytics';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore/lite';
 import { getStorage, ref } from 'firebase/storage';
-import { getQueryData, loadPreviewImage } from './helpers.js';
+import { getQueryData, loadImage } from './helpers.js';
 import { local, session } from './storage-factory.js';
 
 const firebaseConfig = {
@@ -57,10 +57,21 @@ async function loadProjects() {
   catch(error) { console.error(error); }
 }
 
-function setupProject(data) {
+async function setupProject(data) {
 
-  // Load icon image
-  const imageURL = loadPreviewImage(data);
+  let imageURL = '../images/temp.svg';
+  if (data.imageCount) {
+    const refStr = `${ data.businessID }/equipment/${ data.id }/tiny_img_0`;
+
+    // Check localstorage
+    imageURL = local.getItem(refStr);
+    if (imageURL) return imageURL;
+  
+    console.log('downloaded image url', refStr);
+    const url = await getDownloadURL(storage, ref(refStr));
+    local.setItem(ref, url);
+    imageURL = url;
+  }
 
   // Render to DOM
   let div = document.createElement('div');
