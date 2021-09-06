@@ -11,7 +11,7 @@
       "redirects": [
         {
           "source": "/",
-          "destination": "/menus/login.html",
+          "destination": "/login",
           "type": 301
         }
       ],
