@@ -14,11 +14,11 @@
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Poppins">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins" media="print" onload="this.media='all'">
   
-  <link href="../css/forgot-password.css" rel="stylesheet">
-  <link href="forgot-password/style.css" rel="stylesheet">
+  <link href="../global/globalStyle.css" rel="stylesheet">
+  <link href="forgot/style.css" rel="stylesheet">
   
-  <script type="module" defer src="../global/js/storage-factory.js"></script>
-  <script type="module" defer src="forgot-password/index.js"></script>
+  <script type="module" defer src="forgot/index.js"></script>
+  <script defer src="https://www.google.com/recaptcha/api.js"></script>
   <noscript>Your browser does not support JavaScript!</noscript>
 </head>
 
@@ -28,25 +28,15 @@
 
   <div class="container">
     <p id="header">Recover Password</p>
-    <span id="p-sign-up">Need an account? <span id="link-sign-up">Register Here</span></span>
-    <span id="p-sign-in" hidden="true">Already have an account? <span id="link-sign-in">Sign In</span></span>
-
     <div class="div-input">
-      <input type="email" id="email"placeholder="Email">
+      <input type="email" id="email" placeholder="Email">
       <img src="../global/images/email.svg">
     </div>
-    <div class="div-input">
-      <input type="password" spellcheck="false" id="password" placeholder="Password">
-      <img id="view" src="../global/images/view.svg">
-      <a href="equipment.html" id="forgot">Forgot</a>
+    <div id="div-captcha">
+      <div class="g-recaptcha" data-sitekey="6LcRXkccAAAAABcm5OS8HkuDj9_Pi9A__dU_EeTx"></div>
     </div>
-    <div class="div-input" hidden="true">
-      <input type="password" spellcheck="false" id="confirm-password" placeholder="confirm password">
-      <img id="view" src="../global/images/lock.svg">
-    </div>
-    <button id="btn-sign-in">Sign In</button>
-    <button id="btn-register" hidden="true">Register</button>
-    <button id="btn-google">Google Authentication</button>
+    <button id="btn-submit">Recover</button>
+    <button id="btn-cancel" onclick="window.location='../login'">Cancel</button>
   </div> 
   <p id="errors"></p>
 </body>

@@ -38,6 +38,7 @@ const username = document.getElementById('username');
 const email = document.getElementById('email');
 const password = document.getElementById('password');
 const confirmPassword = document.getElementById('confirm-password');
+const forgot = document.getElementById('forgot');
 const divCaptcha = document.getElementById('div-captcha');
 const errorLog = document.getElementById('errors');
 
@@ -75,6 +76,7 @@ divRegister.onclick = () => {
   divCaptcha.hidden = false;
   confirmPassword.parentElement.hidden = false;
   username.parentElement.hidden = false;
+  forgot.hidden = true;
   pSignUp.hidden = true;
   pSignIn.hidden = false;
   setPasswordView(false);
@@ -87,6 +89,7 @@ divSignIn.onclick = () => {
   divCaptcha.hidden = true;
   confirmPassword.parentElement.hidden = true;
   username.parentElement.hidden = true;
+  forgot.hidden = false;
   pSignUp.hidden = false;
   pSignIn.hidden = true;
   setPasswordView(true);
@@ -104,7 +107,7 @@ btnSignIn.onclick = signIn;
 
 btnRegister.onclick = async () => {
   if (!btnSignIn.hidden) return;
-  if (!gredivCaptcha.getResponse().length) return;
+  if (!grecaptcha.getResponse().length) return;
   usernameVal = username.value;
   errorLog.innerText = validatePassword(usernameVal, email.value, password.value, confirmPassword.value);
   if (errorLog.innerText) return;
@@ -157,7 +160,7 @@ auth.onAuthStateChanged(async user => {
     const businessID = userDoc.data().businessID;
     let businessDoc = null;
     if (typeof businessID === 'string' && businessID !== '') businessDoc = await getDoc(doc(db, 'businesses', businessID)); //db.collection('businesses').doc(businessID).get();
-    if (!businessDoc || !businessDoc.exists) window.location = BUSINESS_MENU_PATH;
+    if (!businessDoc || !businessDoc.exists) window.location = BUSINESS_KEY_PATH;
     else window.location = MAIN_MENU_PATH;
     local.setItem('businessName', userDoc.data().businessName);
   } 
