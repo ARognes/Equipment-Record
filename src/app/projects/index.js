@@ -36,7 +36,7 @@ const itemContainer = [...document.getElementsByClassName('item-container')][0];
 auth.onAuthStateChanged(async user => {
   if (!user) { window.location = LOGIN_MENU_PATH; return; }
   try {
-    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    const userDoc = await getDoc(doc(db, 'users', user.displayName));
     businessID = userDoc.data().businessID;
     username = userDoc.data().name;
     

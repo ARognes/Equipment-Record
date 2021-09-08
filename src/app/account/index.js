@@ -23,17 +23,14 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 const LOGIN_MENU_PATH = '../login';
-let businessID = null;
-let username = null;
 const btnSignOut = document.getElementById('btn-sign-out');
 
 auth.onAuthStateChanged(async user => {
   if (!user) { window.location = LOGIN_MENU_PATH; return; }
   try {
 
-    const userDoc = await getDoc(doc(db, 'users', auth.currentUser.uid));
-    businessID = userDoc.data().businessID;
-    username = userDoc.data().name;
+    const userDoc = await getDoc(doc(db, 'users', user.displayName));
+    const businessID = userDoc.data().businessID;
 
     btnSignOut.onclick = () => {
       // divConfirmation.hidden = false;

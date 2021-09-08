@@ -60,7 +60,7 @@ document.body.addEventListener('scroll', () => {
 auth.onAuthStateChanged(async user => {
   if (!user) { window.location = LOGIN_MENU_PATH; return; }
   try {
-    const userDoc = await getDoc(doc(db, 'users', user.uid)); //db.collection('users').doc(auth.currentUser.uid).get();
+    const userDoc = await getDoc(doc(db, 'users', user.displayName)); //db.collection('users').doc(auth.currentUser.uid).get();
     businessID = userDoc.data().businessID;
     // username = userDoc.data().name;
     

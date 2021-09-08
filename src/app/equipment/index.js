@@ -35,9 +35,8 @@ const search = document.getElementById('search');
 auth.onAuthStateChanged(async user => {
   if (!user) { window.location = LOGIN_MENU_PATH; return; }
   try {
-    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    const userDoc = await getDoc(doc(db, 'users', user.displayName));
     const businessID = userDoc.data().businessID;
-    // const username = userDoc.data().name;
     search.value = '';
 
     equipmentResults = await loadEquipment(businessID);
@@ -104,7 +103,7 @@ async function setupEquipment(data) {
       <p>${ data.desc }</p>
     </div>`;
   
-  if (data.checkedOutID) innerHTML += `<div class="item-right">${ data.checkedOutName }</div>`;
+  if (data.checkedOutName) innerHTML += `<div class="item-right">${ data.checkedOutName }</div>`;
   innerHTML += `</div>`;
   data.div.innerHTML += innerHTML;
 

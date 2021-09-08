@@ -3,7 +3,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, getDoc, getDocs, collection, query, where } from 'firebase/firestore/lite';
+import { getFirestore, doc, getDoc, getDocs, collection, query, where, updateDoc } from 'firebase/firestore/lite';
 import { local, session } from '../global/js/storage-factory.js';
 import jsQR from 'jsqr';
 import Quagga from 'quagga';
@@ -36,7 +36,6 @@ const btnConfirmFoundEquipment = document.getElementById('btn-confirm-found-equi
 const btnDenyFoundEquipment = document.getElementById('btn-deny-found-equipment');
 
 let businessID;
-let username = null;
 let foundEquipment = null;
 let barcodeReady = true;
 let lastBarcode = null;
@@ -45,9 +44,9 @@ let lastQRCode = null;
 auth.onAuthStateChanged(async user => {
   if (!user) { window.location = LOGIN_MENU_PATH; return; }
   try {
-    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    const userDoc = await getDoc(doc(db, 'users', user.displayName));
     businessID = userDoc.data().businessID;
-    username = userDoc.data().name;
+    console.log(user);
   }
   catch(error) { console.error(error); }
 
@@ -287,7 +286,7 @@ function drawBox(box, color) {
 
 btnConfirmFoundEquipment.onclick = async () => {
   if (!foundEquipment) location.reload();
-  await updateDoc(doc(db, 'equipment', foundEquipment.id), {checkedOutID: auth.currentUser.uid, checkedOutName: username}); //db.collection('equipment').doc(foundEquipment.id).update({checkedOutID: auth.currentUser.uid, checkedOutName: username});
+  await updateDoc(doc(db, 'equipment', foundEquipment.id), { checkedOutName: auth.currentUser.displayName }); 
   window.location = EQUIPMENT_MENU_PATH;
 }
 

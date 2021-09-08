@@ -148,7 +148,6 @@ async function submitEquipmentFirestore(businessID) {
       purchaseDate: null,
       project: null,
       businessID,
-      checkedOutID: null,
       checkedOutName: null,
       barcode: barcode,
       createdAt: serverTimestamp()
@@ -202,7 +201,7 @@ async function checkIfNameExists(businessID, name, col) {
 //       purchaseDate: null,
 //       project: null,
 //       businessID: businessID,
-//       checkedOutID: null,
+//      // checkedOutID: null,
 //       checkedOutName: null,
 //       barcode: barcode,
 //       createdAt: firebase.firestore.FieldValue.serverTimestamp()

@@ -31,7 +31,7 @@ auth.onAuthStateChanged(async user => {
   if (!user) { window.location = LOGIN_MENU_PATH; return; }
   
   try {
-    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    const userDoc = await getDoc(doc(db, 'users', user.displayName));
     const userData = userDoc.data();
     local.setItem('businessName', userData.businessName);
     pTitle.innerText = userData.businessName;

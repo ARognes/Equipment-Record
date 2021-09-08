@@ -2,7 +2,7 @@
 
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence } from 'firebase/auth';
+import { getAuth, updateProfile, sendEmailVerification, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import { getFirestore, doc, getDoc, setDoc, serverTimestamp} from 'firebase/firestore/lite';
 import { local, session } from '../global/js/storage-factory.js';
 
@@ -76,6 +76,7 @@ divRegister.onclick = () => {
   divCaptcha.hidden = false;
   confirmPassword.parentElement.hidden = false;
   username.parentElement.hidden = false;
+  email.placeholder = 'Email';
   forgot.hidden = true;
   pSignUp.hidden = true;
   pSignIn.hidden = false;
@@ -89,6 +90,7 @@ divSignIn.onclick = () => {
   divCaptcha.hidden = true;
   confirmPassword.parentElement.hidden = true;
   username.parentElement.hidden = true;
+  email.placeholder = 'Username or Email';
   forgot.hidden = false;
   pSignUp.hidden = false;
   pSignIn.hidden = true;
@@ -97,28 +99,44 @@ divSignIn.onclick = () => {
 
 async function signIn() {
   try {
+
     await setPersistence(auth, browserLocalPersistence);
-    await signInWithEmailAndPassword(auth, email.value, password.value);
+    let emailVal = email.value;
+
+    // Get user email from username
+    if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email.value))) {
+      const emailDoc = await getDoc(doc(db, 'users', email.value));
+      if (emailDoc.exists()) emailVal = emailDoc.data().email;
+    }
+
+    await signInWithEmailAndPassword(auth, emailVal, password.value);
   } 
-  catch (error) { errorLog.innerText = error }
+  catch (error) { errorLog.innerText = error; }
 }
 
 btnSignIn.onclick = signIn;
 
 btnRegister.onclick = async () => {
   if (!btnSignIn.hidden) return;
-  if (!grecaptcha.getResponse().length) return;
+  if (!grecaptcha.getResponse().length) return errorLog.innerText = 'Please verify with reCAPTCHA';
   usernameVal = username.value;
   errorLog.innerText = validatePassword(usernameVal, email.value, password.value, confirmPassword.value);
   if (errorLog.innerText) return;
 
   try {
+    const userDoc = await getDoc(doc(db, 'users', usernameVal));
+    if (userDoc.exists()) {
+      errorLog.innerText = 'Username already taken';
+      return;
+    }
+
     await setPersistence(auth, browserLocalPersistence);
     await createUserWithEmailAndPassword(auth, email.value, password.value);
+    await updateProfile(auth.currentUser, { displayName: usernameVal });
+    await sendEmailVerification(auth.currentUser);
+    // await signInWithEmailAndPassword(auth, email.value, password.value);
   }
-  catch (error) { errorLog.innerText = error; }
-
-  // signIn();
+  catch (error) { errorLog.innerText = 'Email already in use' }
 }
 
 // Google auth
@@ -129,25 +147,26 @@ btnGoogle.onclick = async () => {
     const result = await signInWithPopup(auth, provider);
     usernameVal = result.additionalUserInfo.profile.name;
   } 
-  catch (error) { errorLog.innerText = 'Unable to login with Google'; }
+  catch (error) { console.error(error); errorLog.innerText = 'Unable to login with Google'; }
 }
 
 auth.onAuthStateChanged(async user => {
   if (!user) return;
 
-  const userRef = doc(db, 'users', user.uid);
-  local.setItem('username', user.name);
+  const userRef = doc(db, 'users', usernameVal || user.displayName);
+  local.setItem('username', usernameVal);
 
   try {
     // Check if user exists in firestore
     const userDoc = await getDoc(userRef);
-
+    console.log(user.email, user);
     // Add user to firestore
-    if (!userDoc.exists()) {  
+    if (!userDoc.exists()) { 
       await setDoc(userRef, {
         businessID: '',
         businessName: '',
-        name: usernameVal,
+        uid: user.uid,
+        email: user.email,
         phone: null,
         createdAt: serverTimestamp()
       });

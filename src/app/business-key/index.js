@@ -30,7 +30,7 @@ const btnAddBusiness = document.getElementById('btn-business-add');
 auth.onAuthStateChanged(async user => {
   if (!user) return;
   
-  const userRef = doc(db, 'users', user.uid); //db.collection('users').doc(user.uid);
+  const userRef = doc(db, 'users', user.displayName);
 
   btnBusinessCode.onclick = enterBusinessCode;
   businessCode.onkeydown = (event) => {
@@ -43,7 +43,7 @@ auth.onAuthStateChanged(async user => {
   
     try {
       
-      const queryBusinesses = await getDocs(query(collection(db, 'businesses'), where('code', '==', businessCode.value))); //await db.collection('businesses').where('code', '==', businessCode.value).get();
+      const queryBusinesses = await getDocs(query(collection(db, 'businesses'), where('code', '==', businessCode.value))); 
       if (queryBusinesses.docs.length > 0 && queryBusinesses.docs[0] !== null) {
         const businessName = queryBusinesses.docs[0].data().name;
         await setDoc(userRef, { 
