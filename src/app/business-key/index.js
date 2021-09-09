@@ -26,6 +26,8 @@ const btnBusinessCode = document.getElementById('btn-business-code');
 const businessCode = document.getElementById('business-code');
 const divFindBusiness = document.getElementById('find-business');
 const btnAddBusiness = document.getElementById('btn-business-add');
+const divHighlight = document.getElementById('highlight-container');
+
 
 auth.onAuthStateChanged(async user => {
   if (!user) return;
@@ -33,13 +35,20 @@ auth.onAuthStateChanged(async user => {
   const userRef = doc(db, 'users', user.displayName);
 
   btnBusinessCode.onclick = enterBusinessCode;
-  businessCode.onkeydown = (event) => {
+  businessCode.onkeydown = (event) => setTimeout(() => inputChange(event), 1);
+  function inputChange(event) {
     event.code === 'Enter' && enterBusinessCode();
+    businessCode.value = businessCode.value.replace(/[^a-z0-9]/gi,'');
+    businessCode.selectionStart = businessCode.selectionEnd = businessCode.value.length;
+    [...divHighlight.children].forEach((el, i) => {
+      el.classList.replace('highlight-on', 'highlight-off');
+      if (i === businessCode.value.length) el.classList.replace('highlight-off', 'highlight-on');
+    });
   }
   
   async function enterBusinessCode() {
     const input = businessCode.value;
-    console.log(input);
+    if (input.length !== 6) return;
   
     try {
       

@@ -28,7 +28,15 @@
   <div id="find-business" class="menu">
     <div class="container">
       <button id="btn-sign-out" class="btn-top-left">Sign out</button>
-      <input type="text" id="business-code" placeholder="business code">
+      <input type="text" id="business-code" spellcheck="false" maxlength="6" autofocus>
+      <div id="highlight-container">
+        <div class="highlight-on"></div>
+        <div class="highlight-off"></div>
+        <div class="highlight-off"></div>
+        <div class="highlight-off"></div>
+        <div class="highlight-off"></div>
+        <div class="highlight-off"></div>
+      </div>
       <button id="btn-business-code">Enter</button>
       <button id="btn-business-add">Add my business</button> <!-- TODO -->
     </div>

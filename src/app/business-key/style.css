@@ -13,17 +13,46 @@
 }
 
 input {
-  width: 100%;
-  height: 46px;
-  font-family: 'Poppins', sans-serif;  
-  font-size: 40px;
+  font-size: 8vw;
+  margin-left: 2ch;
+  width: 18ch;
+  height: 8vw;
+  text-transform:uppercase;
+  /* font-family: 'Poppins', sans-serif;   */
+  font-family: 'Courier New', monospace;
   font-weight: bold;
+  caret-color: transparent;
   border: none;
-  border-bottom: 3px solid #888;
+  letter-spacing: 2ch;
 }
 
 input:focus {
   outline: none;
+
+}
+
+#highlight-container {
+  position: relative;
+  width: 86%;
+  height: 1.4vw;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+.highlight-on {
+  width: 7vw;
+  height: 1.4vw;
+  background: #66f;
+  transition: all 100ms;
+}
+
+.highlight-off {
+  width: 7vw;
+  height: 0.8vw;
+  background: #888;
+  transition: all 100ms;
 }
 
 button {
