@@ -1,8 +1,13 @@
 # Equipment-Record
+## Link
+[app.equipment-record.com](app.equipment-record.com)
+[equipment-record.com](equipment-record.com) #TODO this is the barebones website
+
+
 ## About
   This is a web-app that keeps records of where equipment has gone, who has it, and more.
   I intend to make this private soon...
-  
+
 
 ## Functionality
 * Equipment may be checked out a project.
