@@ -1,7 +1,8 @@
 # Equipment-Record
 ## Link
-[app.equipment-record.com](app.equipment-record.com)
-[equipment-record.com](equipment-record.com) #TODO this is the barebones website
+[app.equipment-record.com](app.equipment-record.com) <- This is the webapp
+
+[equipment-record.com](equipment-record.com) #TODO Not even started yet.
 
 
 ## About
