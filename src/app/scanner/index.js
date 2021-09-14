@@ -164,7 +164,6 @@ function tick() {
   }
   if (loader) {
     loader.remove();
-    console.log(loader, loader === null);
     loader = null;
   }
 

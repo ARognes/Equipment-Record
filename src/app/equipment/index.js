@@ -56,18 +56,8 @@ async function loadEquipment(businessID) {
     // Map and sort query alphabetically
     const dataArray = getQueryData(queryEquipment);
 
-    // Setup skeleton equipment divs
-    dataArray.forEach(data => {
-      data.div = document.createElement('div');
-      data.div.setAttribute('id', data.id);
-      data.div.classList.add('item');
-    });
-
-    // Setup all equipment concurrently
-    await Promise.allSettled(dataArray.map(setupEquipment));
-    
-    // Display equipment divs
-    dataArray.forEach(data => itemContainer.appendChild(data.div));
+    dataArray.map(setupEquipmentSkeleton)
+             .forEach(async data => await setupEquipmentImage(data));
 
     // Remove loader
     const loader = itemContainer.getElementsByClassName('loader')[0];
@@ -79,7 +69,34 @@ async function loadEquipment(businessID) {
   catch (error) { console.error(error); }
 }
 
-async function setupEquipment(data) {
+function setupEquipmentSkeleton(data) {
+  const div = document.createElement('div');
+  div.setAttribute('id', data.id);
+  div.classList.add('item');
+
+  const divImage = document.createElement('div');
+  divImage.classList.add('loader');
+  divImage.style.left = '22px';
+  div.appendChild(divImage);
+  data.div = div;
+
+  let innerHTML = 
+  `<p class="item-name">${ data.name }</p>
+    <div class="item-desc">
+      <p>${ data.desc }</p>
+    </div>`;
+  
+  if (data.checkedOutName) innerHTML += `<div class="item-right">${ data.checkedOutName }</div>`;
+  innerHTML += `</div>`;
+  div.innerHTML += innerHTML;
+
+  // Link div to its info page
+  div.onclick = () => window.location = EQUIPMENT_INFO_MENU + `?id=${ data.id }&name=${ data.name }`;
+  itemContainer.appendChild(div);
+  return data;
+}
+
+async function setupEquipmentImage(data) {
   let imageURL = '../global/images/temp.svg';
   if (data.imageCount) {
     try {
@@ -99,20 +116,8 @@ async function setupEquipment(data) {
 
   // Create DOM render
   const img = await loadImageSrc(imageURL);
-  data.div.appendChild(img);
-  let innerHTML = 
-  `<p class="item-name">${ data.name }</p>
-    <div class="item-desc">
-      <p>${ data.desc }</p>
-    </div>`;
-  
-  if (data.checkedOutName) innerHTML += `<div class="item-right">${ data.checkedOutName }</div>`;
-  innerHTML += `</div>`;
-  data.div.innerHTML += innerHTML;
-
-  // Link div to its info page
-  data.div.onclick = () => window.location = EQUIPMENT_INFO_MENU + `?id=${ data.id }&name=${ data.name }`;
-  return data.div;
+  data.div.children[0].remove();
+  data.div.prepend(img);
 }
 
 search.onkeydown = () => searchForItem(search, equipmentResults);
