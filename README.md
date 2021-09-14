@@ -1,8 +1,8 @@
 # Equipment-Record
 ## Link
-[app.equipment-record.com](app.equipment-record.com) <- This is the webapp
+[app.equipment-record.com](https://app.equipment-record.com) <- This is the webapp
 
-[equipment-record.com](equipment-record.com) #TODO Not even started yet.
+[equipment-record.com](https://equipment-record.com) #TODO Not even started yet.
 
 
 ## About
