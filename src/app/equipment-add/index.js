@@ -6,7 +6,7 @@ import { getAuth} from 'firebase/auth';
 import { getFirestore, doc, addDoc, getDoc, getDocs, collection, query, where, serverTimestamp } from 'firebase/firestore/lite';
 import { getStorage, ref, uploadBytes } from 'firebase/storage';
 // import { getFunctions, httpsCallable } from 'firebase/functions';
-import { compress, blobToImage, cropImage } from '../global/js/helpers.js';
+import { compress, blobToImage, cropImage, removeOnKeyboard } from '../global/js/helpers.js';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAH4i8ugZfZMlbBTruvXJa4DSKaj361U6c',
@@ -50,12 +50,30 @@ let images = [], smallImages = [], tinyImages = [];
 
 
 const btnAddEquipmentFirestore = document.getElementById('btn-add-equipment-firestore');
+const baseMenu = document.getElementById('base-menu');
+window.onresize = removeOnKeyboard([btnAddEquipmentFirestore, baseMenu]);
+
+// const input = document.querySelectorAll('input, textarea');
+
+// input.forEach(el => el.onfocus = () => {
+//   baseMenu.style.bottom = '-100px';
+//   btnAddEquipmentFirestore.style.bottom = '-100px';
+// });
+
+// input.forEach(el => el.onblur = () => {
+//   baseMenu.style.bottom = null;
+//   btnAddEquipmentFirestore.style.bottom = null;
+// });
+
+
+
+
 
 auth.onAuthStateChanged(async user => {
   if (!user) { window.location = LOGIN_MENU_PATH; return; }
 
   try {
-    const userDoc = await getDoc(doc(db, 'users', auth.currentUser.uid));
+    const userDoc = await getDoc(doc(db, 'users', auth.currentUser.displayName));
     const userData = userDoc.data();
     const businessID = userData.businessID;
 
@@ -123,17 +141,6 @@ async function submitEquipmentFirestore(businessID) {
   try {
     if (await checkIfNameExists(businessID, name, 'equipment')) throw 'Name already exists';
 
-    // // Send to firestore
-    // const addEquipment = httpsCallable(fun, 'addEquipment');
-    // const { data: equipmentID } = await addEquipment({
-    //   name,
-    //   desc,
-    //   imageCount: smallImages.length,
-    //   price,
-    //   purchaseDate: null,
-    //   businessID
-    // });
-
     const randomValues = new Uint32Array(1);
     window.crypto.getRandomValues(randomValues);
     const barcode = (Date.now() * 100000000 + randomValues[0]) % 1000000000000;
@@ -141,15 +148,15 @@ async function submitEquipmentFirestore(businessID) {
 
     // Add equipment to firestore
     const docRef = await addDoc(collection(db, 'equipment'), {
-      name: name,
-      desc: desc,
+      name,
+      desc,
       imageCount,
-      price: price,
+      price,
       purchaseDate: null,
       project: null,
       businessID,
       checkedOutName: null,
-      barcode: barcode,
+      barcode,
       createdAt: serverTimestamp()
     });
 

@@ -15,6 +15,24 @@ import Compressor from 'compressorjs';
 //   return url;
 // }
 
+export function removeOnKeyboard(elements) {
+  const KEYBOARD_HEIGHT = 200;
+  return () => {
+    if (window.innerHeight + KEYBOARD_HEIGHT < screen.height && !elements[0].style.bottom) {
+      elements.forEach(el => {
+        el.style.transition = null;
+        el.style.bottom = '-100px';
+      });
+    }
+    else {
+      elements.forEach(el => {
+      el.style.transition = 'bottom 250ms ease';
+      el.style.bottom = null;
+    });
+    }
+  }
+}
+
 export function getQueryData(query) {
   return query.docs.map(doc => {
     let data = doc.data();

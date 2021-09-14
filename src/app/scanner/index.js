@@ -26,10 +26,9 @@ const db = getFirestore(app);
 
 const EQUIPMENT_MENU_PATH = '../equipment';
 
+let loader = document.getElementsByClassName('loader')[0];
 const video = document.createElement('video');
 const canvas = document.getElementById('canvas'), ctx = canvas.getContext('2d');
-const loadingMessage = document.getElementById('loading-message');
-const outputData = document.getElementById('output-data');
 const divFoundEquipment = document.getElementById('div-found-equipment');
 const titleFoundEquipment = document.getElementById('title-found-equipment');
 const btnConfirmFoundEquipment = document.getElementById('btn-confirm-found-equipment');
@@ -46,7 +45,6 @@ auth.onAuthStateChanged(async user => {
   try {
     const userDoc = await getDoc(doc(db, 'users', user.displayName));
     businessID = userDoc.data().businessID;
-    console.log(user);
   }
   catch(error) { console.error(error); }
 
@@ -160,12 +158,15 @@ function error(error) {
 }
 
 function tick() {
-  loadingMessage.innerText = '⌛ Loading video...'
   if (video.readyState !== video.HAVE_ENOUGH_DATA || !businessID) {
     requestAnimationFrame(tick);
     return;
   }
-  loadingMessage.hidden = true;
+  if (loader) {
+    loader.remove();
+    console.log(loader, loader === null);
+    loader = null;
+  }
 
   canvas.width = video.videoWidth;
   if (video.videoWidth < video.videoHeight) {

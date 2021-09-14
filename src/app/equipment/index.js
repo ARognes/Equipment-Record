@@ -2,10 +2,10 @@
 
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
-import { getAuth} from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 import { getFirestore, doc, getDoc, getDocs, collection, query, where } from 'firebase/firestore/lite';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
-import { getQueryData, searchForItem } from '../global/js/helpers.js';
+import { getQueryData, searchForItem, removeOnKeyboard } from '../global/js/helpers.js';
 import { local, session } from '../global/js/storage-factory.js';
 
 const firebaseConfig = {
@@ -31,6 +31,9 @@ let equipmentResults = [];
 
 const itemContainer = [...document.getElementsByClassName('item-container')][0];
 const search = document.getElementById('search');
+
+const baseMenu = document.getElementById('base-menu');
+window.onresize = removeOnKeyboard([baseMenu]);
 
 auth.onAuthStateChanged(async user => {
   if (!user) { window.location = LOGIN_MENU_PATH; return; }

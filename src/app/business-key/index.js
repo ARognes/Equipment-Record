@@ -47,12 +47,12 @@ auth.onAuthStateChanged(async user => {
   }
   
   async function enterBusinessCode() {
-    const input = businessCode.value;
+    const input = businessCode.value.toUpperCase();
     if (input.length !== 6) return;
   
     try {
       
-      const queryBusinesses = await getDocs(query(collection(db, 'businesses'), where('code', '==', businessCode.value))); 
+      const queryBusinesses = await getDocs(query(collection(db, 'businesses'), where('code', '==', input))); 
       if (queryBusinesses.docs.length > 0 && queryBusinesses.docs[0] !== null) {
         const businessName = queryBusinesses.docs[0].data().name;
         await setDoc(userRef, { 

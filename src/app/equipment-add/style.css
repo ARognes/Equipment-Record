@@ -140,4 +140,5 @@
   width: 96%;
   height: 40px;
   background-color: lime;
+  /* transition: bottom 250ms ease; */
 }
