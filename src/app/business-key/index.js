@@ -2,7 +2,7 @@
 
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
-import { getAuth} from 'firebase/auth';
+import { getAuth, signOut } from 'firebase/auth';
 import { getFirestore, doc, setDoc, getDocs, collection, query, where } from 'firebase/firestore/lite';
 
 const firebaseConfig = {
@@ -21,17 +21,20 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+const LOGIN_MENU_PATH = '../login';
 const MAIN_MENU_PATH = '../main';
 const btnBusinessCode = document.getElementById('btn-business-code');
 const businessCode = document.getElementById('business-code');
-const divFindBusiness = document.getElementById('find-business');
 const btnAddBusiness = document.getElementById('btn-business-add');
 const divHighlight = document.getElementById('highlight-container');
-
+const btnSignOut = document.getElementById('btn-sign-out');
 
 auth.onAuthStateChanged(async user => {
-  if (!user) return;
-  
+  if (!user) { window.location = LOGIN_MENU_PATH; return; }
+
+  btnSignOut.onclick = () => signOut(auth);
+
+
   const userRef = doc(db, 'users', user.displayName);
 
   btnBusinessCode.onclick = enterBusinessCode;
