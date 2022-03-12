@@ -5,7 +5,7 @@ import { getAnalytics } from 'firebase/analytics';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore/lite';
 import { getStorage, ref } from 'firebase/storage';
-import { getQueryData, loadImage } from '../global/js/helpers.js';
+import { getQueryData } from '../global/js/helpers.js';
 import { local, session } from '../global/js/storage-factory.js';
 
 const firebaseConfig = {

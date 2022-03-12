@@ -1,3 +1,12 @@
+/**
+ * local: username, businessName, businessID all set here if known
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
+
 'use strict';
 
 import { initializeApp } from 'firebase/app';
@@ -97,6 +106,10 @@ divSignIn.onclick = () => {
   setPasswordView(true);
 }
 
+btnSignIn.onclick = signIn;
+btnRegister.onclick = register;
+btnGoogle.onclick = fbAuth;
+
 async function signIn() {
   try {
 
@@ -104,7 +117,7 @@ async function signIn() {
     let emailVal = email.value;
 
     // Get user email from username
-    if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email.value))) {
+    if (!stringIsEmail(email.value)) {
       const emailDoc = await getDoc(doc(db, 'users', email.value));
       if (emailDoc.exists()) emailVal = emailDoc.data().email;
     }
@@ -114,9 +127,7 @@ async function signIn() {
   catch (error) { errorLog.innerText = error; }
 }
 
-btnSignIn.onclick = signIn;
-
-btnRegister.onclick = async () => {
+async function register() {
   if (!btnSignIn.hidden) return;
   if (!grecaptcha.getResponse().length) return errorLog.innerText = 'Please verify with reCAPTCHA';
   usernameVal = username.value;
@@ -134,18 +145,16 @@ btnRegister.onclick = async () => {
     await createUserWithEmailAndPassword(auth, email.value, password.value);
     await updateProfile(auth.currentUser, { displayName: usernameVal });
     await sendEmailVerification(auth.currentUser);
-    // await signInWithEmailAndPassword(auth, email.value, password.value);
   }
   catch (error) { errorLog.innerText = 'Email already in use' }
 }
 
-// Google auth
-btnGoogle.onclick = async () => {
+async function fbAuth() {
   try {
     await setPersistence(auth, browserLocalPersistence);
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
-    usernameVal = result.additionalUserInfo.profile.name;
+    usernameVal = result.user.displayName;
   } 
   catch (error) { console.error(error); errorLog.innerText = 'Unable to login with Google'; }
 }
@@ -159,7 +168,7 @@ auth.onAuthStateChanged(async user => {
   try {
     // Check if user exists in firestore
     const userDoc = await getDoc(userRef);
-    console.log(user.email, user);
+
     // Add user to firestore
     if (!userDoc.exists()) { 
       await setDoc(userRef, {
@@ -174,14 +183,15 @@ auth.onAuthStateChanged(async user => {
       return;
     }
     
-    // TODO This should be a firebase function, don't show user the business information
-    // Check if a business on firestore is associated with this user
-    const businessID = userDoc.data().businessID;
     let businessDoc = null;
-    if (typeof businessID === 'string' && businessID !== '') businessDoc = await getDoc(doc(db, 'businesses', businessID)); //db.collection('businesses').doc(businessID).get();
+    const businessID = userDoc.data().businessID;
+    local.setItem('businessName', userDoc.data().businessName);
+    local.setItem('businessID', businessID);
+
+    // If user isn't associated with any business, send to business code page, else main menu
+    if (typeof businessID === 'string' && businessID !== '') businessDoc = await getDoc(doc(db, 'businesses', businessID));
     if (!businessDoc || !businessDoc.exists) window.location = BUSINESS_KEY_PATH;
     else window.location = MAIN_MENU_PATH;
-    local.setItem('businessName', userDoc.data().businessName);
   } 
   catch (error) { 
     console.error(error);
@@ -193,10 +203,14 @@ function validatePassword(username, email, p, cp) {
   if (username.length < 1) return "Please enter your name";
   if (email.length < 3) return "Please enter your email";  
   if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))) return "Please enter a valid email";
-  if (p.length < 8) return "Your password must be at least 8 characters"; 
+  if (p.length < 12) return "Your password must be at least 12 characters"; 
   if (p.search(/[a-z]/i) < 0) return "Your password must contain at least one letter"; 
   if (p.search(/[0-9]/) < 0) return "Your password must contain at least one digit"; 
   //if (p.search(/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/) < 0) return "Your password must contain at least one special character"; 
   if (p !== cp) return "Your passwords do not match";
   return "";
+}
+
+function stringIsEmail(email) {
+  return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
 }

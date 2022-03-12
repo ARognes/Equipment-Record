@@ -17,11 +17,24 @@
 * Records of who checked out what, where from, where to, and when are recorded and kept for future reference.
 * QR-codes and barcodes may be downloaded by authorized users (Boss and Foremen) to create labels.
   
-* Everything is namespaced under a business name so multiple businesses may use this web-app.
+* Individual businesses have their own separate data
 
+## Installation
+
+Clone this repository 
+``` bash
+npm install
+
+firebase login
+
+npm run build/deploy/deploy-debug
+
+```
+Make sure firebase rules allow use
 
 ## Later TODO's (small things)
 - [x] Load small images of the equipment, if user requests full images then they will be loaded.
 - [ ] [exif-js](https://github.com/exif-js/exif-js) When getting qr-code, access location metadata of picture and save to firestore
 - [ ] [qrious](https://github.com/neocotic/qrious) Use this to give the user printable qr-codes
 - [ ] Find barcode printing js library 
+- [ ] Convert all JavaScript to TypeScript for better documentation

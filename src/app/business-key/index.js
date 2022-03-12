@@ -4,6 +4,7 @@ import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
 import { getAuth, signOut } from 'firebase/auth';
 import { getFirestore, doc, setDoc, getDocs, collection, query, where } from 'firebase/firestore/lite';
+import { local, session } from '../global/js/storage-factory.js';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAH4i8ugZfZMlbBTruvXJa4DSKaj361U6c',
@@ -58,12 +59,15 @@ auth.onAuthStateChanged(async user => {
       const queryBusinesses = await getDocs(query(collection(db, 'businesses'), where('code', '==', input))); 
       if (queryBusinesses.docs.length > 0 && queryBusinesses.docs[0] !== null) {
         const businessName = queryBusinesses.docs[0].data().name;
+        const businessID = queryBusinesses.docs[0].id;
         await setDoc(userRef, { 
           businessName: businessName,
-          businessID: queryBusinesses.docs[0].id,
+          businessID: businessID,
         }, { merge: true });
-        console.log('business added');
-        // window.localStorage.setItem('businessName', businessName);
+
+        local.setItem('businessName', businessName);
+        local.setItem('businessID', businessID);
+
         window.location = MAIN_MENU_PATH;
         return;
       }
@@ -75,6 +79,6 @@ auth.onAuthStateChanged(async user => {
   
   btnAddBusiness.onclick = () => {
     console.log('Show create new business menu');
+    alert("Not complete");
   }
-
 });

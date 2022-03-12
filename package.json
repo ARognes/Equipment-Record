@@ -7,13 +7,16 @@
     "compressorjs": "^1.0.7",
     "esbuild": "^0.12.25",
     "firebase": "^9.0.1",
+    "jsbarcode": "^3.11.5",
+    "jspdf": "^2.5.1",
     "jsqr": "^1.4.0",
+    "qrcode": "^1.5.0",
     "quagga": "^0.12.1"
   },
-  "devDependencies": {},
   "scripts": {
-    "build": "python build.py",
-    "deploy": "python build.py && firebase deploy --only hosting"
+    "build": "python3 build.py",
+    "deploy": "python3 build.py && firebase deploy --only hosting",
+    "deploy-debug": "python3 buildDebug.py && firebase deploy --only hosting"
   },
   "author": "Austin Rognes",
   "license": "MIT"

@@ -11,7 +11,7 @@ function storageFactory(getStorage) {
   let inMemoryStorage = {};
   function isSupported() {
       try {
-          const testKey = "__some_random_key_you_are_not_going_to_use__";
+          const testKey = "__some_random_key_you_are_not_ever_going_to_use__";
           getStorage().setItem(testKey, testKey);
           getStorage().removeItem(testKey);
           return true;
