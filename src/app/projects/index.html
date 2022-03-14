@@ -24,12 +24,13 @@
 
 <body>
   <header>
-    <p id="title">Projects</p>
+    <input type="text" id="search" placeholder="search">
+    <button id="filter">I</button>
   </header>
 
-  <div id="project-menu" class="menu">
-    <div class="item-container"></div>
-    <button onclick="window.location='project-add.html'" id="btn-project-add">+</button>
+  <div class="menu">
+    <div class="item-container"><div class="loader"></div></div>
+    <button onclick="window.location='../project-add'" id="btn-project-add">+</button>
   </div>
 
   <div id="base-menu">

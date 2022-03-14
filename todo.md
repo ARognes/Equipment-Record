@@ -68,3 +68,30 @@ Boss starts first project
   Display checked out to Project 1 
 
 
+
+
+
+3/14/22
+
+Implement tagging and subtagging system that can be converted into a folder/file system. 
+
+Projects should be implemented
+
+Select project from dropdown to add equipment to
+
+
+Business owner may modify anything in his own business:
+
+Admin may:
+- Same as foreman
+- Create/edit projects
+- Delegate project editing to foreman (Time based OR project based)
+
+Foreman may:
+- Same as worker
+- Create/edit equipment
+- Delegate equipment editing to worker (Time based OR equipment based OR tag based)
+
+Worker may:
+- checkout equipment to project assigned to
+- checkin equipment from project assigned to

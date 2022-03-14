@@ -1,0 +1,153 @@
+body {
+  overflow-y: auto;
+}
+
+#div-top-filler {
+  position: relative;
+  height: 100vw;
+  pointer-events: none;
+}
+
+#div-images-buttons {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  top: calc(100vw - 30px);
+  left: calc(50vw - 140px);
+  width: 280px;
+  height: 30px;
+}
+
+.btn-image-inactive {
+  position: relative;
+  top: 1px;
+  margin: 6px 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  background-color: white;
+  opacity: 0.5;
+  transition: 100ms all ease;
+}
+
+.btn-image-active {
+  top: 0;
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+  transition: 100ms all ease;
+}
+
+#div-images {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: calc(100vw + 17px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  scroll-snap-type: x mandatory;
+  /* pointer-events: none; */
+}
+
+#div-images img {
+  margin: 0;
+  padding: 0;
+  position: relative;
+  width: 100vw;
+  height: 100vw;
+  transition: 250ms filter ease-in;
+  scroll-snap-stop: always;
+  scroll-snap-align: start;
+}
+
+#div-title {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: relative;
+  left: 0;
+  width: 100vw;
+  height: 60px;
+  background-color: #ddd;
+}
+
+#title {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: relative;
+  top: 0;
+  line-height: 60px;
+  height: 40px;
+  font-size: 40px;
+}
+
+#div-desc {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: relative;
+  left: 0;
+  width: 100vw;
+  height: auto;
+  min-height: 300px;
+  background-color: #fff;
+}
+
+#desc {
+  margin: 6px;
+  padding: 0;
+  border: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+#div-manager {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: relative;
+  left: 0;
+  width: 100vw;
+  height: auto;
+  min-height: 100px;
+  background-color: #eee;
+}
+
+#div-equipment {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: relative;
+  left: 0;
+  width: 100vw;
+  height: auto;
+  min-height: 100px;
+  background-color: #eee;
+}
+
+#div-history {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: relative;
+  left: 0;
+  width: 100vw;
+  height: auto;
+  min-height: 500px;
+  background-color: #fff;
+}

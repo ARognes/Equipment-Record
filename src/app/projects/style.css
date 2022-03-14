@@ -1,3 +1,33 @@
+#search {
+  margin: 0; 
+  padding: 6px; 
+  border: 0; 
+  /* border-radius: 8px; */
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: calc(100% - 66px);
+  height: 24px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 24px;
+}
+
+#search:focus {
+  outline: 0; 
+}
+
+#filter {
+  margin: 0; 
+  padding: 0; 
+  border: 0; 
+  /* /* border-radius: 8px; */
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 36px;
+  height: 36px;
+}
+
 #btn-project-add {
   position: fixed;
   right: 10px;

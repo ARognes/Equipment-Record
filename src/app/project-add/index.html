@@ -14,33 +14,39 @@
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Poppins">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins" media="print" onload="this.media='all'">
   
-  <link href="../css/project-add.css" rel="stylesheet">
+  <link href="../global/globalStyle.css" rel="stylesheet">
   <link href="project-add/style.css" rel="stylesheet">
   
-  <script type="text/javascript" defer src="../js/compressor.min.js"></script>
+  <script type="module" defer src="../global/js/helpers.js"></script>
   <script type="module" defer src="project-add/index.js"></script>
   <noscript>Your browser does not support JavaScript!</noscript>
 </head>
 
 <body>
   <header>
-    <!-- <p id="title">Add Equipment</p> -->
+    <!-- <p id="title">Add Project</p> -->
     <input type="text" id="name" placeholder="name">
 
   </header>
 
   <div id="project-add-menu" class="menu">
     <button onclick="window.location='../projects'" class="btn-top-left"><</button>
+    <div id="div-images"></div>
+    <label for="camera" id="label-camera">Camera</label>
+    <input type="file" id="camera" accept="image/*" capture="application" multiple="true">
+
+    <label for="images" id="label-images">Gallery</label>
+    <input type="file" id="images" accept="image/*" multiple="true">
     <textarea id="desc" placeholder="description"></textarea>
-    <button id="btn-add-project-firestore">Add</button>
+    <button id="btn-add-project-firestore">Add Project</button>
   </div>
 
-  <div id="base-menu">
+  <!-- <div id="base-menu">
     <button onclick="window.location='../projects'" class="btn-base-menu" ><img src="../global/images/projects.svg"></button>
-    <button onclick="window.location='../equipment'" class="btn-base-menu"><img src="../global/images/equipment.svg"></button>
+    <button onclick="window.location='../project'" class="btn-base-menu"><img src="../global/images/equipment.svg"></button>
     <button onclick="window.location='../main'" class="btn-base-menu"><img src="../global/images/home.svg"></button>
     <button onclick="window.location='../history'" class="btn-base-menu"><img src="../global/images/history.svg"></button>
     <button onclick="window.location='../account'" class="btn-base-menu"><img src="../global/images/account.svg"></button>
-  </div>
+  </div> -->
 </body>
 </html>

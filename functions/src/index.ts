@@ -4,6 +4,10 @@ import * as admin from 'firebase-admin';
 admin.initializeApp();
 const db = admin.firestore();
 
+
+/**
+ * Add equipment to firestore
+ */
 export const addEquipment = functions.https.onCall( async (data, context) => {
   if (!context.auth) throw new functions.https.HttpsError('unauthenticated', 'Not signed in');
   
@@ -15,6 +19,7 @@ export const addEquipment = functions.https.onCall( async (data, context) => {
   const docRef = await db.collection('equipment').add({
     name: data.name,
     desc: data.desc,
+    tags: data.tags,
     imageCount: Math.min(data.imageCount, 5),
     price: data.price,
     purchaseDate: data.purchaseDate,

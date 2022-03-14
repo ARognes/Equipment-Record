@@ -50,8 +50,8 @@ let images = [], smallImages = [], tinyImages = [];
 
 
 const btnAddEquipmentFirestore = document.getElementById('btn-add-equipment-firestore');
-const baseMenu = document.getElementById('base-menu');
-window.onresize = removeOnKeyboard([btnAddEquipmentFirestore, baseMenu]);
+// const baseMenu = document.getElementById('base-menu');
+// window.onresize = removeOnKeyboard([btnAddEquipmentFirestore, baseMenu]);
 
 // const input = document.querySelectorAll('input, textarea');
 
@@ -135,6 +135,7 @@ async function submitEquipmentFirestore(businessID) {
   const name = document.getElementById('name').value;
   const desc = document.getElementById('desc').value;
   const price = document.getElementById('price').value || 0;
+  const tags = null;
 
   if (!name.length) return;
 
@@ -150,6 +151,7 @@ async function submitEquipmentFirestore(businessID) {
     const docRef = await addDoc(collection(db, 'equipment'), {
       name,
       desc,
+      tags,
       imageCount,
       price,
       purchaseDate: null,
