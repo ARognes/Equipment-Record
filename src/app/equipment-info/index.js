@@ -3,8 +3,9 @@
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore/lite';
+import { getFirestore, doc, getDoc, getDocs, query, where, collection, addDoc, updateDoc, serverTimestamp } from 'firebase/firestore/lite';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
+import { getQueryData } from '../global/js/helpers.js';
 import { local, session } from '../global/js/storage-factory.js';
 
 const firebaseConfig = {
@@ -27,6 +28,10 @@ const storage = getStorage(app);
 const LOGIN_MENU_PATH = '../login';   
 const EQUIPMENT_IMAGES_MAX = 10;
 let businessID = null;
+let username = null;
+let userID = null;
+let equipmentData = null;
+
 let parameters = new URLSearchParams(window.location.search);
 let equipmentID = parameters.get('id');
 let equipmentName = parameters.get('name');
@@ -36,12 +41,14 @@ title.innerText = equipmentName;
 const divImages = document.getElementById('div-images');
 const divImageBtns = document.getElementById('div-images-buttons');
 const desc = document.getElementById('desc');
+const btnAssignmentModify = document.getElementById('btn-assignment-modify');
 
 document.body.scrollTop = window.innerWidth;
 
 let images = checkCachedImages();
 populateImages(images);
 
+// Image scroll horizontal
 divImages.addEventListener('scroll', () => {
   const index = Math.round(divImages.scrollLeft / window.innerWidth);
   const buttons = [...document.getElementsByClassName('btn-image-inactive')];
@@ -51,62 +58,161 @@ divImages.addEventListener('scroll', () => {
   buttons[index].classList.add('btn-image-active');
 });
 
-
+// Image parallax
 document.body.addEventListener('scroll', () => {
   divImages.style.top = -document.body.scrollTop / 2 + 'px';
 });
+
+btnAssignmentModify.onclick = async () => {
+
+  if (btnAssignmentModify.children.length > 0) {
+    btnAssignmentModify.children[0].style.display = (btnAssignmentModify.children[0].style.display == 'block') ? 'none' : 'block';
+    return;
+  }
+
+  const projectsUnformatted = await getDocs(query(collection(db, 'projects'), where('businessID', '==', businessID))); 
+  const projects = getQueryData(projectsUnformatted);
+  
+  let dropdown = document.createElement('div');
+  for (let i in projects) {
+    const btn = document.createElement('button');
+    btn.style = 'display: block; background-color: #04AA6D; border: 1px solid green; color: white;';
+    btn.innerText = projects[i].name;
+    btn.onclick = async () => await changeEquipmentAssignment(projects[i]);
+    console.log(projects[i].name, equipmentData.projectAssigned);
+    if (projects[i].name == equipmentData.projectAssigned) btn.style.display = 'none';
+    dropdown.appendChild(btn);
+  }
+
+  btnAssignmentModify.appendChild(dropdown);
+}
+
+
+async function changeEquipmentAssignment(project) {
+
+  if (!username) return;
+
+  try {
+
+    await updateDoc(doc(db, 'equipment', equipmentID), { 
+      projectAssigned: project.name,
+      userAssigned: username,
+      timeAssigned: serverTimestamp()
+    });
+
+    // Update previous assignments of this equipment to not current
+    const prevAssignments = await getDocs(query(collection(db, 'assignments'), 
+           where('businessID', '==', businessID), 
+           where('equipmentAssigned', '==', equipmentName),
+           where('current', '==', true)));
+
+    console.log(prevAssignments.docs);
+
+    for (let i in prevAssignments.docs) 
+      await updateDoc(prevAssignments.docs[i].ref, { current: false });
+    
+    // console.log(equipmentName, equipmentID, username, userID, project.name, project.id);
+    await addDoc(collection(db, 'assignments'), {
+      businessID,
+      current: true,
+      equipmentAssigned: equipmentName,
+      equipmentIDAssigned: equipmentID,
+      userAssigned: username,
+      userIDAssigned: userID,
+      projectAssigned: project.name,
+      projectIDAssigned: project.id,
+      createdAt: serverTimestamp()
+    });
+
+  }
+  catch (err) { console.error(err); }
+
+  if (btnAssignmentModify.children.length > 0) {
+    btnAssignmentModify.children[0].style.display = (btnAssignmentModify.children[0].style.display == 'block') ? 'none' : 'block';
+  }
+
+  const buttons = btnAssignmentModify.children[0].children;
+  console.log(buttons);
+  for (let i = 0; i < buttons.length; i++) {
+    console.log(i, buttons[i]);
+
+    if (buttons[i].innerText == project.name) buttons[i].style.display = 'none';
+    else buttons[i].style.display = 'block';
+  }
+
+  document.getElementById('div-assignment').children[0].innerText = 'Assignment: ' + project.name;
+
+
+  alert('Added to ' + project.name + ' successfully');
+}
 
 
 auth.onAuthStateChanged(async user => {
   if (!user) { window.location = LOGIN_MENU_PATH; return; }
   try {
-    const userDoc = await getDoc(doc(db, 'users', user.displayName)); //db.collection('users').doc(auth.currentUser.uid).get();
+    const userDoc = await getDoc(doc(db, 'users', user.displayName)); 
     businessID = userDoc.data().businessID;
-    // username = userDoc.data().name;
+    username = user.displayName;
+    userID = user.uid;
+
+    const token = await user.getIdTokenResult();
     
-    const equipmentData = await getEquipmentData();
-
-    // Load temp
-    if (equipmentData.imageCount === 0) {
-      while (divImages.firstChild) divImages.removeChild(divImages.firstChild);
-      while (divImageBtns.firstChild) divImages.removeChild(divImageBtns.firstChild);
-      populateImages(null);
-    }
-    else {
-
-      // Download small blurred images
-      if (images.length !== equipmentData.imageCount) {
-        console.log('reloading tiny images');
-        images = await downloadImages(equipmentData.imageCount, 'tiny_img');
-        while (divImages.firstChild) divImages.removeChild(divImages.firstChild);
-        while (divImageBtns.firstChild) divImages.removeChild(divImageBtns.firstChild);
-        populateImages(images);
-      }
-
-      // Download full sized images
-      images = await downloadImages(equipmentData.imageCount, 'img');
-      [...divImages.children].forEach((img, i) => {
-        if (i < images.length) {
-          img.src = images[i];
-          img.addEventListener('load', () => {
-            img.style.filter = null;
-          });
-        }
-      });
-    }
-    
-   
-
-    desc.innerText = equipmentData.desc;
+    await setupEquipment(token?.claims?.accessLevel);
 
   }
   catch(error) { console.error(error); }
 });
 
 
+async function setupEquipment(accessLevel) {
+  equipmentData = await getEquipmentData();
+
+  // Load equipment information
+  desc.innerText = equipmentData.desc;
+
+  document.getElementById('div-assignment').children[0].innerText = 'Assignment: ' + equipmentData.projectAssigned;
+
+
+
+  console.log("accessLevel: " + accessLevel);
+
+  // Admin may modify assignment
+  if (accessLevel && accessLevel >= 2) btnAssignmentModify.hidden = false;
+
+  // Load temp images 
+  if (equipmentData.imageCount === 0) {
+    while (divImages.firstChild) divImages.removeChild(divImages.firstChild);
+    while (divImageBtns.firstChild) divImages.removeChild(divImageBtns.firstChild);
+    populateImages(null);
+  }
+  else { // load firestore images
+
+    // Download small blurred images
+    if (images.length !== equipmentData.imageCount) {
+      console.log('reloading tiny images');
+      images = await downloadImages(equipmentData.imageCount, 'tiny_img');
+      while (divImages.firstChild) divImages.removeChild(divImages.firstChild);
+      while (divImageBtns.firstChild) divImages.removeChild(divImageBtns.firstChild);
+      populateImages(images);
+    }
+
+    // Download full sized images
+    images = await downloadImages(equipmentData.imageCount, 'img');
+    [...divImages.children].forEach((img, i) => {
+      if (i < images.length) {
+        img.src = images[i];
+        img.addEventListener('load', () => {
+          img.style.filter = null;
+        });
+      }
+    });
+  }
+}
+
+
 async function getEquipmentData() {
   try {
-    const equipmentDoc = await getDoc(doc(db, 'equipment', equipmentID)); //db.collection('equipment').doc(equipmentID).get();
+    const equipmentDoc = await getDoc(doc(db, 'equipment', equipmentID)); 
     const equipmentData = equipmentDoc.data();
     equipmentData.id = equipmentDoc.id;
     return equipmentData;
@@ -114,19 +220,23 @@ async function getEquipmentData() {
   catch(error) { console.error(error); }
 }
 
+
 function populateImages(images) {
+
   if (!images) {
     const img = document.createElement('img');
     divImages.appendChild(img);
     img.src = '../global/images/temp.svg';
     return;
   }
+
   if (!images.length) {
     const loader = document.createElement('div');
     loader.classList.add('loader');
     divImages.appendChild(loader);
     return;
   }
+
   images.forEach((url, i) => {
     const img = document.createElement('img');
     divImages.appendChild(img);
@@ -163,7 +273,7 @@ function checkCachedImages() {
 async function downloadImages(count, name) {
   console.log('looking for images');
   try {
-    const imagePathName = `${ businessID }/equipment/`; //firebase.storage().ref(`${ businessID }/equipment/`);
+    const imagePathName = `${ businessID }/equipment/`; 
 
     // Download image urls
     const imageURLs = [];

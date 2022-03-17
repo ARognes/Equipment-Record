@@ -34,6 +34,7 @@ const TINY_COMPRESSION_PERCENTAGE = 0.6;
 const TINY_COMPRESSION_MAX_SIZE = 200;
 
 const EQUIPMENT_MENU_PATH = '../equipment';
+const LOGIN_MENU_PATH = '../login';   
 
 
 if (location.hostname === "localhost") {
@@ -152,13 +153,14 @@ async function submitEquipmentFirestore(businessID) {
       name,
       desc,
       tags,
+      barcode,
       imageCount,
       price,
       purchaseDate: null,
-      project: null,
       businessID,
-      checkedOutName: null,
-      barcode,
+      userAssigned: null,
+      projectAssigned: null,
+      timeAssigned: null,
       createdAt: serverTimestamp()
     });
 
@@ -211,7 +213,7 @@ async function checkIfNameExists(businessID, name, col) {
 //       project: null,
 //       businessID: businessID,
 //      // checkedOutID: null,
-//       checkedOutName: null,
+//       userAssigned: null,
 //       barcode: barcode,
 //       createdAt: firebase.firestore.FieldValue.serverTimestamp()
 //     });

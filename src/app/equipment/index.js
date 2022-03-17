@@ -86,7 +86,7 @@ function setupEquipmentSkeleton(data) {
       <p>${ data.desc }</p>
     </div>`;
   
-  if (data.checkedOutName) innerHTML += `<div class="item-right">${ data.checkedOutName }</div>`;
+  if (data.userAssigned) innerHTML += `<div class="item-right">${ data.userAssigned }</div>`;
   innerHTML += `</div>`;
   div.innerHTML += innerHTML;
 

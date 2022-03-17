@@ -54,9 +54,9 @@ btnGenerate.onclick = async () => {
 
 function savePDF(equipment) {
 
-  const pdf = new jsPDF({ unit: 'in' });
+  const pdf = new jsPDF({ unit: 'in', format: 'letter'});
   pdf.text('Equipment codes: ' + businessName, 0.12, 0.3);
-  pdf.setLineWidth(0.1);
+  pdf.setLineWidth(0.002);
   pdf.setFontSize(6);
 
   // Print qr codes
@@ -100,9 +100,9 @@ function savePDF(equipment) {
 
         } else {
           JsBarcode(canvas, equipment[equipmentIndex].barcode, {format: "CODE128", width: 12, height: 500, fontSize: 80});
-          let x = 0.6 + j * 1.5;
+          let x = 0.5 + j * 1.5;
           let y = 0.6 + i;
-          pdf.addImage(canvas, "JPEG", x, y, 1.3, 0.63523);
+          pdf.addImage(canvas, "JPEG", x + 0.1, y, 1.3, 0.63523);
 
           canvas.width = 1500;
           canvas.height = 630;
@@ -119,14 +119,16 @@ function savePDF(equipment) {
           ctx.fillText(equipment[equipmentIndex].name.substring(0, CUT_LEN), canvas.width / 2, 60);
           if (equipment[equipmentIndex].name.length > CUT_LEN) ctx.fillText(equipment[equipmentIndex].name.substring(CUT_LEN), canvas.width / 2, 140);
           
-          pdf.addImage(canvas, "JPEG", x - 0.1, y + 0.66, 1.5, 0.63);
+          pdf.addImage(canvas, "JPEG", x, y + 0.66, 1.5, 0.63);
 
         }
 
-        // pdf.line(0.5 + j * 1.5, 0.5 + i, 2 + j * 1.5, 0.5 + i);
-        // pdf.line(0.5 + j * 1.5, 1.5 + i, 2 + j * 1.5, 1.5 + i);
-        // pdf.line(0.5 + j * 1.5, 0.5 + i, 0.5 + j * 1.5, 1.5 + i);
-        // pdf.line(2 + j * 1.5, 0.5 + i, 2 + j * 1.5, 1.5 + i);
+        pdf.setDrawColor('gray');
+        pdf.line(0.5 + j * 1.5, 0.5 + i, 2 + j * 1.5, 0.5 + i);
+        pdf.line(0.5 + j * 1.5, 1.5 + i, 2 + j * 1.5, 1.5 + i);
+        pdf.line(0.5 + j * 1.5, 0.5 + i, 0.5 + j * 1.5, 1.5 + i);
+        pdf.line(2 + j * 1.5, 0.5 + i, 2 + j * 1.5, 1.5 + i);
+        pdf.setDrawColor('black');
         
         equipmentIndex++;
         

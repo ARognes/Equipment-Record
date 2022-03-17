@@ -3,9 +3,10 @@
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore/lite';
+import { getFirestore, doc, getDoc, getDocs, query, collection, where, orderBy, limit } from 'firebase/firestore/lite';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { local, session } from '../global/js/storage-factory.js';
+import { getQueryData } from '../global/js/helpers.js';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAH4i8ugZfZMlbBTruvXJa4DSKaj361U6c',
@@ -67,6 +68,67 @@ auth.onAuthStateChanged(async user => {
     
     const projectData = await getProjectData();
 
+    desc.innerText = projectData.desc;
+
+    // Assignment
+    const assignmentQuery = await getDocs(query(collection(db, 'assignments'), 
+                                         where('businessID', '==', businessID), 
+                                         where('projectIDAssigned', '==', projectID),
+                                         where('current', '==', true)));
+
+    const equipmentData = assignmentQuery.docs.map(doc => {
+      let data = doc.data();
+      data.id = doc.id;
+      return data;
+    });
+
+    const divEquipmentContainer = document.getElementById('div-equipment-container');
+    equipmentData.forEach(assn => {
+      const item = document.createElement('div');
+
+      const date = timeSince(assn.createdAt.toDate());
+
+      item.innerHTML = `<strong>${ assn.equipmentAssigned }</strong>:\t`
+                       + `${ assn.userAssigned }\t${ date }`;
+      
+      item.style.display = 'block';
+      divEquipmentContainer.appendChild(item);
+    });
+
+    // History
+    const historyQuery = await getDocs(query(collection(db, 'assignments'), 
+                                         where('businessID', '==', businessID), 
+                                         where('projectIDAssigned', '==', projectID),
+                                         orderBy('createdAt', 'desc'),
+                                         limit(5)));
+
+    const historyData = historyQuery.docs.map(doc => {
+      let data = doc.data();
+      data.id = doc.id;
+      return data;
+    });
+
+    const divHistoryContainer = document.getElementById('div-history-container');
+    // for (let i in historyData) {
+    //   const item = document.createElement('div');
+    //   item.innerText = historyData[i].equipmentAssigned + ': ' + historyData[i].userAssigned + ': ' + historyData[i].createdAt.toDate();
+    //   item.style.display = 'block';
+    //   divHistoryContainer.appendChild(item);
+    // }
+
+    historyData.forEach(assn => {
+      const item = document.createElement('div');
+
+      const date = timeSince(assn.createdAt.toDate());
+
+      item.innerHTML = `<strong>${ assn.equipmentAssigned }</strong>: `
+                       + `${ assn.userAssigned } ${ date }`;
+      
+      item.style.display = 'block';
+      divHistoryContainer.appendChild(item);
+    });
+
+
     // Load temp
     if (projectData.imageCount === 0) {
       while (divImages.firstChild) divImages.removeChild(divImages.firstChild);
@@ -95,9 +157,6 @@ auth.onAuthStateChanged(async user => {
         }
       });
     }
-
-    desc.innerText = projectData.desc;
-
   }
   catch(error) { console.error(error); }
 });
@@ -112,6 +171,7 @@ async function getProjectData() {
   }
   catch(error) { console.error(error); }
 }
+
 
 function populateImages(images) {
   if (!images) {
@@ -184,4 +244,28 @@ async function downloadImages(count, name) {
     return imageURLs;
   }
   catch(error) { console.error(error); }
+}
+
+
+function timeSince(date) {
+
+  const millis = date.getTime();
+
+  const seconds = Math.floor((new Date() - millis) / 1000);
+
+  let interval = seconds / 31536000;
+
+  interval = seconds / 2592000;
+  if (interval > 1) return `${ date.getDate() } ${ date.getMonth() } ${ date.getYear() } ${ date.getHours % 12 }${date.getMinutes()}`;
+  
+  interval = seconds / 86400;
+  if (interval > 1) return Math.floor(interval) + ((interval < 2) ? " day ago" : " days ago");
+  
+  interval = seconds / 3600;
+  if (interval > 1) return Math.floor(interval) + ((interval < 2) ? " hour ago" : " hours ago");
+  
+  interval = seconds / 60;
+  if (interval > 1) return Math.floor(interval) + ((interval < 2) ? " minute ago" : " minutes ago");
+  
+  return Math.floor(seconds) + " seconds ago";
 }
