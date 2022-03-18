@@ -90,6 +90,12 @@ button {
   height: 36px;
 }
 
+.btn-top-right img {
+  margin: auto;
+  display: block;
+  width: 80%;
+}
+
 .btn-menu {
   width: 200px;
   height: 40px;

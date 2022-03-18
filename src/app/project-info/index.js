@@ -45,6 +45,7 @@ document.body.scrollTop = window.innerWidth;
 let images = checkCachedImages();
 populateImages(images);
 
+
 divImages.addEventListener('scroll', () => {
   const index = Math.round(divImages.scrollLeft / window.innerWidth);
   const buttons = [...document.getElementsByClassName('btn-image-inactive')];
@@ -71,59 +72,84 @@ auth.onAuthStateChanged(async user => {
     desc.innerText = projectData.desc;
 
     // Assignment
-    const assignmentQuery = await getDocs(query(collection(db, 'assignments'), 
-                                         where('businessID', '==', businessID), 
-                                         where('projectIDAssigned', '==', projectID),
-                                         where('current', '==', true)));
+    // const assignmentQuery = await getDocs(query(collection(db, 'assignments'), 
+    //                                      where('businessID', '==', businessID), 
+    //                                      where('projectIDAssigned', '==', projectID),
+    //                                      where('current', '==', true)));
 
-    const equipmentData = assignmentQuery.docs.map(doc => {
+    const equipmentQuery = await getDocs(query(collection(db, 'equipment'), 
+                                         where('businessID', '==', businessID), 
+                                         where('projectAssigned', '==', projectName)));
+
+
+    const equipmentData = equipmentQuery.docs.map(doc => {
       let data = doc.data();
       data.id = doc.id;
       return data;
     });
 
     const divEquipmentContainer = document.getElementById('div-equipment-container');
-    equipmentData.forEach(assn => {
+    equipmentData.forEach(equip => {
       const item = document.createElement('div');
 
-      const date = timeSince(assn.createdAt.toDate());
+      const date = timeSince(equip.timeAssigned?.toDate());
 
-      item.innerHTML = `<strong>${ assn.equipmentAssigned }</strong>:\t`
-                       + `${ assn.userAssigned }\t${ date }`;
+      item.innerHTML = `<strong>${ equip.name }</strong>:\t`
+                       + `${ equip.userAssigned }\t${ date }`;
       
       item.style.display = 'block';
       divEquipmentContainer.appendChild(item);
     });
 
-    // History
-    const historyQuery = await getDocs(query(collection(db, 'assignments'), 
+    // History Towards
+    const fromHistoryQuery = await getDocs(query(collection(db, 'assignments'), 
                                          where('businessID', '==', businessID), 
-                                         where('projectIDAssigned', '==', projectID),
+                                         where('projectID', '==', projectID),
                                          orderBy('createdAt', 'desc'),
-                                         limit(5)));
+                                         limit(10)));
 
-    const historyData = historyQuery.docs.map(doc => {
+    // History Away
+    const toHistoryQuery = await getDocs(query(collection(db, 'assignments'), 
+                                         where('businessID', '==', businessID), 
+                                         where('lastProjectID', '==', projectID),
+                                         orderBy('createdAt', 'desc'),
+                                         limit(10)));
+
+    console.log(fromHistoryQuery, toHistoryQuery);
+
+    const historyData = fromHistoryQuery.docs.concat(toHistoryQuery.docs).map(doc => {
       let data = doc.data();
       data.id = doc.id;
       return data;
-    });
+    }).sort((a, b) => b.createdAt - a.createdAt);
+
+    console.log(historyData.map(a => [a.createdAt, a.projectName]));
 
     const divHistoryContainer = document.getElementById('div-history-container');
-    // for (let i in historyData) {
-    //   const item = document.createElement('div');
-    //   item.innerText = historyData[i].equipmentAssigned + ': ' + historyData[i].userAssigned + ': ' + historyData[i].createdAt.toDate();
-    //   item.style.display = 'block';
-    //   divHistoryContainer.appendChild(item);
-    // }
+
 
     historyData.forEach(assn => {
       const item = document.createElement('div');
 
-      const date = timeSince(assn.createdAt.toDate());
-
-      item.innerHTML = `<strong>${ assn.equipmentAssigned }</strong>: `
-                       + `${ assn.userAssigned } ${ date }`;
+      const dateStarted = timeSince(assn.createdAt.toDate());
+      console.log(assn);
+      let otherProject = assn.projectName;
+      let toFrom = 'to ->';
+      if (assn.projectID == projectID) {
+        otherProject = assn.lastProjectName;
+        toFrom = '<- from';
+      }
+      if (otherProject == undefined || otherProject == null) {
+        otherProject = ' (created)';
+        toFrom = '';
+      }
+      let lastUsername = assn.lastUsername;
+      if (lastUsername == null) lastUsername = '';
       
+      item.innerHTML = `<strong>${ assn.equipmentName }</strong>: `
+                     + `${ assn.username } ${ dateStarted } `
+                     + `${ toFrom } ${ otherProject } ${ lastUsername }`;
+
       item.style.display = 'block';
       divHistoryContainer.appendChild(item);
     });
@@ -248,6 +274,8 @@ async function downloadImages(count, name) {
 
 
 function timeSince(date) {
+
+  if (date == null) return '';
 
   const millis = date.getTime();
 

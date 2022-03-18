@@ -48,6 +48,7 @@ document.body.scrollTop = window.innerWidth;
 let images = checkCachedImages();
 populateImages(images);
 
+
 // Image scroll horizontal
 divImages.addEventListener('scroll', () => {
   const index = Math.round(divImages.scrollLeft / window.innerWidth);
@@ -58,10 +59,12 @@ divImages.addEventListener('scroll', () => {
   buttons[index].classList.add('btn-image-active');
 });
 
+
 // Image parallax
 document.body.addEventListener('scroll', () => {
   divImages.style.top = -document.body.scrollTop / 2 + 'px';
 });
+
 
 btnAssignmentModify.onclick = async () => {
 
@@ -94,35 +97,43 @@ async function changeEquipmentAssignment(project) {
 
   try {
 
-    await updateDoc(doc(db, 'equipment', equipmentID), { 
-      projectAssigned: project.name,
-      userAssigned: username,
-      timeAssigned: serverTimestamp()
-    });
+    let lastAssignment = null;
+    if (equipmentData?.assignmentRef) lastAssignment = await getDoc(equipmentData.assignmentRef);
+    const lastUsername = lastAssignment?.data()?.username || null;
+    const lastUserID = lastAssignment?.data()?.userID || null;
+    const lastProjectName = lastAssignment?.data()?.projectName || null;
+    const lastProjectID = lastAssignment?.data()?.projectID || null;
 
-    // Update previous assignments of this equipment to not current
-    const prevAssignments = await getDocs(query(collection(db, 'assignments'), 
-           where('businessID', '==', businessID), 
-           where('equipmentAssigned', '==', equipmentName),
-           where('current', '==', true)));
+    const timeNow = serverTimestamp();
 
-    console.log(prevAssignments.docs);
-
-    for (let i in prevAssignments.docs) 
-      await updateDoc(prevAssignments.docs[i].ref, { current: false });
-    
-    // console.log(equipmentName, equipmentID, username, userID, project.name, project.id);
-    await addDoc(collection(db, 'assignments'), {
+    const nextAssignment = await addDoc(collection(db, 'assignments'), {
       businessID,
-      current: true,
-      equipmentAssigned: equipmentName,
-      equipmentIDAssigned: equipmentID,
-      userAssigned: username,
-      userIDAssigned: userID,
-      projectAssigned: project.name,
-      projectIDAssigned: project.id,
-      createdAt: serverTimestamp()
+      nextAssignment: null,
+      equipmentName,
+      equipmentID,
+
+      username,
+      userID,
+      projectName: project.name,
+      projectID: project.id,
+
+      lastUsername,
+      lastUserID,
+      lastProjectName,
+      lastProjectID,
+
+      createdAt: timeNow
     });
+
+    if (lastAssignment?.ref) await updateDoc(lastAssignment.ref, { nextAssignment });
+
+    await updateDoc(doc(db, 'equipment', equipmentID), { 
+      assignmentRef: nextAssignment,
+      projectAssigned: project.name,
+      userAssigned: username,
+      timeAssigned: timeNow
+    });
+    
 
   }
   catch (err) { console.error(err); }
@@ -141,7 +152,6 @@ async function changeEquipmentAssignment(project) {
   }
 
   document.getElementById('div-assignment').children[0].innerText = 'Assignment: ' + project.name;
-
 
   alert('Added to ' + project.name + ' successfully');
 }

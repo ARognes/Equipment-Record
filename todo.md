@@ -95,3 +95,12 @@ Foreman may:
 Worker may:
 - checkout equipment to project assigned to
 - checkin equipment from project assigned to
+
+
+
+
+
+3/18/22
+
+End of service equipment + reason why
+

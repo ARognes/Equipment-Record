@@ -29,25 +29,24 @@
 
   </header>
 
-  <div id="equipment-add-menu" class="menu">
+  <div id="equipment-add-menu" class="menu" style="overflow-y: auto; max-height: calc(100vh - 80px)">
     <button onclick="window.location='../equipment'" class="btn-top-left"><</button>
-    <div id="div-images"></div>
-    <label for="camera" id="label-camera">Camera</label>
-    <input type="file" id="camera" accept="image/*" capture="application" multiple="true">
+    <!-- <div style="position: relative; top: 0; height: auto; over"> -->
 
-    <label for="images" id="label-images">Gallery</label>
-    <input type="file" id="images" accept="image/*" multiple="true">
-    <textarea id="desc" placeholder="description"></textarea>
-    <input type="number" id="price" placeholder="price">
-    <button id="btn-add-equipment-firestore">Add Equipment</button>
+      <div id="div-images"></div>
+      <label for="camera" id="label-camera">Camera</label>
+      <input type="file" id="camera" accept="image/*" capture="application" multiple="true">
+      
+      <label for="images" id="label-images">Gallery</label>
+      <input type="file" id="images" accept="image/*" multiple="true">
+      
+      <textarea id="desc" placeholder="description"></textarea>
+      <input type="number" id="price" placeholder="price">
+      <button id="btn-assignment" hidden="true">
+        <p style="margin: 0; padding: 0;">Assignment</p>
+      </button>
+      <button id="btn-add-equipment-firestore">Add Equipment</button>
+    <!-- </div> -->
   </div>
-
-  <!-- <div id="base-menu">
-    <button onclick="window.location='../projects'" class="btn-base-menu" ><img src="../global/images/projects.svg"></button>
-    <button onclick="window.location='../equipment'" class="btn-base-menu"><img src="../global/images/equipment.svg"></button>
-    <button onclick="window.location='../main'" class="btn-base-menu"><img src="../global/images/home.svg"></button>
-    <button onclick="window.location='../history'" class="btn-base-menu"><img src="../global/images/history.svg"></button>
-    <button onclick="window.location='../account'" class="btn-base-menu"><img src="../global/images/account.svg"></button>
-  </div> -->
 </body>
 </html>

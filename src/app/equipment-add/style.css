@@ -129,13 +129,31 @@
   font-family: 'Poppins', sans-serif;
 }
 
+#btn-assignment {
+  margin: 0;
+  padding: 6px;
+  border: 2px solid #ddd;
+  /* border-radius: 8px; */
+  position: absolute;
+  left: 2%;
+  top: 550px;
+  width: calc(96% - 16px);
+  height: auto;
+  min-height: 40px;
+  /* max-height: 120px; */
+  overflow-y: auto;
+  overflow-wrap: break-word;
+  font-size: large;
+  font-family: 'Poppins', sans-serif;
+}
+
 #btn-add-equipment-firestore {
   margin: 0;
   padding: 0;
   border: 0;
   /* border-radius: 8px; */
   position: fixed;
-  bottom: 70px;
+  bottom: 10px;
   left: 2%;
   width: 96%;
   height: 40px;
