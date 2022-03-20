@@ -20,7 +20,7 @@ const createAuth = () => {
         unsubscribe = onAuthStateChanged(auth, set)
 
       } else set(null)
-    })();
+    })()
 
     return unsubscribe
   })
@@ -35,12 +35,12 @@ const createAuth = () => {
     
     const db = getFirestore(app)
     const userRef = doc(db, 'users', username)
-    const userDoc = await getDoc(userRef);
-    if (userDoc.exists()) return;
+    const userDoc = await getDoc(userRef)
+    if (userDoc.exists()) return
 
-    await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(auth.currentUser, { displayName: username });
-    await sendEmailVerification(auth.currentUser);
+    await createUserWithEmailAndPassword(auth, email, password)
+    await updateProfile(auth.currentUser, { displayName: username })
+    await sendEmailVerification(auth.currentUser)
 
     // Create user in firestore
     await setDoc(userRef, {
@@ -56,7 +56,7 @@ const createAuth = () => {
   async function signInGoogle() {
     const { setPersistence, browserLocalPersistence, signInWithRedirect, GoogleAuthProvider } = await import('firebase/auth')
 
-    await setPersistence(auth, browserLocalPersistence);
+    await setPersistence(auth, browserLocalPersistence)
 
     await signInWithRedirect(auth, new GoogleAuthProvider())
   }
@@ -64,7 +64,7 @@ const createAuth = () => {
   async function signInEmail(email: string, password: string) {
     const { setPersistence, browserLocalPersistence, signInWithEmailAndPassword } = await import('firebase/auth')
 
-    await setPersistence(auth, browserLocalPersistence);
+    await setPersistence(auth, browserLocalPersistence)
 
     await signInWithEmailAndPassword(auth, email, password)
   }
@@ -75,19 +75,19 @@ const createAuth = () => {
     const { app } = await import('../app')
 
     // Filter parameters
-    if (!username || username.length < 2 || !password || password.length < 12) return;
+    if (!username || username.length < 2 || !password || password.length < 12) return
 
     // Get user from firestore
     const db = getFirestore(app)
-    const userDoc = await getDoc(doc(db, 'users', username));
-    if (!userDoc.exists()) return;
+    const userDoc = await getDoc(doc(db, 'users', username))
+    if (!userDoc.exists()) return
 
     // Get user's email
     const email = userDoc?.data()?.email
 
     if (!email || email.length < 3) return
 
-    await setPersistence(auth, browserLocalPersistence);
+    await setPersistence(auth, browserLocalPersistence)
     await signInWithEmailAndPassword(auth, email, password)
   }
 

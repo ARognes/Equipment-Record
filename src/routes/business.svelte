@@ -1,6 +1,9 @@
-<h1>Hello world!</h1>
 
-<a href="/on/account"><button>Back</button></a>
+
+<h1>Enter business number</h1>
+
+
+<a href="/">Login</a>
 
 <style>
 	h1 {

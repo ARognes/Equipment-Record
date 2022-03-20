@@ -12,17 +12,17 @@
   
   const loading = writable(false)
 
-  let signIn = true;
-  let viewPassword = false;
+  let signIn = true
+  let viewPassword = false
 
   let username = ""
   let email = ""
   let password = ""
   let confirmPassword = ""
 
-  let errorMsg = "";
+  let errorMsg = ""
 
-  async function loginEmail(): void {
+  async function loginEmail() {
     try {
       $loading = true
 
@@ -38,13 +38,13 @@
   async function loginGoogle() {
     try {
       $loading = true
-      await auth.signInGoogle();
+      await auth.signInGoogle()
     }
     catch (e) { errorMsg = <string> e; console.error(e) }
     finally { $loading = false }
   }
 
-  async function validateRegistration(): void {
+  async function validateRegistration() {
     try {
       $loading = true
       if (username.length < 1) throw new Error("Please enter your name")
@@ -64,7 +64,7 @@
   }
 
   function emailValid(email: string): boolean {
-    return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email));
+    return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
   }
 
   $: if ($auth) goto('/on/home')
@@ -74,7 +74,7 @@
 
 <!-- Auth status unknown -->
 {#if $auth === undefined}
-  Checking auth status &hellip;
+  Checking auth status &hellip
   <Loading />
 {:else if $auth === null} <!-- No auth found, register/sign in -->
 
