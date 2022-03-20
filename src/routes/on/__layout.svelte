@@ -33,8 +33,8 @@
 				const userData = userDoc?.data()
 				userData.uid = userRef.id
 
+				if (!userData) await goto('/business')
 				userDataStore.set(userData)
-				if (!$userDataStore) await goto('/business')
 			}
 			catch (e) { console.error(e) }
 

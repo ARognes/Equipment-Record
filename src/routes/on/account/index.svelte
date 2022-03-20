@@ -9,10 +9,9 @@
 </script>
 
 <header>
+	<h1>Account</h1>
 	<a href="/on/settings"><button id="settings">Settings</button></a>
 </header>
-
-<h1>Account</h1>
 
 <div id="menu">
 	<button>Nothing</button>
@@ -29,6 +28,14 @@ header
 	background-color: #bbb
 	margin: 0
 	height: 60px
+
+	h1
+		margin: 0
+		position: absolute
+		left: 25%
+		top: 5px
+		width: 50%
+		text-align: center
 
 	button
 		position: absolute

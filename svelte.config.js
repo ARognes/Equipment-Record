@@ -8,7 +8,13 @@ const config = {
 	preprocess: preprocess(),
 
 	kit: {
-		adapter: adapter()
+		adapter: adapter(),
+		// This fixes a bug: https://github.com/sveltejs/kit/issues/2418
+		vite: {
+			ssr: {
+				external: ['@xstate/svelte']
+			}
+		}
 	}
 };
 
