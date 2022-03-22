@@ -4,9 +4,11 @@
 	import { getContext } from 'svelte'
 	import { getDocs, doc, getFirestore, where, query, collection } from 'firebase/firestore/lite'
 	import { app } from '$lib/app'
+import { exclude_internal_props } from 'svelte/internal';
 
 	const userDataStore = getContext('userData')
-	let equipmentData = []
+	let equipmentData: any[] = []
+	let showEquipmentData : any[] = []
 
 	let doOnce = true
 	$: {
@@ -18,27 +20,105 @@
 			
 			const equipmentQuery = await getDocs(query(collection(db, 'equipment'),
 			where('businessID', '==', $userDataStore.businessID)))
-			equipmentData = equipmentQuery.docs.map(e => {
+			equipmentData = <any[]> equipmentQuery.docs.map(e => {
 				const eData = e.data()
 				eData.id = e.id
 				return eData
 			}).sort((a, b) => b.name - a.name)
 
-			console.log(equipmentData)
+			showEquipmentData = [...equipmentData]
+			for (let i = 0; i < showEquipmentData.length; i++) {
+				showEquipmentData[i].nameHighlight = [{ highlight: false, text: showEquipmentData[i].name }]
+				showEquipmentData[i].descHighlight = [{ highlight: false, text: showEquipmentData[i].desc }]
+			}
+
+			console.log(showEquipmentData);
 			
+
 		})()
+	}
+
+	let search
+
+	// Update name highlighting when search's value changes
+	$: {
+		(async () => {
+
+			// Reset equipment data shown
+			showEquipmentData = [...equipmentData]
+			for (let i = 0; i < showEquipmentData.length; i++) {
+				showEquipmentData[i].nameHighlight = [{ highlight: false, text: showEquipmentData[i].name }]
+				showEquipmentData[i].descHighlight = [{ highlight: false, text: showEquipmentData[i].desc }]
+			}
+
+			if (search == null || search.length == 0) return
+
+			const settings = search?.charAt(0)
+			const settings2 = search?.charAt(1)
+			let descSearch = 0, caseSens = 0
+
+			if (settings == '*' || settings2 == '*')
+			descSearch = 1
+			if (settings == '_' || settings2 == '_')
+				caseSens = 1
+
+			const caseValue = search?.substring(0 + descSearch + caseSens)
+			const value = caseSens ? caseValue : caseValue.toUpperCase()
+
+			if (value == null || value.length == 0) return
+			
+			for (let i = 0; i < showEquipmentData.length; i++) {
+				const compareText = descSearch ? ((caseSens) ? showEquipmentData[i].desc : showEquipmentData[i].desc.toUpperCase()) 
+																				: ((caseSens) ? showEquipmentData[i]?.name : showEquipmentData[i]?.name.toUpperCase())
+
+				if (descSearch) {
+					const desc = showEquipmentData[i].desc
+					if (desc == null || desc.length == 0 || !compareText.includes(value))
+						showEquipmentData.splice(i--, 1)
+					else 
+						showEquipmentData[i].descHighlight = matchSearch(value, desc)
+					continue
+				}
+
+				if (!compareText.includes(value)) 
+					showEquipmentData.splice(i--, 1)
+				else 
+					showEquipmentData[i].nameHighlight = matchSearch(value, showEquipmentData[i]?.name)
+			}
+		})()
+	}
+
+	function matchSearch(search: string, text: string): any[] {
+
+		if (search == null || search.length == 0) return [{ highlight: false, text}]
+
+		const pattern = new RegExp(search, "gi")
+		const matches = []
+		let match
+
+		// Split name and add 'highlight' boolean parameter
+		while (match = pattern.exec(text)) {
+			console.log(match)
+			const i = match.index, j = i + match[0].length
+			if (i) matches.push({ highlight: false, text: text.substring(0, i) })
+			matches.push({ highlight: true, text: text.substring(i, j) })
+			text = text.substring(j)
+		}
+		if (text) matches.push({ highlight: false, text })
+
+		return matches
 	}
 
 </script>
 
 <header>
-	<input type="text" placeholder="search equipment">
+	<input type="text" placeholder="search equipment" bind:value={ search }>
   <button id="filter">I</button>
 </header>
 
 
 <div id="items">
-	{#each equipmentData as item (item.name)}
+	{#each showEquipmentData as item (item.name)}
 		<Item info={ item }/>
 	{/each}
 </div>
