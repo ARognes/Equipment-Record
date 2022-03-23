@@ -5,58 +5,60 @@
 
 </script>
 
-<div id="item">
-  <img id="display" src={ tempSVG } alt="">
-  <div id="middle">
-    <!-- {#if info.nameHighlight}
-      {#each info.nameHighlight as matches}
-        <span class:highlight={ matches.highlight }>{ matches.string }</span>
+<div class="item">
+  <img class="display" src={ tempSVG } alt="">
+  <div class="middle">
+
+    <div class="name">
+      {#each info?.nameHighlight as matches}
+      <span class:highlight={ matches.highlight }>{ matches.text }</span>
       {/each}
-    {:else}
-      <span>{ info.name }</span>
+    </div>
 
-    {/if} -->
-
-    {#each info.nameHighlight as matches}
+    <div class="desc">
+      {#each info?.descHighlight as matches}
       <span class:highlight={ matches.highlight }>{ matches.text }</span>
-    {/each}
-
-    {#each info.descHighlight as matches}
-      <span class:highlight={ matches.highlight }>{ matches.text }</span>
-    {/each}
-
-    <!-- <p>{ info?.name }</p> -->
+      {/each}
+    </div>
 
   </div>
-  <div id="right">
+  <div class="right">
     <p>{ info?.userAssigned || "" }<br>{ info?.projectAssigned || "" }</p>
-
   </div>
 </div>
 
 <style lang="sass">
+
 .highlight
-  border-bottom: 3px solid red
-  color: red
-#item
+  // border-bottom: 3px solid red
+  color: white
+  background-color: #888
+  border-radius: 4px
+  border-width: 20px
+  padding: 1px
+
+.item
   position: relative
   display: flex
   margin: 0 0 2px 0
   left: 0
   width: 100%
-  height: 60px
+  height: 80px
   background-color: #eee
 
-#img
+.img
   height: 100%
   margin: auto
 
-#middle
+.middle
 
   height: 100%
   margin: 0 auto 0 10px
 
-#right
+  .desc
+    font-size: 12px
+
+.right
   height: 100%
   margin: 0 10px 0 auto
   color: blue

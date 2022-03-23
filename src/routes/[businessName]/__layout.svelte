@@ -31,7 +31,7 @@
 				const userDoc = await getDoc(userRef)
 				
 				const userData = userDoc?.data()
-				userData.uid = userRef.id
+				userData.displayName = userRef.id
 
 				if (!userData) await goto('/business')
 				userDataStore.set(userData)
