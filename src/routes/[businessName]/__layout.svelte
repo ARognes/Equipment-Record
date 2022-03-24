@@ -7,6 +7,7 @@
 	import { getDoc, doc, getFirestore } from 'firebase/firestore/lite'
 	import { writable } from 'svelte/store'
 	import { setContext } from 'svelte'
+	import { session } from '$lib/storage'
 
 	const userDataStore = writable(null)
 	setContext('userData', userDataStore)
@@ -20,9 +21,9 @@
 				if (!browser) return
 				if (!$auth) {
 					if (!firstPass) await goto('/')
-					firstPass = false
 					return
 				}
+				firstPass = false
 
 				if ($userDataStore) return
 				
@@ -35,6 +36,11 @@
 
 				if (!userData) await goto('/business')
 				userDataStore.set(userData)
+
+				if (session.getItem('businessID') === $userDataStore.businessID) return
+				console.log('Cleared session')
+				session.clear()
+				session.setItem('businessID', $userDataStore.businessID)
 			}
 			catch (e) { console.error(e) }
 
@@ -45,7 +51,7 @@
 
 <slot />
 
-<Navbar path="on" />
+<Navbar path={ $userDataStore?.businessName } />
 
 
 <style>

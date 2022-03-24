@@ -12,7 +12,7 @@
 	import { getDocs, getFirestore, where, query, collection } from 'firebase/firestore/lite'
 	import { app } from '$lib/app'
 	import { session } from '$lib/storage'
-
+	
 	const userDataStore = getContext('userData')
 	let equipmentData: any[] = []
 	// let items : any[] = []

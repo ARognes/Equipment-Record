@@ -11,6 +11,8 @@
 	let view = 1
 	let search
 	let showItems
+
+	$: items && resetEquipment()
 	
 	// Update name highlighting when search's value changes
 	$: searchbar(search)
