@@ -9,6 +9,8 @@
   import viewSVG from '$lib/images/view.svg'
   import hideSVG from '$lib/images/hide.svg'
   import lockSVG from '$lib/images/lock.svg'
+import { getIdTokenResult } from 'firebase/auth';
+import { session } from '$lib/storage';
   
   const loading = writable(false)
 
@@ -67,7 +69,17 @@
     return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
   }
 
-  $: if ($auth) goto('/on/home')
+  $: {
+    if ($auth) {
+      (async () => {
+
+        const token = await getIdTokenResult($auth)
+        session.clear()
+        session.setItem('accessLevel', token?.claims?.accessLevel || 0);
+        goto('/on/home')
+      })()
+    }
+  }
   
 
 </script>

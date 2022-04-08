@@ -8,6 +8,12 @@
 	import { writable } from 'svelte/store'
 	import { setContext } from 'svelte'
 	import { session } from '$lib/storage'
+	import { navigating } from '$app/stores'
+	import Loading from '$lib/Loading/Loading.svelte'
+
+	const loading = writable(false)
+
+	$: $loading = !!$navigating
 
 	const userDataStore = writable(null)
 	setContext('userData', userDataStore)
@@ -43,14 +49,27 @@
 			catch (e) { console.error(e) }
 		})()
 	}
-	
+
 </script>
+
+
+<svelte:head>
+	<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+	<link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Poppins">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
+</svelte:head>
+
+{#if $loading}
+	<Loading />
+{/if}
 
 <slot />
 
-<Navbar path={ $userDataStore?.businessName }/>
-
 
 <style lang="sass">
-
-</style>
+	:root 
+		/* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+			'Open Sans', 'Helvetica Neue', sans-serif; */
+		font-family: 'Poppins', sans-serif
+	
+	</style>

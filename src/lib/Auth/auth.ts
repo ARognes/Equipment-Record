@@ -1,13 +1,14 @@
 import { readable } from 'svelte/store'
 import { browser } from '$app/env'
-import type { Auth, User } from "firebase/auth"
+import type { Auth } from 'firebase/auth'
 
 const createAuth = () => {
   let auth: Auth
 
   const { subscribe } = readable<User>(undefined, set => {
-    let unsubscribe = () => {}
 
+    let unsubscribe = () => {}
+    
     (async () => {
 
       // Send auth to browser

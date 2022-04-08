@@ -1,43 +1,13 @@
 <script lang="ts">
-	import { getContext } from 'svelte'
-	import { getDocs, getFirestore, where, query, collection } from 'firebase/firestore/lite'
-	import { app } from '$lib/app'
-	import { session } from '$lib/storage'
 
-	const userDataStore = getContext('userData')
-
-	let assignmentData
-
-	$: init($userDataStore)
-
-	async function init(userData) {
-		if (!userData) return
-
-		assignmentData = JSON.parse(session.getItem('assignmentData'))
-
-		if (!assignmentData || assignmentData?.length == 0) {
-			console.log('hit')
-			const db = getFirestore(app)
-			const equipmentQuery = await getDocs(query(collection(db, 'assignments'),
-			where('businessID', '==', userData.businessID)))
-			assignmentData = <any[]> equipmentQuery.docs.map(e => {
-				const eData = e.data()
-				eData.id = e.id
-				return eData
-			})
-
-			session.setItem('assignmentData', JSON.stringify(assignmentData))
-		}
-
-		console.log('init', userData?.displayName)
-	}
+	let assignmentData = []
 
 </script>
+
 
 <header>
 	<h1>History</h1>
 </header>
-
 
 <div id="menu">
 

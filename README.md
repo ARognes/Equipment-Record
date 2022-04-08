@@ -32,6 +32,18 @@ npm run build/deploy/deploy-debug
 ```
 Make sure firebase rules allow use
 
+## Dev Installation Other Info
+
+firestore.cors.json contains the cors http codes allowed to access the firebase storage bucket.
+
+Use gsutil to set cors for the bucket, [check the docs](https://cloud.google.com/storage/docs/configuring-cors#gsutil_2)
+`gsutil cors set firestore.cors.json gs://...
+`
+
+
+
+
+
 ## Later TODO's (small things)
 - [x] Load small images of the equipment, if user requests full images then they will be loaded.
 - [ ] [exif-js](https://github.com/exif-js/exif-js) When getting qr-code, access location metadata of picture and save to firestore

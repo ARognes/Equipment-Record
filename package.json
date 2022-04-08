@@ -23,6 +23,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-svelte3": "^3.2.1",
     "firebase": "^9.6.9",
+    "firebase-admin": "^10.0.2",
     "prettier": "^2.5.1",
     "prettier-plugin-svelte": "^2.5.0",
     "sass": "^1.49.9",
@@ -35,6 +36,9 @@
   },
   "type": "module",
   "dependencies": {
-    "storage-factory": "^0.2.0"
+    "base64-arraybuffer": "^1.0.2",
+    "cookie": "^0.4.2",
+    "dotenv": "^16.0.0",
+    "encrypt-storage": "^2.2.6"
   }
 }

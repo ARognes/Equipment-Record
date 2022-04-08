@@ -6,26 +6,25 @@
 <style lang="sass">
 
 $color: #44f
-$size: 100px
-$inner-size: 60px
+$size: 60px
 $border: 6px
 
 .lds-ring 
-  // position: fixed
-  display: inline-block
-  position: absolute
+  display: block
+  position: relative
   left: calc(50% - $size / 2)
   top: calc(50% - $size / 2)
   width: $size
   height: $size
+  margin: 0
 
   div 
     box-sizing: border-box
     display: block
     position: absolute
-    width: $inner-size
-    height: $inner-size
-    margin: $border
+    width: $size
+    height: $size
+    margin: 0
     border: $border solid #fff
     border-radius: 50%
     animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite

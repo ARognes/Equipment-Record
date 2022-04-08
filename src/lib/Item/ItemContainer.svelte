@@ -1,8 +1,6 @@
-
 <script lang="ts">
 	import ItemList from '$lib/Item/ItemList.svelte'
 	import ItemCard from '$lib/Item/ItemCard.svelte'
-	import ItemSquare from '$lib/Item/ItemSquare.svelte'
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher()
 
@@ -35,7 +33,7 @@
 		if (settings1 == '_' || settings2 == '_') caseSens = 1
 
 		// Clip settings off search
-		const value = search?.substring(0 + descSearch + caseSens)
+		const value = search?.substring(0 + descSearch + caseSens).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 		// Empty search
 		if (value == null || value.length == 0) return
@@ -84,7 +82,7 @@
 
 <header>
 	<input type="text" placeholder="Search" bind:value={ search }>
-	<button id="view" on:click={ () => { view = (view + 1) % 3 } }>{ view }</button>
+	<button id="view" on:click={ () => { view = (view + 1) % 2 } }>{ view }</button>
 </header>
 
 {#if showItems}
@@ -93,10 +91,8 @@
 			<div on:click={ () => dispatch('innerClick', { item }) }>
 				{#if view == 0}
 					<ItemList bind:info={ item } />
-				{:else if view == 1}
-					<ItemCard bind:info={ item } />
 				{:else}
-					<ItemSquare bind:info={ item } />
+					<ItemCard bind:info={ item } />
 				{/if}
 			</div> 
 		{/each}

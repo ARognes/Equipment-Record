@@ -1,3 +1,7 @@
+<script lang="ts">
+	
+</script>
+
 <h1>Hello world!</h1>
 
 <a href="/on/account"><button>Back</button></a>

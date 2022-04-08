@@ -5,43 +5,32 @@
 	 * 
 	 * 
 	 */
-
+	
+	import Navbar from '$lib/Navbar.svelte';
 	import ItemContainer from '$lib/Item/ItemContainer.svelte'
 	import EquipmentInfo from '$lib/Item/EquipmentInfo.svelte'
+	import { allDocs, getSRC } from '$lib/firebase'
 	import { getContext } from 'svelte'
-	import { getDocs, getFirestore, where, query, collection } from 'firebase/firestore/lite'
-	import { app } from '$lib/app'
-	import { session } from '$lib/storage'
 	
-	const userDataStore = getContext('userData')
-	let equipmentData: any[] = []
-	// let items : any[] = []
-
-	// let search
 	let equipmentInfo = null
 
-	$: init($userDataStore)
+	let equipmentData = []
 
-	async function init(userData) {
-		if (!userData || equipmentData?.length > 0) return
+	const userDataStore = getContext('userData')
 
-		equipmentData = JSON.parse(session.getItem('equipmentData'))
+	$: $userDataStore && getEquipmentData()
 
-		if (!equipmentData || equipmentData?.length == 0) {
-			console.log('hit')
-			const db = getFirestore(app)
-			const equipmentQuery = await getDocs(query(collection(db, 'equipment'),
-			where('businessID', '==', userData.businessID)))
-			equipmentData = <any[]> equipmentQuery.docs.map(e => {
-				const eData = e.data()
-				eData.id = e.id
-				return eData
-			})
+	async function getEquipmentData() {
+		
+		equipmentData = await allDocs($userDataStore.businessID, 'equipment')
+		
+		for (let i in equipmentData) {
+			equipmentData[i].attributes = !equipmentData[i]?.attributes ? [] : Object.keys(equipmentData[i].attributes).map(key => ({ key, val: equipmentData[i].attributes[key] }))
 
-			session.setItem('equipmentData', JSON.stringify(equipmentData))
+			console.log(equipmentData[i].attributes)
+			equipmentData[i].tinySRC = []
+			getSRC(equipmentData[i], true, 0).then(src => equipmentData[i].tinySRC[0] = src)
 		}
-
-		console.log('init', userData?.displayName)
 	}
 
 	function handleClick(event) {
@@ -50,13 +39,12 @@
 	
 </script>
 
+
 {#if equipmentInfo == null}
-
 	<ItemContainer bind:items={ equipmentData } on:innerClick={ handleClick } />
-
+	<Navbar path={ $userDataStore?.businessName }/>
 {:else}
 	<EquipmentInfo bind:equipmentInfo on:back={ () => equipmentInfo = null }/>
-
 {/if}
 
 

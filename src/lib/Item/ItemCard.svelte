@@ -1,12 +1,19 @@
 <script lang="ts">
-  import tempSVG from '$lib/images/temp.svg'
+  import errorSVG from '$lib/images/error.svg'
+  import Loading from '$lib/Loading/Loading.svelte';
 
   export let info
 
 </script>
 
 <div class="item">
-  <img class="display" src={ tempSVG } alt="">
+  <div class="left">
+    {#if info?.tinySRC?.length }
+      <img src={ info?.tinySRC[0] || errorSVG } alt="">
+    {:else}  
+      <Loading />
+    {/if}
+  </div>
   <div class="middle">
 
     <div class="name">
@@ -29,11 +36,12 @@
 
 <style lang="sass">
 
+$item-height: 80px
+
 .highlight
-  // border-bottom: 3px solid red
   color: white
   background-color: #888
-  border-radius: 4px
+  // border-radius: 4px
   border-width: 20px
   padding: 1px
 
@@ -43,23 +51,26 @@
   margin: 0 0 2px 0
   left: 0
   width: 100%
-  height: 80px
+  height: $item-height
   background-color: #eee
 
-.img
-  height: 100%
-  margin: auto
+.left
+  height: $item-height
+  width: $item-height
+  margin: 0
+
+  img
+    height: $item-height
 
 .middle
-
-  height: 100%
+  height: $item-height
   margin: 0 auto 0 10px
 
   .desc
     font-size: 12px
 
 .right
-  height: 100%
+  height: $item-height
   margin: 0 10px 0 auto
   color: blue
   font-weight: bold
