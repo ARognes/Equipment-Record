@@ -1,6 +1,6 @@
 [
   {
-    "origin": ["https://app.equipment-record.com", "http://localhost:3000"],
+    "origin": ["https://app.equipment-record.com", "http://localhost:3000", "https://equipment-record.vercel.app"],
     "responseHeader": ["Content-Type"],
     "method": ["GET", "POST", "PUT", "DELETE"],
     "maxAgeSeconds": 3600

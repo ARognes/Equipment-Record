@@ -1,16 +1,18 @@
 <script lang="ts">
 	import ItemList from '$lib/Item/ItemList.svelte'
 	import ItemCard from '$lib/Item/ItemCard.svelte'
-	import { createEventDispatcher } from 'svelte';
-	const dispatch = createEventDispatcher()
+	import { getContext } from 'svelte';
+	import { goto } from '$app/navigation';
 
 	export let items
 	
 	let view = 1
 	let search
-	let showItems
+	let searchItems
 
-	$: items && resetEquipment()
+	const userDataStore = getContext('userData')
+
+	$: items && resetSearchItems()
 	
 	// Update name highlighting when search's value changes
 	$: searchbar(search)
@@ -19,7 +21,7 @@
 		if (items == null) return
 
 		// Reset equipment data shown
-		resetEquipment()
+		resetSearchItems()
 
 		// Empty searchbar
 		if (search == null || search.length == 0) return
@@ -34,14 +36,14 @@
 
 		// Clip settings off search
 		const value = search?.substring(0 + descSearch + caseSens).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-
+		
 		// Empty search
 		if (value == null || value.length == 0) return
 		
-		for (let i = 0; i < showItems.length; i++) {
-			const text = showItems[i][descSearch ? 'desc' : 'name']
-			if (text == null || text.length == 0 || !testSearch(value, text, caseSens)) showItems.splice(i--, 1)
-			else showItems[i][descSearch ? 'descHighlight' : 'nameHighlight'] = matchSearch(value, text, caseSens)
+		for (let i = 0; i < searchItems.length; i++) {
+			const text = searchItems[i][descSearch ? 'desc' : 'name']
+			if (text == null || text.length == 0 || !testSearch(value, text, caseSens)) searchItems.splice(i--, 1)
+			else searchItems[i][descSearch ? 'descHighlight' : 'nameHighlight'] = matchSearch(value, text, caseSens)
 		}
 	}
 
@@ -68,13 +70,13 @@
 		return matches
 	}
 
-	function resetEquipment() {
-		showItems = [...items]
-		for (let i = 0; i < showItems.length; i++) {
-			showItems[i].nameHighlight = [{ highlight: false, text: showItems[i].name }]
-			showItems[i].descHighlight = [{ highlight: false, text: showItems[i].desc }]
+	function resetSearchItems() {
+		searchItems = [...items]
+		for (let i = 0; i < searchItems.length; i++) {
+			searchItems[i].nameHighlight = [{ highlight: false, text: searchItems[i].name }]
+			searchItems[i].descHighlight = [{ highlight: false, text: searchItems[i].desc }]
 		}
-		showItems = showItems.sort((a, b) => a.name.localeCompare(b.name))
+		searchItems = searchItems.sort((a, b) => a.name.localeCompare(b.name))
 	}
 
 </script>
@@ -85,16 +87,16 @@
 	<button id="view" on:click={ () => { view = (view + 1) % 2 } }>{ view }</button>
 </header>
 
-{#if showItems}
-	<div id={view == 2 ? 'showItems-grid' : 'showItems'}>
-		{#each showItems as item (item.id)}
-			<div on:click={ () => dispatch('innerClick', { item }) }>
+{#if searchItems}
+	<div id={view == 2 ? 'searchItems-grid' : 'searchItems'}>
+		{#each searchItems as item (item.id)}
+			<div on:click={ async () => await goto(`/${ $userDataStore.businessName }/equipment/${ item.name }`) }>
 				{#if view == 0}
 					<ItemList bind:info={ item } />
 				{:else}
 					<ItemCard bind:info={ item } />
 				{/if}
-			</div> 
+			</div>
 		{/each}
 	</div>
 {/if}
@@ -104,7 +106,7 @@
 
 $grid-gaps: 4px
 
-#showItems
+#searchItems
 	position: relative
 	display: block
 	height: calc(100% - 100px)
@@ -112,7 +114,7 @@ $grid-gaps: 4px
 	overflow-y: auto
 	overflow-x: hidden
 
-#showItems-grid
+#searchItems-grid
 	position: relative
 	display: grid
 	grid-template-columns: calc(50vw - $grid-gaps) calc(50vw - $grid-gaps)

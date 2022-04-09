@@ -1,13 +1,5 @@
-import { browser } from "$app/env"
+import { browser } from '$app/env'
 
-
-// `import 'dotenv/config'
-
-// if (!browser) {
-
-//   const test = process.env.SECRET
-//   console.log(test)
-// }`
 
 export let session, local
 
@@ -55,3 +47,48 @@ async function init() {
     storageType: 'localStorage',
   })
 }
+
+
+// Apapted from https://fractils.fractal-hq.com/#localStorageStore
+// who adapted from https://svelte.dev/repl/7b4d6b448f8c4ed2b3d5a3c31260be2a?version=3.34.0
+/**
+ *
+ * A Svelte store that uses session to store data.
+ * @param key - The key to store the data under.
+ * @param value - The initial value of the store.
+ * @returns a writable store.
+ * @example
+ * const store = sessionStorage('foo', 'bar')
+ */
+// export const sessionStorage = <T = any>(key: string, value: T): Writable<T> => {
+// 	const { set: setStore, ...readableStore } = writable(value, () => {
+// 		if (!browser) return
+
+// 		getAndSetFromSession()
+
+// 		const updateFromStorageEvents = (e: StorageEvent) => {
+// 			if (e.key === key) getAndSetFromSession()
+// 		}
+
+// 		window.addEventListener('storage', updateFromStorageEvents)
+// 		return () => window.removeEventListener('storage', updateFromStorageEvents)
+// 	})
+
+// 	//? Set both session and this Svelte store
+// 	const set = (value: T) => {
+//     console.log('set happened')
+// 		setStore(value)
+//     session.setItem(key, value)
+// 	}
+
+// 	//? Synchronize the Svelte store with session
+// 	const getAndSetFromSession = () => {
+// 		let sessionValue = session.getItem(key)
+//     if (sessionValue === null) session.setKey(key, value)
+//     setStore(sessionValue)
+// 	}
+
+// 	return { ...readableStore, set }
+// }
+
+// export default sessionStorage

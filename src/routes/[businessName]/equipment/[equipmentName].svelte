@@ -1,30 +1,31 @@
 <script lang="ts">
 	import Gallery from '$lib/Item/Gallery.svelte'
-	import Attributes from './Attributes.svelte';
-	import { createEventDispatcher } from "svelte";
+	import Attributes from '$lib/Item/Attributes.svelte';
 	import backSVG from '$lib/images/back.svg'
 	import editSVG from '$lib/images/edit.svg'
 	import doneSVG from '$lib/images/done.svg'
 	import closeSVG from '$lib/images/close.svg'
 	import addSVG from '$lib/images/add.svg'
 	import { session } from '$lib/storage';
+	import { updateDoc } from '$lib/firebase';
+  import { page } from '$app/stores';
+  import { goto } from '$app/navigation';
 
-  export let equipmentInfo
+
+  let equipment = session.getItem('equipment')
+
+  let item = equipment?.find(e => e.name == $page.params.equipmentName)
 
 	let editing = false
 
-		
-	$: console.log(equipmentInfo.attributes.length)
-
 	const accessLevel = session.getItem('accessLevel')
-
-  const dispatch = createEventDispatcher()
+  console.log(accessLevel)
 
 	function toggleEditing() {
 		editing = !editing
 		if (editing) return
 
-		equipmentInfo.attributes = equipmentInfo.attributes
+		item.attributes = item.attributes
 			.filter(attr => attr.key?.length > 0)
 			.map(attr => ({key: attr.key, val: attr.val}))
 	}
@@ -32,57 +33,60 @@
 	function makeEdits() {
 		editing = false
 
-		console.log(equipmentInfo.attributes)
-		
-		const filteredAttributes = equipmentInfo.attributes
+		const filteredAttributes = item.attributes
 			.filter(attr => !attr.hidden && (attr.editKey?.length > 0 || attr.key?.length > 0))
 			.map(attr => ({ key: attr.key, val: attr.val, editKey: attr?.editKey || attr.key, editVal: attr?.editVal || attr.val }))
-		console.log(filteredAttributes)
 		
 		const attrEditKeys = filteredAttributes.map(attr => attr.editKey);
-		equipmentInfo.attributes = filteredAttributes
+		item.attributes = filteredAttributes
 			.filter((attr, i) => attrEditKeys.indexOf(attr.editKey) === i)
-			.map(attr => ({key: attr.editKey || attr.key, val: attr.editVal || attr.val}))
+			.map(attr => ({ key: attr.editKey || attr.key, val: attr.editVal || attr.val }))
 
-		console.log(equipmentInfo.attributes)
+    // Convert array to map
+    const attributes = item.attributes.reduce((map, obj) => {
+        map[obj.key] = obj.val
+        return map
+    }, {});    
 
 		// Firebase changes
+		updateDoc('equipment', item.id, { attributes })
 
+    // Update locally
+    session.setItem('equipment', equipment)
 	}
-
 
 </script>
 
 
 <header>
-	<button on:click={ () => dispatch('back') }><img src={ backSVG } alt="<"></button>
-	
-	{#if !editing}
-		<p>{ equipmentInfo.name }</p>
-	{:else}
-		<input type="text" id="name" value={ equipmentInfo.name }>
-	{/if}
-	{#if accessLevel && accessLevel >= 2 }
-		<button on:click={ toggleEditing }><img src={ editing ? closeSVG : editSVG } alt="Edit"></button>
-	{/if}
+  <button on:click={ async () => goto(`/${ $page.params.businessName }/equipment`) }><img src={ backSVG } alt="<"></button>
+  
+  {#if !editing}
+    <p>{ item?.name || '' }</p>
+  {:else}
+    <input type="text" id="name" value={ item.name }>
+  {/if}
+  {#if accessLevel && accessLevel >= 2 }
+    <button on:click={ toggleEditing }><img src={ editing ? closeSVG : editSVG } alt="Edit"></button>
+  {/if}
 </header>
 
 <div id="body">
-	
-	<Gallery bind:equipmentInfo />
-	
-	<Attributes bind:equipmentInfo bind:editing />
+  
+  <Gallery bind:item />
+  
+  <Attributes bind:attributes={ item.attributes } bind:editing />
 
-	{#if editing}
-		{#if equipmentInfo?.attributes?.length < 10 }
-			<button class="add" on:click={ () => equipmentInfo.attributes = [...equipmentInfo.attributes, {key: '', val: ''}] }><img src={ addSVG } alt="Add"></button>
-		{/if}
-		<div id="controls">
-			<button id="done" on:click={ makeEdits }><img src={ doneSVG } alt="Done"></button>
-			<button id="cancel" on:click={ toggleEditing }><img src={ closeSVG } alt="Cancel"></button>
-		</div>
-	{/if}
-	
+  {#if editing}
+    {#if item?.attributes?.length < 10 }
+      <button class="add" on:click={ () => item.attributes = [...item.attributes, {key: '', val: ''}] }><img src={ addSVG } alt="Add"></button>
+    {/if}
+    <div id="controls">
+      <button id="done" on:click={ makeEdits }><img src={ doneSVG } alt="Done"></button>
+      <button id="cancel" on:click={ toggleEditing }><img src={ closeSVG } alt="Cancel"></button>
+    </div>
+  {/if}
+  
 </div>
 
 

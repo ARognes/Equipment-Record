@@ -41,12 +41,23 @@ Use gsutil to set cors for the bucket, [check the docs](https://cloud.google.com
 `
 
 
-
-
-
-## Later TODO's (small things)
+## Later TODOs (small things)
 - [x] Load small images of the equipment, if user requests full images then they will be loaded.
+- [X] [qrious](https://github.com/neocotic/qrious) Use this to give the user printable qr-codes
+- [X] Find barcode printing js library 
+- [X] Convert all JavaScript to TypeScript for better documentation
 - [ ] [exif-js](https://github.com/exif-js/exif-js) When getting qr-code, access location metadata of picture and save to firestore
-- [ ] [qrious](https://github.com/neocotic/qrious) Use this to give the user printable qr-codes
-- [ ] Find barcode printing js library 
-- [ ] Convert all JavaScript to TypeScript for better documentation
+- [ ] Use [tailwind](https://tailwindcss.com/) css
+- [ ] Implement industry grade qr-code scanner
+- [ ] Equipment attributes
+- [ ] Equipment templates
+- [ ] Project templates
+- [ ] Testing
+- [ ] [Useful sveltekit utilities](https://fractils.fractal-hq.com/#localStorageStore)
+
+
+## Long term TODOs
+- [ ] Use Google Cloud
+- [ ] Try out redis
+- [ ] Use GraphQL
+- [ ] GraphQL with MongoDB, PostgreSQL, Sqlite?

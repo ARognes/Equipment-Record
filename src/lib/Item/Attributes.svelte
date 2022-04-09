@@ -1,10 +1,6 @@
 <script lang="ts">
-import { onMount } from "svelte";
-import { attr } from "svelte/internal";
-
-
   
-  export let equipmentInfo, editing
+  export let attributes, editing
 
 	let textAreas = []
 
@@ -12,18 +8,17 @@ import { attr } from "svelte/internal";
 		e.target.style.height = 'auto'
 		let offset = e.target.offsetHeight - e.target.clientHeight
 		e.target.style.height = e.target.scrollHeight + offset + 'px'
-		equipmentInfo.attributes[i].editVal = e.target.value
+		attributes[i].editVal = e.target.value
 	}
 
 	function inputName(e, i) {
-		equipmentInfo.attributes[i].editKey = e.target.value
+		attributes[i].editKey = e.target.value
 	}
 
 	function removeAttribute(i: number) {
-		console.log(equipmentInfo)
-		equipmentInfo.attributes[i].hidden = true
-		// equipmentInfo.attributes = [...equipmentInfo.attributes.slice(0, i), ...equipmentInfo.attributes.slice(i + 1)]
-		console.log(equipmentInfo)
+		console.log()
+		attributes[i].hidden = true
+		console.log()
 	}
 
 	$: {
@@ -40,7 +35,7 @@ import { attr } from "svelte/internal";
 
 
 <div id="attributes">
-  {#each equipmentInfo.attributes as attr, i}
+	{#each attributes || [] as attr, i}
 		{#if !attr.hidden }
 			<div class="attribute">
 				{#if !editing }
@@ -55,7 +50,7 @@ import { attr } from "svelte/internal";
 				{/if}
 			</div>
 		{/if}
-  {/each}
+	{/each}
 </div>
 
 

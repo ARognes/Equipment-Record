@@ -37,6 +37,7 @@
 				if (!userData) await goto('/business')
 				userDataStore.set(userData)
 
+				// sessionStorage('businessID', $userDataStore.businessID)
 				if (session.getItem('businessID') === $userDataStore.businessID) return
 				session.setItem('businessID', $userDataStore.businessID)
 			}

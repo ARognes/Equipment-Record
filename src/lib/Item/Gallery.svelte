@@ -2,37 +2,32 @@
   import Loading from "$lib/Loading/Loading.svelte";
   import { getSRC } from "$lib/firebase";
 
-  export let equipmentInfo
+  export let item
 
-
-  // function checkCachedImages() {
-  //   const imageURLs = [];
-  //   let j = 0;
-  //   while (j < PROJECT_IMAGES_MAX) {
-  //     const imageName = `${ projectID }/tiny_img_${ j++ }`;
-
-  //     // Check localstorage
-  //     const url = local.getItem(imageName);
-  //     if (url) imageURLs.push(url);
-  //     else break;
-  //   }
-  //   return imageURLs;
-  // }
-
-  // let images = [...equipmentInfo.tinySRC]
-  let images = Array(equipmentInfo.imageOrder.length).fill(null)
-  for (let i = 0; i < equipmentInfo.tinySRC.length; i++) 
-    images[i] = equipmentInfo.tinySRC[i]
-  images = images.map(src => ({ src, done: false }))
+  let images = []
   
   async function init() {
-    equipmentInfo.imgSRC = []
-    for (let i = 0; i < equipmentInfo.imageOrder.length; i++) {
-      equipmentInfo.imgSRC[i] = await getSRC(equipmentInfo, false, i)
-      images[i] = { src: equipmentInfo.imgSRC[i], done: true }
+
+    images = Array(item.imageOrder.length).fill({ src: '', done: false })
+    
+    // Get tiny images
+    // if (!item.tinySRC || item.tinySRC.length == 0 || item.tinySRC[0] == null) item.tinySRC = [ await getSRC(item, true, 0) ]
+    for (let i = 0; i < item.tinySRC?.length || 0; i++) 
+        images[i].src = item.tinySRC[i]
+
+    // Get full images one at a time
+    item.imgSRC = []
+    for (let i = 0; i < item.imageOrder.length; i++) {
+      item.imgSRC[i] = await getSRC(item, false, i)
+      images[i] = { src: item.imgSRC[i], done: true }
     }
   }
-  init()
+
+  let done = false
+  $: if (item && !done) {
+    done = true
+    init()
+  }
 
   let imgElem = []
   let btnActive = 0
@@ -48,9 +43,9 @@
   };
 
   // Image parallax
-  document.body.addEventListener('scroll', () => {
-    gallery.style.top = -document.body.scrollTop / 2 + 'px';
-  });
+  // document.body.addEventListener('scroll', () => {
+  //   gallery.style.top = -document.body.scrollTop / 2 + 'px';
+  // });
 
 </script>
 
@@ -60,11 +55,14 @@
   {#if images != null}
   {#each images as img, i}
   
-  {#if img?.src }
-    <img src={ img.src } class={ img.done ? "noblur" : "blur"} bind:this={ imgElem[i] } alt="">
-  {:else}
-    <Loading />
-  {/if}
+    {#if img?.src }
+      <img src={ img.src } class={ img.done ? "noblur" : "blur"} bind:this={ imgElem[i] } alt="">
+    {:else}
+      <div class="loading-container">
+        <Loading />
+      </div>
+    {/if}
+
   {/each}
   {/if}
 </div>
@@ -102,6 +100,16 @@
     scrollbar-width: none
 
     img
+      margin: 0
+      padding: 0
+      position: relative
+      width: 100vw
+      height: 100vw
+      transition: 250ms filter ease-in
+      scroll-snap-stop: always
+      scroll-snap-align: start
+
+    .loading-container
       margin: 0
       padding: 0
       position: relative

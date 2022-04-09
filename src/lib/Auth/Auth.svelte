@@ -9,8 +9,8 @@
   import viewSVG from '$lib/images/view.svg'
   import hideSVG from '$lib/images/hide.svg'
   import lockSVG from '$lib/images/lock.svg'
-import { getIdTokenResult } from 'firebase/auth';
-import { session } from '$lib/storage';
+  import { getIdTokenResult } from 'firebase/auth';
+  import { session } from '$lib/storage';
   
   const loading = writable(false)
 
@@ -64,7 +64,7 @@ import { session } from '$lib/storage';
     catch (e) { errorMsg = <string> e; console.error(e) }
     finally { $loading = false }
   }
-
+  
   function emailValid(email: string): boolean {
     return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
   }
@@ -75,13 +75,13 @@ import { session } from '$lib/storage';
 
         const token = await getIdTokenResult($auth)
         session.clear()
-        session.setItem('accessLevel', token?.claims?.accessLevel || 0);
+        // sessionStorage('accessLevel', token?.claims?.accessLevel || 0)
+        session.setItem('accessLevel', token?.claims?.accessLevel || 0)
         goto('/on/home')
       })()
     }
   }
   
-
 </script>
 
 <!-- Auth status unknown -->
