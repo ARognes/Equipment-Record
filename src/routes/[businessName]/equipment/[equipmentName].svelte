@@ -5,18 +5,23 @@
 	import editSVG from '$lib/images/edit.svg'
 	import doneSVG from '$lib/images/done.svg'
 	import closeSVG from '$lib/images/close.svg'
-	// import addSVG from '$lib/images/add.svg'
 	import { session } from '$lib/storage'
-	import { updateDoc } from '$lib/firebase'
+	import { addDoc, updateDoc } from '$lib/firebase'
+	import { serverTimestamp } from 'firebase/firestore/lite';
   import { page } from '$app/stores'
   import { goto } from '$app/navigation'
+	import { getContext } from 'svelte';
 
+	const userDataStore = getContext('userData')
+
+	console.log($userDataStore)
 
   let equipment = session.getItem('equipment')
   let item = equipment?.find(e => e.name == $page.params.equipmentName)
-	let attributes = item?.attributes
+	let attributes = item?.attributes || []
 	let editing = false
 	const accessLevel = session.getItem('accessLevel')
+	let itemBefore = JSON.parse(JSON.stringify(item))	// Copy item
 
 	function toggleEditing() {
 		editing = !editing
@@ -44,6 +49,13 @@
 
 		// Firebase changes
 		updateDoc('equipment', item.id, { attributes })
+
+		addDoc('edits', {
+			collection: 'equipment',
+			user: $userDataStore.uid,
+			before: itemBefore,
+			createdAt: serverTimestamp()
+		})
 
     // Update locally
 		item.attributes = attributes
@@ -149,7 +161,7 @@ header
 // 	height: 40px
 
 #controls
-	position: relative
+	position: fixed
 	margin: 10px
 	left: 0
 	bottom: 0

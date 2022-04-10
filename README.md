@@ -56,6 +56,7 @@ Use gsutil to set cors for the bucket, [check the docs](https://cloud.google.com
 - [ ] Testing
 - [ ] [Useful sveltekit utilities](https://fractils.fractal-hq.com/#localStorageStore)
 - [ ] Drag and drop to move attributes / images
+- [ ] Attributes should have their own table?
 
 
 ## Long term TODOs
