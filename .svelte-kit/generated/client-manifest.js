@@ -15,7 +15,8 @@ export const components = [
 	() => import("../../src/routes/[businessName]/settings/index.svelte"),
 	() => import("../../src/routes/[businessName]/account/index.svelte"),
 	() => import("../../src/routes/[businessName]/history/index.svelte"),
-	() => import("../../src/routes/[businessName]/home/index.svelte")
+	() => import("../../src/routes/[businessName]/home/index.svelte"),
+	() => import("../../src/routes/[businessName]/add/equipment.svelte")
 ];
 
 export const dictionary = {
@@ -28,5 +29,6 @@ export const dictionary = {
 	"[businessName]/settings": [[10, 11], []],
 	"[businessName]/account": [[0, 5, 12], [1]],
 	"[businessName]/history": [[0, 5, 13], [1]],
-	"[businessName]/home": [[0, 5, 14], [1]]
+	"[businessName]/home": [[0, 5, 14], [1]],
+	"[businessName]/add/equipment": [[0, 5, 15], [1]]
 };

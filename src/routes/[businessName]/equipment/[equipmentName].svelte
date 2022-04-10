@@ -19,7 +19,6 @@
   let item = equipment?.find(e => e.name == $page.params.equipmentName)
 	let attributes = item?.attributes || []
 	let editing = false
-	const accessLevel = session.getItem('accessLevel')
 	let itemBefore = JSON.parse(JSON.stringify(item || {}))	// Copy item
 
 	$: {
@@ -29,7 +28,7 @@
 			attributes = item?.attributes || []
 			itemBefore = JSON.parse(JSON.stringify(item || {}))	// Copy item
 
-			console.log(equipment)
+			console.log($userDataStore)
 		})()
 	}
 
@@ -83,7 +82,7 @@
   {:else}
     <input type="text" id="name" value={ item.name }>
   {/if}
-  {#if accessLevel && accessLevel >= 2 }
+  {#if $userDataStore?.accessLevel && $userDataStore?.accessLevel >= 2 }
     <button on:click={ toggleEditing }><img src={ editing ? closeSVG : editSVG } alt="Edit"></button>
   {/if}
 </header>
@@ -93,6 +92,8 @@
   <Gallery bind:item />
   
   <Attributes bind:attributes bind:editing />
+
+	<div id="space"></div>
 
   {#if editing}
     <!-- {#if !attributes || attributes.length < 10 }
@@ -185,5 +186,9 @@ header
 		position: relative
 		width: 80px
 		height: 40px
+
+#space
+	width: 100vw
+	height: 200px
 
 </style>

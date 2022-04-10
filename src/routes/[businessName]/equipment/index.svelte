@@ -6,11 +6,13 @@
 	 * 
 	 */
 	
+	import addSVG from '$lib/images/add.svg'
 	import Navbar from '$lib/Navbar.svelte';
 	import ItemContainer from '$lib/Item/ItemContainer.svelte'
 	import { allDocs, getSRC } from '$lib/firebase'
 	import { getContext } from 'svelte'
 	import { session } from '$lib/storage'
+	import { page } from '$app/stores';
 
 	let equipmentData = []
 
@@ -45,11 +47,35 @@
 
 <!-- {#if equipmentInfo == null} -->
 <ItemContainer bind:items={ equipmentData } />
+
+{#if $userDataStore?.accessLevel && $userDataStore?.accessLevel >= 2 }
+	<a href={ `add/equipment` } id="add-equipment"><img src={ addSVG } alt="+"></a>
+{/if}
+
 <Navbar path={ $userDataStore?.businessName }/>
 <!-- {:else}
 	<EquipmentInfo bind:equipmentInfo on:back={ () => equipmentInfo = null }/>
 {/if} -->
 
 <style lang="sass">
+
+	#add-equipment
+		position: fixed
+		right: 10px
+		bottom: 70px
+		width: 60px
+		height: 60px
+		padding: 0
+		border-radius: 50%
+		border: 0
+		background-color: #ccc
+
+		img
+			position: relative
+			width: 50%
+			height: 50%
+			margin: 0
+			left: 25%
+			top: 25%
 
 </style>

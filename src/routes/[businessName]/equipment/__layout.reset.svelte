@@ -39,6 +39,8 @@
 				
 				const userData = userDoc?.data()
 				userData.displayName = userRef.id
+			
+				userData.accessLevel = session.getItem('accessLevel') || 0
 
 				if (!userData) await goto('/business')
 				userDataStore.set(userData)
