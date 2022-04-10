@@ -6,7 +6,7 @@
 	import doneSVG from '$lib/images/done.svg'
 	import closeSVG from '$lib/images/close.svg'
 	import { session } from '$lib/storage'
-	import { addDoc, updateDoc } from '$lib/firebase'
+	import { addDoc, allDocs, updateDoc } from '$lib/firebase'
 	import { serverTimestamp } from 'firebase/firestore/lite';
   import { page } from '$app/stores'
   import { goto } from '$app/navigation'
@@ -14,14 +14,24 @@
 
 	const userDataStore = getContext('userData')
 
-	console.log($userDataStore)
 
   let equipment = session.getItem('equipment')
   let item = equipment?.find(e => e.name == $page.params.equipmentName)
 	let attributes = item?.attributes || []
 	let editing = false
 	const accessLevel = session.getItem('accessLevel')
-	let itemBefore = JSON.parse(JSON.stringify(item))	// Copy item
+	let itemBefore = JSON.parse(JSON.stringify(item || {}))	// Copy item
+
+	$: {
+		$userDataStore && !equipment && (async () => {
+			equipment = await allDocs($userDataStore.businessID, 'equipment')
+			item = equipment?.find(e => e.name == $page.params.equipmentName)
+			attributes = item?.attributes || []
+			itemBefore = JSON.parse(JSON.stringify(item || {}))	// Copy item
+
+			console.log(equipment)
+		})()
+	}
 
 	function toggleEditing() {
 		editing = !editing

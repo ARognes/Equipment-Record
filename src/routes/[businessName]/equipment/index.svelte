@@ -10,9 +10,7 @@
 	import ItemContainer from '$lib/Item/ItemContainer.svelte'
 	import { allDocs, getSRC } from '$lib/firebase'
 	import { getContext } from 'svelte'
-	import { session } from '$lib/storage';
-	
-	// let equipmentInfo = null
+	import { session } from '$lib/storage'
 
 	let equipmentData = []
 
