@@ -42,7 +42,7 @@
 
 		
 		if (!attrSearch) {
-			for (let i in searchItems) {
+			for (let i = 0; i < searchItems.length; i++) {
 				const text = searchItems[i].name
 				if (text == null || text.length == 0 || !testSearch(value, text, caseSens)) searchItems.splice(i--, 1)
 				else searchItems[i].nameHighlight = matchSearch(value, text, caseSens)

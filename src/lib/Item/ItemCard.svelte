@@ -24,9 +24,11 @@
 
     <div class="attr">
       {#each info?.attrHighlight as attr}
-        {#each attr as matches}
-          <span class:highlight={ matches.highlight }>{ matches.text }</span>
-        {/each}
+        <div>
+          {#each attr as matches}
+            <span class:highlight={ matches.highlight }>{ matches.text }</span>
+          {/each}
+        </div>
       {/each}
     </div>
 

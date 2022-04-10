@@ -73,19 +73,7 @@
 
 </script>
 
-
-<header>
-  <button on:click={ async () => goto(`/${ $page.params.businessName }/equipment`) }><img src={ backSVG } alt="<"></button>
-  
-  {#if !editing}
-    <p>{ item?.name || '' }</p>
-  {:else}
-    <input type="text" id="name" value={ item.name }>
-  {/if}
-  {#if $userDataStore?.accessLevel && $userDataStore?.accessLevel >= 2 }
-    <button on:click={ toggleEditing }><img src={ editing ? closeSVG : editSVG } alt="Edit"></button>
-  {/if}
-</header>
+<div id="space-top"></div>
 
 <div id="body">
   
@@ -93,7 +81,7 @@
   
   <Attributes bind:attributes bind:editing />
 
-	<div id="space"></div>
+	<div id="space-bottom"></div>
 
   {#if editing}
     <!-- {#if !attributes || attributes.length < 10 }
@@ -107,10 +95,27 @@
   
 </div>
 
+<div id="header">
+  <button on:click={ async () => goto(`/${ $page.params.businessName }/equipment`) }><img src={ backSVG } alt="<"></button>
+  
+  {#if !editing}
+    <p>{ item?.name || '' }</p>
+  {:else}
+    <input type="text" id="name" value={ item.name }>
+  {/if}
+  {#if $userDataStore?.accessLevel && $userDataStore?.accessLevel >= 2 }
+    <button on:click={ toggleEditing }><img src={ editing ? closeSVG : editSVG } alt="Edit"></button>
+  {/if}
+</div>
+
 
 <style lang="sass">
-header
-	position: relative
+
+#header
+	position: fixed
+	top: 0
+	left: 0
+	width: 100vw
 	background-color: #bbb
 	margin: 0
 	height: 40px
@@ -187,8 +192,13 @@ header
 		width: 80px
 		height: 40px
 
-#space
+#space-bottom
 	width: 100vw
 	height: 200px
+
+#space-top
+	width: 100vw
+	height: 40px
+
 
 </style>
