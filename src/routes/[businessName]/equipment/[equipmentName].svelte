@@ -1,57 +1,49 @@
 <script lang="ts">
 	import Gallery from '$lib/Item/Gallery.svelte'
-	import Attributes from '$lib/Item/Attributes.svelte';
+	import Attributes from '$lib/Item/Attributes.svelte'
 	import backSVG from '$lib/images/back.svg'
 	import editSVG from '$lib/images/edit.svg'
 	import doneSVG from '$lib/images/done.svg'
 	import closeSVG from '$lib/images/close.svg'
 	import addSVG from '$lib/images/add.svg'
-	import { session } from '$lib/storage';
-	import { updateDoc } from '$lib/firebase';
-  import { page } from '$app/stores';
-  import { goto } from '$app/navigation';
+	import { session } from '$lib/storage'
+	import { updateDoc } from '$lib/firebase'
+  import { page } from '$app/stores'
+  import { goto } from '$app/navigation'
 
 
   let equipment = session.getItem('equipment')
-
   let item = equipment?.find(e => e.name == $page.params.equipmentName)
-
+	let attributes = item?.attributes
 	let editing = false
-
 	const accessLevel = session.getItem('accessLevel')
-  console.log(accessLevel)
 
 	function toggleEditing() {
 		editing = !editing
 		if (editing) return
 
-		item.attributes = item.attributes
-			.filter(attr => attr.key?.length > 0)
-			.map(attr => ({key: attr.key, val: attr.val}))
+		attributes = attributes
+			?.filter(attr => attr.key?.length > 0)
+			?.map(attr => ({key: attr.key, val: attr.val}))
 	}
 
 	function makeEdits() {
 		editing = false
 
-		const filteredAttributes = item.attributes
+		const filteredAttributes = attributes
 			.filter(attr => !attr.hidden && (attr.editKey?.length > 0 || attr.key?.length > 0))
 			.map(attr => ({ key: attr.key, val: attr.val, editKey: attr?.editKey || attr.key, editVal: attr?.editVal || attr.val }))
 		
 		const attrEditKeys = filteredAttributes.map(attr => attr.editKey);
-		item.attributes = filteredAttributes
+		attributes = filteredAttributes
 			.filter((attr, i) => attrEditKeys.indexOf(attr.editKey) === i)
 			.map(attr => ({ key: attr.editKey || attr.key, val: attr.editVal || attr.val }))
-
-    // Convert array to map
-    const attributes = item.attributes.reduce((map, obj) => {
-        map[obj.key] = obj.val
-        return map
-    }, {});    
 
 		// Firebase changes
 		updateDoc('equipment', item.id, { attributes })
 
     // Update locally
+		item.attributes = attributes
     session.setItem('equipment', equipment)
 	}
 
@@ -75,11 +67,11 @@
   
   <Gallery bind:item />
   
-  <Attributes bind:attributes={ item.attributes } bind:editing />
+  <Attributes bind:attributes bind:editing />
 
   {#if editing}
-    {#if item?.attributes?.length < 10 }
-      <button class="add" on:click={ () => item.attributes = [...item.attributes, {key: '', val: ''}] }><img src={ addSVG } alt="Add"></button>
+    {#if !attributes || attributes.length < 10 }
+      <button class="add" on:click={ () => attributes = attributes ? [...attributes, { key: '', val: '' }] : [{ key: '', val: '' }] }><img src={ addSVG } alt="Add"></button>
     {/if}
     <div id="controls">
       <button id="done" on:click={ makeEdits }><img src={ doneSVG } alt="Done"></button>

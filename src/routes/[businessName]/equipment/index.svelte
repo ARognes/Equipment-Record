@@ -27,6 +27,7 @@
 	async function getEquipmentData() {
 		
 		equipmentData = await allDocs($userDataStore.businessID, 'equipment')
+		console.log(equipmentData)
 		
 		for (let i in equipmentData) {
 			equipmentData[i].tinySRC = []

@@ -2,6 +2,8 @@
   
   export let attributes, editing
 
+	console.log(attributes)
+
 	let textAreas = []
 
 	function textarea(e, i) {
@@ -16,9 +18,7 @@
 	}
 
 	function removeAttribute(i: number) {
-		console.log()
 		attributes[i].hidden = true
-		console.log()
 	}
 
 	$: {
