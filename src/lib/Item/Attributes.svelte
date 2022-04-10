@@ -11,10 +11,19 @@
 		let offset = e.target.offsetHeight - e.target.clientHeight
 		e.target.style.height = e.target.scrollHeight + offset + 'px'
 		attributes[i].editVal = e.target.value
+		if (i == attributes.length - 1) attributes[i + 1] = { key: '', val: ''}
 	}
 
 	function inputName(e, i) {
 		attributes[i].editKey = e.target.value
+		if (i == attributes.length - 1) attributes[i + 1] = { key: '', val: ''}
+	}
+
+	function moveAttribute(i, toEnd) {
+		if (toEnd && i < attributes.length - 2) attributes.splice(i + 1, 0, attributes.splice(i, 1)[0])
+		else if (!toEnd && i > 0) attributes.splice(i - 1, 0, attributes.splice(i, 1)[0])
+		attributes = attributes
+		console.log(attributes)
 	}
 
 	function removeAttribute(i: number) {
@@ -40,14 +49,23 @@
 			<div class="attribute">
 				{#if !editing }
 					<p class="key">{ attr.key }</p>
-					<textarea readonly bind:this={ textAreas[i] } on:input={ e => textarea(e, i) } placeholder="Empty" rows="1">{ attr.val }</textarea>
 				{:else}
 					<div class="div-key">
-						<input type="text" on:input={ e => inputName(e, i)} placeholder="Attribute" value={ attr.key }>
-						<button on:click={ () => removeAttribute(i) }>-</button>
+						<input type="text" on:input={ e => inputName(e, i)} placeholder="Attribute" value={ attr.key || attr.editKey || '' }>
+						{#if i + 1 < attributes.length }
+							<div class="attribute-actions">
+								{#if i > 0 }
+									<button on:click={ () => moveAttribute(i, false) }>^</button>
+								{/if}
+								{#if i < attributes.length - 2}
+									<button on:click={ () => moveAttribute(i, true) }>v</button>
+								{/if}
+								<button on:click={ () => removeAttribute(i) }>-</button>
+							</div>
+						{/if}
 					</div>
-					<textarea bind:this={ textAreas[i] } on:input={ e => textarea(e, i) } placeholder="Empty" rows="1">{ attr.val }</textarea>
 				{/if}
+				<textarea readonly={ !editing } bind:this={ textAreas[i] } on:input={ e => textarea(e, i) } placeholder="Empty" rows="1">{ attr.val || attr.editVal || '' }</textarea>
 			</div>
 		{/if}
 	{/each}
@@ -84,29 +102,30 @@
 			font-size: 14px
 
 		.div-key
-			position: relative
+			display: flex
+			flex-wrap: nowrap
+			justify-content: space-between
 			background-color: #ddd
-			border: 0
 			margin: 0
-			padding: 0
-			width: 100vw
+			padding: 0 4px
+			width: calc(100vw - 8px)
 			height: 30px
 
 			input
 				margin: 0
-				width: calc(100vw - 34px)
+				padding: 0
+				width: calc(100vw - 108px)
 				height: 30px
-				padding: 0 0 0 4px
 				background-color: #ddd
 
-			button
-				float: right
-				right: 0
-				top: 0
+			.attribute-actions
 				margin: 0
-				padding: 0
-				width: 30px
-				height: 30px
+
+				button
+					margin: 0
+					padding: 0
+					width: 30px
+					height: 30px
 
 		input, textarea
 			border: 0

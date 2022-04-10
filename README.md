@@ -49,11 +49,13 @@ Use gsutil to set cors for the bucket, [check the docs](https://cloud.google.com
 - [ ] [exif-js](https://github.com/exif-js/exif-js) When getting qr-code, access location metadata of picture and save to firestore
 - [ ] Use [tailwind](https://tailwindcss.com/) css
 - [ ] Implement industry grade qr-code scanner
-- [ ] Equipment attributes
+- [X] Equipment attributes
+- [ ] Project attributes
 - [ ] Equipment templates
 - [ ] Project templates
 - [ ] Testing
 - [ ] [Useful sveltekit utilities](https://fractils.fractal-hq.com/#localStorageStore)
+- [ ] Drag and drop to move attributes / images
 
 
 ## Long term TODOs
@@ -61,3 +63,6 @@ Use gsutil to set cors for the bucket, [check the docs](https://cloud.google.com
 - [ ] Try out redis
 - [ ] Use GraphQL
 - [ ] GraphQL with MongoDB, PostgreSQL, Sqlite?
+- [ ] rich text editors [quilljs](https://github.com/quilljs/quill/) [tiptap](https://tiptap.dev/)
+- [ ] files [filedrop](https://www.npmjs.com/package/filedrop-svelte)
+

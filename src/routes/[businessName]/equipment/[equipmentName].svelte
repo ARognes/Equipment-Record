@@ -5,7 +5,7 @@
 	import editSVG from '$lib/images/edit.svg'
 	import doneSVG from '$lib/images/done.svg'
 	import closeSVG from '$lib/images/close.svg'
-	import addSVG from '$lib/images/add.svg'
+	// import addSVG from '$lib/images/add.svg'
 	import { session } from '$lib/storage'
 	import { updateDoc } from '$lib/firebase'
   import { page } from '$app/stores'
@@ -20,7 +20,10 @@
 
 	function toggleEditing() {
 		editing = !editing
-		if (editing) return
+		if (editing) {
+			attributes[attributes.length] = { key: '', val: ''}
+			return
+		}
 
 		attributes = attributes
 			?.filter(attr => attr.key?.length > 0)
@@ -32,7 +35,7 @@
 
 		const filteredAttributes = attributes
 			.filter(attr => !attr.hidden && (attr.editKey?.length > 0 || attr.key?.length > 0))
-			.map(attr => ({ key: attr.key, val: attr.val, editKey: attr?.editKey || attr.key, editVal: attr?.editVal || attr.val }))
+			.map(attr => ({ key: attr?.key?.trim(), val: attr?.val, editKey: attr?.editKey?.trim() || attr?.key?.trim(), editVal: attr?.editVal || attr?.val }))
 		
 		const attrEditKeys = filteredAttributes.map(attr => attr.editKey);
 		attributes = filteredAttributes
@@ -70,9 +73,9 @@
   <Attributes bind:attributes bind:editing />
 
   {#if editing}
-    {#if !attributes || attributes.length < 10 }
+    <!-- {#if !attributes || attributes.length < 10 }
       <button class="add" on:click={ () => attributes = attributes ? [...attributes, { key: '', val: '' }] : [{ key: '', val: '' }] }><img src={ addSVG } alt="Add"></button>
-    {/if}
+    {/if} -->
     <div id="controls">
       <button id="done" on:click={ makeEdits }><img src={ doneSVG } alt="Done"></button>
       <button id="cancel" on:click={ toggleEditing }><img src={ closeSVG } alt="Cancel"></button>
@@ -139,11 +142,11 @@ header
 		outline: none
 		color: blue
 
-.add
-	position: relative
-	margin: 10px 10px 0 10px
-	width: calc(100vw - 20px)
-	height: 40px
+// .add
+// 	position: relative
+// 	margin: 10px 10px 0 10px
+// 	width: calc(100vw - 20px)
+// 	height: 40px
 
 #controls
 	position: relative
