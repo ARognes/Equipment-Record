@@ -22,11 +22,19 @@
       {/each}
     </div>
 
-    <div class="desc">
+    <div class="attr">
+      {#each info?.attrHighlight as attr}
+        {#each attr as matches}
+          <span class:highlight={ matches.highlight }>{ matches.text }</span>
+        {/each}
+      {/each}
+    </div>
+
+    <!-- <div class="desc">
       {#each info?.descHighlight as matches}
       <span class:highlight={ matches.highlight }>{ matches.text }</span>
       {/each}
-    </div>
+    </div> -->
 
   </div>
   <div class="right">
@@ -66,7 +74,7 @@ $item-height: 80px
   height: $item-height
   margin: 0 auto 0 10px
 
-  .desc
+  .attr
     font-size: 12px
 
 .right

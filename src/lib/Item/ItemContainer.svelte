@@ -29,21 +29,36 @@
 		// *_ search settings for * description search, _ case sensitive search
 		const settings1 = search?.charAt(0)
 		const settings2 = search?.charAt(1)
-		let descSearch = 0, caseSens = 0
+		let attrSearch = 0, caseSens = 0
 
-		if (settings1 == '*' || settings2 == '*') descSearch = 1
+		if (settings1 == ':' || settings2 == ':') attrSearch = 1
 		if (settings1 == '_' || settings2 == '_') caseSens = 1
 
 		// Clip settings off search
-		const value = search?.substring(0 + descSearch + caseSens).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+		const value = search?.substring(0 + attrSearch + caseSens).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 		
 		// Empty search
 		if (value == null || value.length == 0) return
+
 		
-		for (let i = 0; i < searchItems.length; i++) {
-			const text = searchItems[i][descSearch ? 'desc' : 'name']
-			if (text == null || text.length == 0 || !testSearch(value, text, caseSens)) searchItems.splice(i--, 1)
-			else searchItems[i][descSearch ? 'descHighlight' : 'nameHighlight'] = matchSearch(value, text, caseSens)
+		if (!attrSearch) {
+			for (let i in searchItems) {
+				const text = searchItems[i].name
+				if (text == null || text.length == 0 || !testSearch(value, text, caseSens)) searchItems.splice(i--, 1)
+				else searchItems[i].nameHighlight = matchSearch(value, text, caseSens)
+			}
+		}
+		else {
+			for (let i = 0; i < searchItems.length; i++) {
+				console.log(searchItems[i])
+				searchItems[i].attrHighlight = []
+				for (let j in searchItems[i].attributes) {
+					const text = searchItems[i].attributes[j].key
+					if (text == null || text.length == 0 || !testSearch(value, text, caseSens)) continue
+					searchItems[i].attrHighlight = [...searchItems[i].attrHighlight, matchSearch(value, text, caseSens)]
+				}
+				if (searchItems[i].attrHighlight.length == 0) searchItems.splice(i--, 1)
+			}
 		}
 	}
 
@@ -74,7 +89,7 @@
 		searchItems = [...items]
 		for (let i = 0; i < searchItems.length; i++) {
 			searchItems[i].nameHighlight = [{ highlight: false, text: searchItems[i].name }]
-			searchItems[i].descHighlight = [{ highlight: false, text: searchItems[i].desc }]
+			searchItems[i].attrHighlight = searchItems[i].attributes?.length ? [[{ highlight: false, text: searchItems[i].attributes[0].key }]] : [[]]
 		}
 		searchItems = searchItems.sort((a, b) => a.name.localeCompare(b.name))
 	}
