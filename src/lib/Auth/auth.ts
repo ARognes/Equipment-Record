@@ -1,6 +1,7 @@
 import { readable } from 'svelte/store'
 import { browser } from '$app/env'
 import type { Auth } from 'firebase/auth'
+import { error } from '$lib/logging'
 
 const createAuth = () => {
   let auth: Auth
@@ -55,11 +56,14 @@ const createAuth = () => {
   }
 
   async function signInGoogle() {
-    const { setPersistence, browserLocalPersistence, signInWithRedirect, GoogleAuthProvider } = await import('firebase/auth')
+    try {
 
-    await setPersistence(auth, browserLocalPersistence)
-
-    await signInWithRedirect(auth, new GoogleAuthProvider())
+      const { setPersistence, browserLocalPersistence, signInWithPopup, GoogleAuthProvider } = await import('firebase/auth')
+      
+      await setPersistence(auth, browserLocalPersistence)
+      
+      await signInWithPopup(auth, new GoogleAuthProvider())
+    } catch (e) { error(e) }
   }
 
   async function signInEmail(email: string, password: string) {

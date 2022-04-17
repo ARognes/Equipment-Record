@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Loading from "$lib/Loading/Loading.svelte";
+  import Loading from "$lib/components/Loading.svelte";
   import { getSRC } from "$lib/firebase";
 
   export let item
@@ -8,7 +8,7 @@
   
   async function init() {
 
-    images = Array(item.imageOrder.length).fill({ src: '', done: false })
+    images = Array(item?.imageOrder?.length || 0).fill({ src: '', done: false })
     
     // Get tiny images
     // if (!item.tinySRC || item.tinySRC.length == 0 || item.tinySRC[0] == null) item.tinySRC = [ await getSRC(item, true, 0) ]
@@ -17,14 +17,14 @@
 
     // Get full images one at a time
     item.imgSRC = []
-    for (let i = 0; i < item.imageOrder.length; i++) {
+    for (let i = 0; i < item?.imageOrder?.length; i++) {
       item.imgSRC[i] = await getSRC(item, false, i)
       images[i] = { src: item.imgSRC[i], done: true }
     }
   }
 
   let done = false
-  $: if (item && !done) {
+  $: if (item?.imageOrder?.length && !done) {
     done = true
     init()
   }
@@ -40,14 +40,10 @@
   // Image scroll horizontal
   function galleryScroll() {
     btnActive = Math.round(gallery.scrollLeft / window.innerWidth)
-  };
-
-  // Image parallax
-  // document.body.addEventListener('scroll', () => {
-  //   gallery.style.top = -document.body.scrollTop / 2 + 'px';
-  // });
+  }
 
 </script>
+
 
 
 <div id="gallery" bind:this={ gallery } on:scroll={ galleryScroll }>

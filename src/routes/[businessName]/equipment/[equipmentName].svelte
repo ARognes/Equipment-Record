@@ -1,25 +1,28 @@
 <script lang="ts">
-	import Gallery from '$lib/Item/Gallery.svelte'
-	import Attributes from '$lib/Item/Attributes.svelte'
+	import Gallery from '$lib/components/Gallery.svelte'
+	import Assignments from '$lib/components/Assignments.svelte'
+	import Attributes from '$lib/components/Attributes.svelte'
 	import backSVG from '$lib/images/back.svg'
 	import editSVG from '$lib/images/edit.svg'
 	import doneSVG from '$lib/images/done.svg'
 	import closeSVG from '$lib/images/close.svg'
 	import { session } from '$lib/storage'
-	import { addDoc, allDocs, updateDoc } from '$lib/firebase'
+	import { getDoc, addDoc, allDocs, updateDoc, changeName } from '$lib/firebase'
 	import { serverTimestamp } from 'firebase/firestore/lite';
   import { page } from '$app/stores'
   import { goto } from '$app/navigation'
 	import { getContext } from 'svelte';
+	import { log } from '$lib/logging';
 
 	const userDataStore = getContext('userData')
 
 
   let equipment = session.getItem('equipment')
-  let item = equipment?.find(e => e.name == $page.params.equipmentName)
+  let item = JSON.parse(JSON.stringify(equipment?.find(e => e.name == $page.params.equipmentName) || {}))
 	let attributes = item?.attributes || []
 	let editing = false
 	let itemBefore = JSON.parse(JSON.stringify(item || {}))	// Copy item
+	
 
 	$: {
 		$userDataStore && !equipment && (async () => {
@@ -35,18 +38,84 @@
 	function toggleEditing() {
 		editing = !editing
 		if (editing) {
+
+			// Add next empty attribute
 			attributes[attributes.length] = { key: '', val: ''}
 			return
 		}
 
-		attributes = attributes
-			?.filter(attr => attr.key?.length > 0)
-			?.map(attr => ({key: attr.key, val: attr.val}))
+		// Remove all edits
+		item = JSON.parse(JSON.stringify(itemBefore))
+		attributes = item?.attributes || []
+		// attributes = attributes
+		// 	?.filter(attr => attr.key?.length > 0)
+		// 	?.map(attr => ({key: attr.key, val: attr.val}))
 	}
 
-	function makeEdits() {
-		editing = false
+	function inputName(e) {
+		item.name = e.target.value
+	}
 
+	/**
+	 * Update name, assignment, and attributes
+	 * TODO: Images, template 
+	 */
+	async function makeEdits() {
+		editing = false
+		if (!item || !itemBefore) return
+		let updates = {}
+		const timeStamp = serverTimestamp()
+
+
+		// ---- NAME ----
+		if (item.name !== itemBefore.name) {
+			log('Updating Name')
+			updates = { name: item.name }
+			changeName(item.id, item.name)
+		}
+
+		// ---- ASSIGNMENT ----
+		if (item.projectAssigned !== itemBefore.projectAssigned) {
+
+			log('Updating Assignment')
+			console.log(item.projectAssigned, itemBefore.projectAssigned)
+
+			const lastAssignment = await getDoc(item.assignmentRef)
+			console.log(lastAssignment)
+
+			// Update equipment doc
+			updates = { 
+				projectAssigned: item.projectAssigned,
+				userAssigned: $userDataStore.displayName,
+				timeAssigned: timeStamp,
+				...updates
+			}
+
+			// Create new assignment
+			const curAssn = await addDoc('assignments', {
+				businessID: $userDataStore.businessID,
+				nextAssignment: null,
+				
+				lastProjectID: lastAssignment?.projectID || null,	// This may not be necessary
+				lastProjectName: lastAssignment?.projectName || null,
+				lastUserID: lastAssignment?.userID || null,
+				lastUsername: lastAssignment?.username || null,
+				
+				projectID: item.projectID,
+				projectName: item.projectAssigned,
+				equipmentID: item.id,
+				equipmentName: item.name,
+				userID: $userDataStore.uid,
+				username: $userDataStore.displayName,
+				
+				createdAt: timeStamp
+			})
+
+			// Update last assignment linked list
+			updateDoc('assignments', lastAssignment?.id, { nextAssignment: curAssn })
+		}
+
+		// ---- ATTRIBUTES ----
 		const filteredAttributes = attributes
 			.filter(attr => !attr.hidden && (attr.editKey?.length > 0 || attr.key?.length > 0))
 			.map(attr => ({ key: attr?.key?.trim(), val: attr?.val, editKey: attr?.editKey?.trim() || attr?.key?.trim(), editVal: attr?.editVal || attr?.val }))
@@ -56,30 +125,53 @@
 			.filter((attr, i) => attrEditKeys.indexOf(attr.editKey) === i)
 			.map(attr => ({ key: attr.editKey || attr.key, val: attr.editVal || attr.val }))
 
-		// Firebase changes
-		updateDoc('equipment', item.id, { attributes })
+		if (JSON.stringify(attributes) === JSON.stringify(itemBefore.attributes)) 
+			updates = { attributes, ...updates }
 
+		if (!Object.keys(updates).length) return
+
+		// Update equipment doc
+		updateDoc('equipment', item.id, updates)
+
+		// Create edit save (Not for assignment)
 		addDoc('edits', {
 			collection: 'equipment',
 			user: $userDataStore.uid,
 			before: itemBefore,
-			createdAt: serverTimestamp()
+			createdAt: timeStamp
 		})
 
     // Update locally
 		item.attributes = attributes
+		for (let i in equipment)
+			if (equipment[+i].id == item.id)
+				equipment[+i] = item
     session.setItem('equipment', equipment)
+
+		location.reload();
 	}
+
+	let scrollTop = 0
+	function parallax(data) {
+		scrollTop = data.target.scrollTop
+  }
 
 </script>
 
 <div id="space-top"></div>
 
-<div id="body">
+<div id="body" on:scroll={ parallax }>
   
-  <Gallery bind:item />
-  
-  <Attributes bind:attributes bind:editing />
+	<div style="overflow: hidden">
+		<div style={ `position: relative; top: ${ scrollTop / 2 }px` }>
+			<Gallery bind:item />
+		</div>
+	</div>
+	<Assignments bind:item bind:editing />
+
+	<Attributes bind:attributes bind:editing />
+	
+
 
 	<div id="space-bottom"></div>
 
@@ -101,7 +193,7 @@
   {#if !editing}
     <p>{ item?.name || '' }</p>
   {:else}
-    <input type="text" id="name" value={ item.name }>
+    <input type="text" id="name" on:input={ inputName } value={ item?.name } placeholder="Name">
   {/if}
   {#if $userDataStore?.accessLevel && $userDataStore?.accessLevel >= 2 }
     <button on:click={ toggleEditing }><img src={ editing ? closeSVG : editSVG } alt="Edit"></button>
@@ -194,7 +286,7 @@
 
 #space-bottom
 	width: 100vw
-	height: 200px
+	height: 30vh
 
 #space-top
 	width: 100vw

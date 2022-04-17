@@ -1,6 +1,6 @@
 <script lang="ts">
-	import ItemList from '$lib/Item/ItemList.svelte'
-	import ItemCard from '$lib/Item/ItemCard.svelte'
+	import ItemList from '$lib/components/ItemList.svelte'
+	import ItemCard from '$lib/components/ItemCard.svelte'
 	import { getContext } from 'svelte';
 	import { goto } from '$app/navigation';
 
@@ -86,7 +86,7 @@
 	}
 
 	function resetSearchItems() {
-		searchItems = [...items]
+		searchItems = JSON.parse(JSON.stringify(items))
 		for (let i = 0; i < searchItems.length; i++) {
 			searchItems[i].nameHighlight = [{ highlight: false, text: searchItems[i].name }]
 			searchItems[i].attrHighlight = searchItems[i].attributes?.length ? [[{ highlight: false, text: searchItems[i].attributes[0].key }]] : [[]]

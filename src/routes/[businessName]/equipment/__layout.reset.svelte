@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Navbar from '$lib/Navbar.svelte'
+	import Navbar from '$lib/components/Navbar.svelte'
 	import { auth } from '$lib/Auth/auth'
   import { goto } from '$app/navigation'
 	import { browser } from '$app/env'
@@ -9,7 +9,7 @@
 	import { setContext } from 'svelte'
 	import { session } from '$lib/storage'
 	import { navigating } from '$app/stores'
-	import Loading from '$lib/Loading/Loading.svelte'
+	import Loading from '$lib/components/Loading.svelte'
 
 	const loading = writable(false)
 

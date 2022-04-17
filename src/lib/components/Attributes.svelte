@@ -1,8 +1,9 @@
 <script lang="ts">
-  
+
   export let attributes, editing
 
 	console.log(attributes)
+
 
 	let textAreas = []
 
@@ -51,7 +52,7 @@
 					<p class="key">{ attr.key }</p>
 				{:else}
 					<div class="div-key">
-						<input type="text" on:input={ e => inputName(e, i)} placeholder="Attribute" value={ attr.key || attr.editKey || '' }>
+						<input type="text" on:input={ e => inputName(e, i) } placeholder="Attribute" value={ attr.key || attr.editKey || '' }>
 						{#if i + 1 < attributes.length }
 							<div class="attribute-actions">
 								{#if i > 0 }

@@ -7,12 +7,11 @@
 	 */
 	
 	import addSVG from '$lib/images/add.svg'
-	import Navbar from '$lib/Navbar.svelte';
-	import ItemContainer from '$lib/Item/ItemContainer.svelte'
+	import Navbar from '$lib/components/Navbar.svelte';
+	import ItemContainer from '$lib/components/ItemContainer.svelte'
 	import { allDocs, getSRC } from '$lib/firebase'
 	import { getContext } from 'svelte'
 	import { session } from '$lib/storage'
-	import { page } from '$app/stores';
 
 	let equipmentData = []
 
@@ -38,24 +37,16 @@
 		}
 	}
 	
-	// function handleClick(event) {
-	// 	equipmentInfo = event?.detail?.item
-	// }
-	
 </script>
 
-
-<!-- {#if equipmentInfo == null} -->
 <ItemContainer bind:items={ equipmentData } />
 
 {#if $userDataStore?.accessLevel && $userDataStore?.accessLevel >= 2 }
-	<a href={ `add/equipment` } id="add-equipment"><img src={ addSVG } alt="+"></a>
+	<a href="add/equipment" id="add-equipment"><img src={ addSVG } alt="+"></a>
 {/if}
 
 <Navbar path={ $userDataStore?.businessName }/>
-<!-- {:else}
-	<EquipmentInfo bind:equipmentInfo on:back={ () => equipmentInfo = null }/>
-{/if} -->
+
 
 <style lang="sass">
 

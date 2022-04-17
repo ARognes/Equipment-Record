@@ -1,6 +1,6 @@
 <script lang="ts">
   import { auth } from '$lib/Auth/auth'
-  import Loading from '$lib/Loading/Loading.svelte'
+  import Loading from '$lib/components/Loading.svelte'
   import { writable } from 'svelte/store'
   import { goto } from '$app/navigation'
 
