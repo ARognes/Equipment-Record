@@ -2,8 +2,7 @@
 
   export let attributes, editing
 
-	console.log(attributes)
-
+	const MAX_ATTRIBUTES = 10
 
 	let textAreas = []
 
@@ -12,25 +11,47 @@
 		let offset = e.target.offsetHeight - e.target.clientHeight
 		e.target.style.height = e.target.scrollHeight + offset + 'px'
 		attributes[i].editVal = e.target.value
-		if (i == attributes.length - 1) attributes[i + 1] = { key: '', val: ''}
 	}
 
 	function inputName(e, i) {
 		attributes[i].editKey = e.target.value
-		if (i == attributes.length - 1) attributes[i + 1] = { key: '', val: ''}
+		console.log(attributes.reduce((count, attr) => attr.hidden ? ++count : count, 0))
 	}
 
-	function moveAttribute(i, toEnd) {
-		if (toEnd && i < attributes.length - 2) attributes.splice(i + 1, 0, attributes.splice(i, 1)[0])
-		else if (!toEnd && i > 0) attributes.splice(i - 1, 0, attributes.splice(i, 1)[0])
+	function moveAttribute(i, dir) {
+		if (dir && i < attributes.length - 2) {
+			attributes.splice(i + 1, 0, attributes.splice(i, 1)[0])
+
+			const ta = textAreas[i]
+			const tan = textAreas[i+1]
+			if (ta != null && tan != null) {
+				ta.style.height = 'auto'
+				let offset = ta.offsetHeight - ta.clientHeight;
+				tan.style.height = ta.scrollHeight + offset + 'px';
+			}
+
+		}
+		else if (!dir && i > 0) {
+			attributes.splice(i - 1, 0, attributes.splice(i, 1)[0])
+
+			const ta = textAreas[i]
+			const tan = textAreas[i-1]
+			if (ta != null && tan != null) {
+				ta.style.height = 'auto'
+				let offset = ta.offsetHeight - ta.clientHeight;
+				tan.style.height = ta.scrollHeight + offset + 'px';
+			}
+
+		}
 		attributes = attributes
-		console.log(attributes)
 	}
 
 	function removeAttribute(i: number) {
-		attributes[i].hidden = true
+		attributes.splice(i, 1)
+		attributes = attributes
 	}
 
+	// Update text area heights
 	$: {
 		for (let i = 0; i < textAreas.length; i++) {
 			const ta = textAreas[i]
@@ -41,34 +62,45 @@
 		}
 	}
 
+	// Add attribute to end < MAX_ATTRIBUTES
+	$: if (editing && attributes.length < MAX_ATTRIBUTES
+		&& (attributes[attributes.length - 1].key.length 
+		|| attributes[attributes.length - 1].val.length
+		|| attributes[attributes.length - 1].editKey?.length 
+		|| attributes[attributes.length - 1].editVal?.length ))
+			attributes[attributes.length] = { key: '', val: '' }
+
+	// Make each attribute have an edit key/val === normal key/val
+	$: if (attributes.length && attributes[0].editVal === undefined)
+			for (let i in attributes) 
+				attributes[+i] = { ...attributes[+i], editKey: attributes[+i].key, editVal: attributes[+i].val  }
+	
 </script>
 
 
 <div id="attributes">
 	{#each attributes || [] as attr, i}
-		{#if !attr.hidden }
-			<div class="attribute">
-				{#if !editing }
-					<p class="key">{ attr.key }</p>
-				{:else}
-					<div class="div-key">
-						<input type="text" on:input={ e => inputName(e, i) } placeholder="Attribute" value={ attr.key || attr.editKey || '' }>
-						{#if i + 1 < attributes.length }
-							<div class="attribute-actions">
-								{#if i > 0 }
-									<button on:click={ () => moveAttribute(i, false) }>^</button>
-								{/if}
-								{#if i < attributes.length - 2}
-									<button on:click={ () => moveAttribute(i, true) }>v</button>
-								{/if}
-								<button on:click={ () => removeAttribute(i) }>-</button>
-							</div>
-						{/if}
-					</div>
-				{/if}
-				<textarea readonly={ !editing } bind:this={ textAreas[i] } on:input={ e => textarea(e, i) } placeholder="Empty" rows="1">{ attr.val || attr.editVal || '' }</textarea>
-			</div>
-		{/if}
+		<div class="attribute">
+			{#if !editing }
+				<p class="key">{ attr.key }</p>
+			{:else}
+				<div class="div-key">
+					<input type="text" on:input={ e => inputName(e, i) } placeholder="Attribute" value={ attr.key || attr.editKey || '' }>
+					{#if i + 1 < attributes.length }
+						<div class="attribute-actions">
+							{#if i > 0 }
+								<button on:click={ () => moveAttribute(i, false) }>^</button>
+							{/if}
+							{#if i < attributes.length - 2}
+								<button on:click={ () => moveAttribute(i, true) }>v</button>
+							{/if}
+							<button on:click={ () => removeAttribute(i) }>-</button>
+						</div>
+					{/if}
+				</div>
+			{/if}
+			<textarea readonly={ !editing } bind:value={ attr.editVal } bind:this={ textAreas[i] } on:input={ e => textarea(e, i) } placeholder="Empty" rows="1"></textarea>
+		</div>
 	{/each}
 </div>
 

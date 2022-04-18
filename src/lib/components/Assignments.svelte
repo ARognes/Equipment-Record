@@ -1,11 +1,10 @@
 <script lang="ts">
-import { page } from "$app/stores";
-import { allDocs, queryDocs } from "$lib/firebase";
-import { log } from "$lib/logging";
-import { orderBy, where } from "firebase/firestore/lite";
-import { getContext } from 'svelte';
+	import { page } from "$app/stores";
+	import { allDocs, queryDocs } from "$lib/firebase";
+	import { orderBy, where } from "firebase/firestore/lite";
+	import { getContext } from 'svelte';
 
-const userDataStore = getContext('userData')
+	const userDataStore = getContext('userData')
 
 	/**
 	 * Use item's projectAssigned, timeAssigned, and userAssigned
@@ -15,39 +14,38 @@ const userDataStore = getContext('userData')
   
   export let item, editing
 
-	let more = false
-	let showItem
-	let assignments, showAssignments
+	let assignments = []
+	let selectedProject
 
-	$: {
-		if (showItem == undefined) {
-			showItem = item?.projectAssigned ? { projectName: item?.projectAssigned, username: item?.userAssigned, createdAt: item?.timeAssigned } : null
-			showAssignments = showItem ? [ showItem ] : []
-		}
+	let showMoreAssignments = false
+	let done2 = false
+	$: if ($userDataStore && item && !done2) init()
+
+	async function init() {
+		done2 = true
+		assignments = await queryDocs($userDataStore.businessID, 'assignments', [where('equipmentID', '==', item.id), orderBy('createdAt', 'desc')]) 
+		resetSelection()
 	}
 
-	let selectedProject
+	$: editing && resetSelection()
+
+	function resetSelection() {
+		if (assignments?.length) selectedProject = projects.find(a => a.id == assignments[0].projectID)
+	}
+
 	$: if (selectedProject) {
 		item.projectAssigned = selectedProject.name
 		item.projectID = selectedProject.id
-	}
-
-	// $: if (item?.projectAssigned && projectAssigned) item.projectAssigned = projectAssigned
-
-	async function getMore() {
-		if (!$userDataStore) return
-		more = !more
-
-		if (!assignments) assignments = await queryDocs($userDataStore.businessID, 'assignments', [where('equipmentID', '==', item.id), orderBy('createdAt', 'desc')]) 
-		if (!more) showAssignments = showItem ? [ showItem ] : []
-		else showAssignments = assignments
 	}
 
 	let projects = []
 	let done = false
 	$: if (editing && !done) {
 		done = true
-		allDocs($userDataStore.businessID, 'projects').then(data => projects = data)
+		allDocs($userDataStore.businessID, 'projects').then(data => {
+			projects = data
+			resetSelection()
+		})
 	}
 
 </script>
@@ -56,17 +54,20 @@ const userDataStore = getContext('userData')
 <div id="assignments">
 	<div id="title">
 		Assigned
-		<button id="getMore" on:click={ getMore }>{ more ? '-' : '+'}</button>
-		{#if editing && projects.length }
+		{#if assignments.length }
+			<button id="showMoreAssignments" on:click={ () => showMoreAssignments = !showMoreAssignments }>{ showMoreAssignments ? '-' : '+'}</button>
+		{/if}
+
+		{#if editing && projects.length && assignments.length }
 			<select id="reassign" bind:value={ selectedProject }>
 				{#each projects as proj, i}
-					<option value={ proj } selected={ proj.name == item?.projectAssigned }>{ proj.name }</option>
+					<option value={ proj }>{ proj.name }</option>
 				{/each}
 			</select>	
 		{/if}
 	</div>
-	<div class="scrollable">
-		{#each showAssignments as assn, i}
+	<div class="scrollable" class:scrollable-more={ showMoreAssignments }>
+		{#each assignments as assn, i}
 			<div class="assignment">
 				<a href={ `/${ $page.params.businessName }/projects/${ assn.projectName }` }>{ assn.projectName || '' }</a>
 				<a href={ `/${ $page.params.businessName }/users/${ assn.username }` }>{ assn.username || '' }</a>
@@ -102,9 +103,17 @@ $entryHeight: 20px
 
 	.scrollable
 		width: 100%
+		max-height: 20px
+		overflow-y: hidden
+		overflow-x: hidden
+		transition: max-height 500ms cubic-bezier(0, 1, 0, 1)
+
+
+	.scrollable-more
 		max-height: 200px
 		overflow-y: auto
-		overflow-x: hidden
+		transition: max-height 500ms ease-in-out
+
 
 	.assignment
 		width: calc(100vw - 8px)
@@ -131,7 +140,7 @@ $entryHeight: 20px
 	.assignment:nth-child(even)
 		background-color: #eee
 
-#getMore
+#showMoreAssignments
 	position: relative
 	float: right
 	margin: 0

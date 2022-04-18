@@ -14,9 +14,9 @@
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
 </svelte:head>
 
-{#if $loading}
+<!-- {#if $loading}
 	<Loading />
-{/if}
+{/if} -->
 
 <slot />
 

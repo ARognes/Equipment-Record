@@ -23,6 +23,8 @@
 		// Reset equipment data shown
 		resetSearchItems()
 
+		search = search?.trim()
+
 		// Empty searchbar
 		if (search == null || search.length == 0) return
 

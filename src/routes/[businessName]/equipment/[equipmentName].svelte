@@ -16,14 +16,13 @@
 
 	const userDataStore = getContext('userData')
 
-
   let equipment = session.getItem('equipment')
-  let item = JSON.parse(JSON.stringify(equipment?.find(e => e.name == $page.params.equipmentName) || {}))
+	let itemPointer = equipment?.find(e => e.name == $page.params.equipmentName)
+  let item = itemPointer ? JSON.parse(JSON.stringify(itemPointer)) : null
+	let itemBefore = item ? JSON.parse(JSON.stringify(item)) : null	// Copy item
 	let attributes = item?.attributes || []
 	let editing = false
-	let itemBefore = JSON.parse(JSON.stringify(item || {}))	// Copy item
 	
-
 	$: {
 		$userDataStore && !equipment && (async () => {
 			equipment = await allDocs($userDataStore.businessID, 'equipment')
@@ -37,19 +36,12 @@
 
 	function toggleEditing() {
 		editing = !editing
-		if (editing) {
-
-			// Add next empty attribute
-			attributes[attributes.length] = { key: '', val: ''}
-			return
-		}
+		if (editing) return
 
 		// Remove all edits
 		item = JSON.parse(JSON.stringify(itemBefore))
 		attributes = item?.attributes || []
-		// attributes = attributes
-		// 	?.filter(attr => attr.key?.length > 0)
-		// 	?.map(attr => ({key: attr.key, val: attr.val}))
+		console.log(attributes)
 	}
 
 	function inputName(e) {
@@ -62,7 +54,7 @@
 	 */
 	async function makeEdits() {
 		editing = false
-		if (!item || !itemBefore) return
+		if (!item || !itemBefore) return console.log('No item or itemBefore!', item, itemBefore)
 		let updates = {}
 		const timeStamp = serverTimestamp()
 
@@ -125,9 +117,10 @@
 			.filter((attr, i) => attrEditKeys.indexOf(attr.editKey) === i)
 			.map(attr => ({ key: attr.editKey || attr.key, val: attr.editVal || attr.val }))
 
-		if (JSON.stringify(attributes) === JSON.stringify(itemBefore.attributes)) 
+		if (JSON.stringify(attributes) !== JSON.stringify(itemBefore.attributes)) 
 			updates = { attributes, ...updates }
 
+		console.log(updates)
 		if (!Object.keys(updates).length) return
 
 		// Update equipment doc
@@ -147,7 +140,6 @@
 			if (equipment[+i].id == item.id)
 				equipment[+i] = item
     session.setItem('equipment', equipment)
-
 		location.reload();
 	}
 
