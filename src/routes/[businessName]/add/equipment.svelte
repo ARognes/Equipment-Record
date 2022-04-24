@@ -18,37 +18,50 @@
   const dragBoxHalfWidth = canvasMargin / 2
 
   const constraints = { top: dragBoxHalfWidth, left: dragBoxHalfWidth, bottom: 0, right: 0 } 
-  let selection = { topDown: 0, leftRight: 0, moving: false }
+  let selection = { upDown: 0, leftRight: 0, moving: false, reset: () => {  selection = { upDown: 0, leftRight: 0, moving: false, reset: selection.reset } } }
 
-  function drag(e) {
+  const within = (pos, start, end) => pos >= start - dragBoxHalfWidth && pos < end + dragBoxHalfWidth
+  const onBoundary = (pos, boundary) => pos >= boundary - dragBoxHalfWidth && pos < boundary + dragBoxHalfWidth
+
+
+  function pointerDown(e) {
+    console.log('arst', e)
+
+    if (selection.upDown !== 0 || selection.leftRight !== 0 || selection.moving === true) return  // Already touched
 
     const conversion = canvas.width / window.innerWidth 
     const x = e.x * conversion
     const y = e.y * conversion
 
-    // Find cursor area
-    if (selection.topDown == 0 && selection.leftRight == 0 && !selection.moving) {  
-      const within = (pos, start, end) => pos >= start && pos < end
-      const withinLine = (pos, boundary) => pos <= boundary + dragBoxHalfWidth * 2 && pos > boundary - dragBoxHalfWidth * 2
-      const withinX = within(x, constraints.left, constraints.right)
-      const withinY = within(y, constraints.top, constraints.bottom)
-      const withinTop = withinLine(y, constraints.top)
-      const withinBottom = withinLine(y, constraints.bottom)
-      const withinLeft = withinLine(x, constraints.left)
-      const withinRight = withinLine(x, constraints.right)
-      
+    const withinX = within(x, constraints.left, constraints.right)
+    const withinY = within(y, constraints.top, constraints.bottom)
+    const onTop = onBoundary(y, constraints.top)
+    const onBottom = onBoundary(y, constraints.bottom)
+    const onLeft = onBoundary(x, constraints.left)
+    const onRight = onBoundary(x, constraints.right)
 
-      if (withinX) {
-        if (withinTop) selection.topDown = 1
-        else if (withinBottom) selection.topDown = -1
-      }
-      if (withinY) {
-        if (withinLeft) selection.leftRight = 1
-        else if (withinRight) selection.leftRight = -1
-      }
-    }
+    // On boundary
+    if (withinX) selection.upDown = +onTop - +onBottom
+    if (withinY) selection.leftRight = +onLeft - +onRight
+    
+    // Within area, but not on boundary
+    if (withinX && withinY && !selection.upDown && !selection.leftRight) selection.moving = true
 
-    if ((selection.topDown == 0 && selection.leftRight == 0 && y >= constraints.top && y < constraints.bottom && x >= constraints.left && x < constraints.right) || selection.moving) { // Translate entire selection
+    drag(e)
+  }
+
+  function drag(e) {
+
+    // No touch being tracked
+    if (selection.upDown === 0 && selection.leftRight === 0 && selection.moving === false) return
+    console.log('drag')
+
+    const conversion = canvas.width / window.innerWidth 
+    const x = e.x * conversion
+    const y = e.y * conversion
+
+    
+    if (selection.moving) { // Translate entire selection
       selection.moving = true
       let moveX = e.movementX, moveY = e.movementY
 
@@ -63,30 +76,30 @@
       constraints.bottom += moveY
 
     } else {  // Translate box or edge
-      if (selection.topDown == 1) constraints.top = y
-      else if (selection.topDown == -1) constraints.bottom = y
+      if (selection.upDown == 1) constraints.top = y
+      else if (selection.upDown == -1) constraints.bottom = y
       if (selection.leftRight == 1) constraints.left = x
       else if (selection.leftRight == -1) constraints.right = x
     }
 
-    // Clamp selection
+    // Clamp outer constraints
     constraints.top = Math.max(constraints.top, dragBoxHalfWidth)
     constraints.bottom = Math.min(constraints.bottom, canvas.height - dragBoxHalfWidth)
     constraints.left = Math.max(constraints.left, dragBoxHalfWidth)
     constraints.right = Math.min(constraints.right, canvas.width - dragBoxHalfWidth)
 
+    // Clamp inner area
     const spaceBetweenDragBox = canvasMargin * 2
-    if (selection.topDown == 1) constraints.top = Math.min(constraints.top, constraints.bottom - spaceBetweenDragBox)
-    else if (selection.topDown == -1)constraints.bottom = Math.max(constraints.bottom, constraints.top + spaceBetweenDragBox)
+    if (selection.upDown == 1) constraints.top = Math.min(constraints.top, constraints.bottom - spaceBetweenDragBox)
+    else if (selection.upDown == -1) constraints.bottom = Math.max(constraints.bottom, constraints.top + spaceBetweenDragBox)
     if (selection.leftRight == 1) constraints.left = Math.min(constraints.left, constraints.right - spaceBetweenDragBox)
     else if (selection.leftRight == -1) constraints.right = Math.max(constraints.right, constraints.left + spaceBetweenDragBox)
-
 
     drawConstraints()
   }
 
   function drawConstraints() {
-    console.log(constraints)
+    // console.log(constraints)
     const ctx = canvasOverlay.getContext('2d')
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
@@ -215,10 +228,11 @@
 
     <canvas bind:this={ canvas } width={ window.innerWidth } height={ window.innerWidth }></canvas><!--
     --><canvas bind:this={ canvasOverlay } 
-        on:pointerdown={ drag } 
+        on:pointerdown={ pointerDown } 
         on:pointermove={ drag } 
-        on:pointerleave={ () => selection = { topDown: 0, leftRight: 0, moving: false } } 
-        on:pointercancel={ () => selection = { topDown: 0, leftRight: 0, moving: false } } 
+        on:pointerup={ selection.reset } 
+        on:pointerout={ selection.reset } 
+        on:pointercancel={ selection.reset } 
         width={ window.innerWidth } 
         height={ window.innerWidth }></canvas>
 
