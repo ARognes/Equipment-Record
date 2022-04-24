@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
   import { pinch } from 'svelte-gestures'
-import { xlink_attr } from 'svelte/internal';
 
   function blobToImage(blob) {
     return new Promise(resolve => {
@@ -21,7 +20,7 @@ import { xlink_attr } from 'svelte/internal';
     // e.detail.X
     // e.detail.Y
     // e.detail.target
-    debug = JSON.stringify(e) + ', ' + e?.detail?.X + ', ' + e?.detail?.Y
+    debug = JSON.stringify(e) + ', ' + e?.detail?.scale + ', ' + e?.detail?.center?.x + ', ' + e?.detail?.center?.y
   }
 
   // let img
