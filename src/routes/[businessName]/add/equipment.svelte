@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-  import { pinch } from 'svelte-gestures'
+	import { onMount } from 'svelte'
+  import { Motion, useMotionValue } from 'svelte-motion'
 
   function blobToImage(blob) {
     return new Promise(resolve => {
@@ -14,14 +14,58 @@
     });
   }
 
-  let debug = 'debug'
-  function handle(e) {
-    console.log(e)
-    // e.detail.X
-    // e.detail.Y
-    // e.detail.target
-    debug = JSON.stringify(e) + ', ' + e?.detail?.scale + ', ' + e?.detail?.center?.x + ', ' + e?.detail?.center?.y
+  let canvas, area, debug
+  const canvasMargin = 40
+
+
+  const dragBLX = useMotionValue(0)
+  const dragBLY = useMotionValue(0)
+  const dragBRX = useMotionValue(0)
+  const dragBRY = useMotionValue(0)
+  const dragTLX = useMotionValue(0)
+  const dragTLY = useMotionValue(0)
+  const dragTRX = useMotionValue(0)
+  const dragTRY = useMotionValue(0)
+
+  $: ($dragBRX || $dragBRY || $dragTLX || $dragTLY) && drag()
+
+  function drag() {
+
+    const rect = { top: $dragTLY, bottom: $dragBRY, left: $dragTLX, right: $dragBRX }
+
+
+
+
+    // console.log(window.innerWidth + $dragX, window.innerHeight + $dragY)
+    const conversion = canvas.width / window.innerWidth 
+    const ctx = canvas.getContext('2d')
+    // canvas.width = window.innerWidth + $dragX
+    ctx.drawImage(images[0], canvasMargin / 2 * conversion, canvasMargin / 2 * conversion, canvas.width - canvasMargin * conversion, canvas.height - canvasMargin * conversion)
+    ctx.fillStyle = 'black'
+
+    
+    // Top box
+    ctx.beginPath()
+    ctx.rect(0, 0, canvas.width + 2, canvas.height + (rect.top - canvasMargin / 2) * conversion)
+    ctx.fill()
+
+    // Left box
+    ctx.beginPath()
+    ctx.rect(0, 0, canvas.width + (rect.left - canvasMargin / 2) * conversion, canvas.height + 2)
+    ctx.fill()
+
+    // Right box
+    ctx.beginPath()
+    ctx.rect(canvas.width + (rect.right - canvasMargin / 2) * conversion, 0, canvas.width + 2, canvas.height + 2)
+    ctx.fill()
+
+    // Bottom Box
+    ctx.beginPath()
+    ctx.rect(0, canvas.height + (rect.bottom - canvasMargin / 2) * conversion, canvas.width + 2, canvas.height + 2)
+    ctx.fill()
+
   }
+
 
 
   // let img
@@ -46,14 +90,13 @@
   // }
   // catch (error) { console.error(error) }
 
-  let canvas
 
   let mounted = false
   onMount(() => mounted = true)
 
   // files is bound to image input
   // cropFiles is array of files user must crop, must be empty to continue
-  let files, cropFiles = []
+  let files, cropFiles = [], images = []
   $: if (files) loadImages()
 
   // Make user wait until this is complete to add to firestore!
@@ -61,7 +104,6 @@
     cropFiles = [...files]
     if (!cropFiles.length) return
     
-
     // Load first canvas image
     let canvasStyleWidth = 0
     let canvasStyleHeight = 0
@@ -80,7 +122,11 @@
       }
       canvas.style = `position: absolute; left: 0; top: 0; width: ${ canvasStyleWidth }px; height: ${ canvasStyleHeight }px;`
 
-      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      images.push(img)
+      // canvas.getContext('2d').drawImage(img, canvasMargin, canvasMargin, canvas.width - canvasMargin * 2, canvas.height - canvasMargin * 2)
+      const conversion = canvas.width / window.innerWidth 
+      canvas.getContext('2d').drawImage(images[0], canvasMargin * conversion / 2, canvasMargin * conversion / 2, canvas.width - canvasMargin * conversion, canvas.height - canvasMargin * conversion)
+
     }
     catch (error) { console.error(error) }
 
@@ -129,21 +175,40 @@
     // }
   };
 
-  
 </script>
 
-<svelte:window on:touchstart={ e => e.touches.length > 1 && e.preventDefault() }></svelte:window>
+
 
 <div>
 
   {#if cropFiles.length }
-    <canvas bind:this={ canvas } use:pinch on:pinch={ handle } width={ window.innerWidth } height={ window.innerWidth }></canvas>
-    <p style="position: relative; left: 0; top: 100vw; font-size: 12px; font-weight: bold">{ debug }</p>
+
+    <div style="width: 100vw; height: 100vw; background-color: aquamarine" bind:this={ area }>
+      <canvas bind:this={ canvas } width={ window.innerWidth } height={ window.innerWidth }></canvas>
+    </div>
   
+    <Motion drag 
+      dragConstraints={{ current:area }} 
+      dragElastic={ 0 } 
+      dragMomentum={ false } 
+      style= { { x: dragBRX, y: dragBRY } }
+      let:motion >
+        <div style="touch-action: none; position: absolute; right: 0; top: calc(100vw - 40px); width: 40px; height: 40px; background-color: red" use:motion />
+    </Motion>
+    <Motion drag 
+      dragConstraints={{ current:area }} 
+      dragElastic={ 0 } 
+      dragMomentum={ false } 
+      style= {{ x: dragTLX, y: dragTLY }}
+      let:motion >
+        <div style="touch-action: none; position: absolute; right: 0; top: calc(100vw - 40px); width: 40px; height: 40px; background-color: blue" use:motion />
+    </Motion>
+
   {:else}
     <input type="file" id="camera" accept="image/*" capture="application" multiple={ true } bind:files={ files }>
   
   {/if}
+
 </div>
 
 <style lang="sass">
