@@ -23,6 +23,8 @@
     debug = JSON.stringify(e) + ', ' + e?.detail?.scale + ', ' + e?.detail?.center?.x + ', ' + e?.detail?.center?.y
   }
 
+  window.addEventListener('touchstart', e => e.touches.length > 1 && e.preventDefault())
+
   // let img
   // let canvasStyleWidth = 0
   // let canvasStyleHeight = 0
