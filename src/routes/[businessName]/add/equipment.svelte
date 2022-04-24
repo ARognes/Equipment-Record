@@ -20,7 +20,7 @@
   let selection = { upDown: 0, leftRight: 0, moving: false, reset: () => selection = { upDown: 0, leftRight: 0, moving: false, reset: selection.reset } }
 
   const within = (pos, start, end) => pos >= start - dragBoxHalfWidth && pos < end + dragBoxHalfWidth
-  const onBoundary = (pos, boundary) => pos >= boundary - dragBoxHalfWidth && pos < boundary + dragBoxHalfWidth
+  const onBoundary = (pos, boundary) => pos >= boundary - dragBoxHalfWidth * 2 && pos < boundary + dragBoxHalfWidth * 2
 
 
   function pointerDown(e) {
@@ -139,7 +139,7 @@
 
   // files is bound to image input
   // cropFiles is array of files user must crop, must be empty to continue
-  let files, cropFiles = [], images = []
+  let files, cropFiles = []
   $: if (files) loadImages()
 
   // Make user wait until this is complete to add to firestore!
@@ -151,21 +151,21 @@
     try {
       const img = await blobToImage(cropFiles[0])
 
-      images.push(img)
       constraints.right = canvasOverlay.width - dragBoxHalfWidth
       constraints.bottom = canvasOverlay.height - dragBoxHalfWidth
-      const imgConversion = canvas.width / Math.max(img.naturalWidth, img.naturalHeight)
+      const imgWidth = img.width, imgHeight = img.height
+      const imgConversion = canvas.width / Math.max(imgWidth, img.height)
       const conversion = canvas.width / window.innerWidth
       const ctx = canvas.getContext('2d')
       ctx.fillStyle = 'black'
       ctx.beginPath()
       ctx.rect(0, 0, canvas.width, canvas.height)
       ctx.fill()
-      ctx.drawImage(images[0], 
-                    img.naturalWidth < img.naturalHeight ? canvas.width / 2 - img.naturalWidth * imgConversion / 2 + canvasMargin * conversion / 2 : canvasMargin * conversion,
-                    img.naturalWidth > img.naturalHeight ? canvas.width / 2 - img.naturalHeight * imgConversion / 2 + canvasMargin * conversion / 2 : canvasMargin * conversion,
-                    img.naturalWidth * imgConversion - canvasMargin * conversion, 
-                    img.naturalHeight * imgConversion - canvasMargin * conversion)
+      ctx.drawImage(img, 
+                    imgWidth < img.height ? canvas.width / 2 - imgWidth * imgConversion / 2 + canvasMargin * conversion / 2 : canvasMargin * conversion,
+                    imgWidth > img.height ? canvas.width / 2 - img.height * imgConversion / 2 + canvasMargin * conversion / 2 : canvasMargin * conversion,
+                    imgWidth * imgConversion - canvasMargin * conversion, 
+                    img.height * imgConversion - canvasMargin * conversion)
 
       drawConstraints()
     }
