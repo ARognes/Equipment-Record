@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-  import { Motion, useMotionValue } from 'svelte-motion'
 
   function blobToImage(blob) {
     return new Promise(resolve => {
@@ -14,82 +13,112 @@
     });
   }
 
-  let canvas, area, debug
-  const canvasMargin = 40
+  let canvas, canvasOverlay, debug
+  const canvasMargin = 60 // Also drag box width/2
+  const dragBoxHalfWidth = canvasMargin / 2
 
+  const constraints = { top: dragBoxHalfWidth, left: dragBoxHalfWidth, bottom: 0, right: 0 } 
+  let selection = { topDown: 0, leftRight: 0, moving: false }
 
-  const dragBLX = useMotionValue(0)
-  const dragBLY = useMotionValue(0)
-  const dragBRX = useMotionValue(0)
-  const dragBRY = useMotionValue(0)
-  const dragTLX = useMotionValue(0)
-  const dragTLY = useMotionValue(0)
-  const dragTRX = useMotionValue(0)
-  const dragTRY = useMotionValue(0)
+  function drag(e) {
 
-  $: ($dragBRX || $dragBRY || $dragTLX || $dragTLY) && drag()
-
-  function drag() {
-
-    const rect = { top: $dragTLY, bottom: $dragBRY, left: $dragTLX, right: $dragBRX }
-
-
-
-
-    // console.log(window.innerWidth + $dragX, window.innerHeight + $dragY)
     const conversion = canvas.width / window.innerWidth 
-    const ctx = canvas.getContext('2d')
-    // canvas.width = window.innerWidth + $dragX
-    ctx.drawImage(images[0], canvasMargin / 2 * conversion, canvasMargin / 2 * conversion, canvas.width - canvasMargin * conversion, canvas.height - canvasMargin * conversion)
-    ctx.fillStyle = 'black'
+    const x = e.x * conversion
+    const y = e.y * conversion
 
-    
-    // Top box
-    ctx.beginPath()
-    ctx.rect(0, 0, canvas.width + 2, canvas.height + (rect.top - canvasMargin / 2) * conversion)
-    ctx.fill()
+    // Find cursor area
+    if (selection.topDown == 0 && selection.leftRight == 0 && !selection.moving) {  
+      const within = (pos, start, end) => pos >= start && pos < end
+      const withinLine = (pos, boundary) => pos <= boundary + dragBoxHalfWidth * 2 && pos > boundary - dragBoxHalfWidth * 2
+      const withinX = within(x, constraints.left, constraints.right)
+      const withinY = within(y, constraints.top, constraints.bottom)
+      const withinTop = withinLine(y, constraints.top)
+      const withinBottom = withinLine(y, constraints.bottom)
+      const withinLeft = withinLine(x, constraints.left)
+      const withinRight = withinLine(x, constraints.right)
+      
 
-    // Left box
-    ctx.beginPath()
-    ctx.rect(0, 0, canvas.width + (rect.left - canvasMargin / 2) * conversion, canvas.height + 2)
-    ctx.fill()
+      if (withinX) {
+        if (withinTop) selection.topDown = 1
+        else if (withinBottom) selection.topDown = -1
+      }
+      if (withinY) {
+        if (withinLeft) selection.leftRight = 1
+        else if (withinRight) selection.leftRight = -1
+      }
+    }
 
-    // Right box
-    ctx.beginPath()
-    ctx.rect(canvas.width + (rect.right - canvasMargin / 2) * conversion, 0, canvas.width + 2, canvas.height + 2)
-    ctx.fill()
+    if ((selection.topDown == 0 && selection.leftRight == 0 && y >= constraints.top && y < constraints.bottom && x >= constraints.left && x < constraints.right) || selection.moving) { // Translate entire selection
+      selection.moving = true
+      let moveX = e.movementX, moveY = e.movementY
 
-    // Bottom Box
-    ctx.beginPath()
-    ctx.rect(0, canvas.height + (rect.bottom - canvasMargin / 2) * conversion, canvas.width + 2, canvas.height + 2)
-    ctx.fill()
+      if (constraints.left + moveX < dragBoxHalfWidth) moveX -= constraints.left + moveX - dragBoxHalfWidth
+      else if (constraints.right + moveX >= canvas.width - dragBoxHalfWidth) moveX -= (constraints.right + moveX) - canvas.width + dragBoxHalfWidth
+      if (constraints.top + moveY < dragBoxHalfWidth) moveY -= constraints.top + moveY - dragBoxHalfWidth
+      else if (constraints.bottom + moveY >= canvas.height - dragBoxHalfWidth) moveY -= (constraints.bottom + moveY) - canvas.height + dragBoxHalfWidth
 
+      constraints.left += moveX
+      constraints.right += moveX
+      constraints.top += moveY
+      constraints.bottom += moveY
+
+    } else {  // Translate box or edge
+      if (selection.topDown == 1) constraints.top = y
+      else if (selection.topDown == -1) constraints.bottom = y
+      if (selection.leftRight == 1) constraints.left = x
+      else if (selection.leftRight == -1) constraints.right = x
+    }
+
+    // Clamp selection
+    constraints.top = Math.max(constraints.top, dragBoxHalfWidth)
+    constraints.bottom = Math.min(constraints.bottom, canvas.height - dragBoxHalfWidth)
+    constraints.left = Math.max(constraints.left, dragBoxHalfWidth)
+    constraints.right = Math.min(constraints.right, canvas.width - dragBoxHalfWidth)
+
+    const spaceBetweenDragBox = canvasMargin * 2
+    if (selection.topDown == 1) constraints.top = Math.min(constraints.top, constraints.bottom - spaceBetweenDragBox)
+    else if (selection.topDown == -1)constraints.bottom = Math.max(constraints.bottom, constraints.top + spaceBetweenDragBox)
+    if (selection.leftRight == 1) constraints.left = Math.min(constraints.left, constraints.right - spaceBetweenDragBox)
+    else if (selection.leftRight == -1) constraints.right = Math.max(constraints.right, constraints.left + spaceBetweenDragBox)
+
+
+    drawConstraints()
   }
 
+  function drawConstraints() {
+    console.log(constraints)
+    const ctx = canvasOverlay.getContext('2d')
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
 
+    ctx.fillStyle = 'black'
+    const constraintsArr = Object.values(constraints)
+    for (let i in constraintsArr) {  // Draw cropped out area
+      ctx.beginPath()
+      ctx.rect( +i == 3 ? constraints.right - dragBoxHalfWidth : 0, 
+                +i == 2 ? constraints.bottom - dragBoxHalfWidth : 0, 
+                +i == 1 ? constraints.left + dragBoxHalfWidth : canvas.width + 2, 
+                +i == 0 ? constraints.top + dragBoxHalfWidth : canvas.height + 2) 
+      ctx.fill()
+    }
+    ctx.fillStyle = '#888'
+    ctx.strokeStyle = '#888'
+    ctx.lineWidth = 12
+    for (let i in constraintsArr) {   // Draw corner boxes
+      ctx.beginPath()
+      ctx.rect(constraintsArr[(+i % 2) * 2 + 1] - dragBoxHalfWidth, 
+               constraintsArr[Math.floor(+i / 2) * 2] - dragBoxHalfWidth, 
+               dragBoxHalfWidth * 2, 
+               dragBoxHalfWidth * 2) 
+      ctx.stroke()
 
-  // let img
-  // let canvasStyleWidth = 0
-  // let canvasStyleHeight = 0
-  // try {
-  //   img = await blobToImage(file)
-  //   const aspectRatio = img.naturalWidth / img.naturalHeight
-  //   canvas.width = img.naturalWidth
-  //   canvas.height = img.naturalHeight
-  //   if (aspectRatio < 1) {
-  //     canvasStyleWidth = window.innerWidth
-  //     canvasStyleHeight = img.naturalHeight * window.innerWidth / img.naturalWidth
-  //   }
-  //   else {
-  //     canvasStyleWidth = aspectRatio * window.innerWidth
-  //     canvasStyleHeight = window.innerWidth
-  //   }
-  //   canvas.style = `position: absolute; left: 0; top: 0; width: ${ canvasStyleWidth }px; height: ${ canvasStyleHeight }px;`
-
-  //   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  // }
-  // catch (error) { console.error(error) }
-
+      ctx.beginPath()
+      ctx.rect( +i % 2 == 1 ? +i == 1 ? constraints.left - dragBoxHalfWidth / 4 : constraints.right - dragBoxHalfWidth / 4 : (constraints.left + constraints.right) / 2 - dragBoxHalfWidth, 
+                +i % 2 == 0 ? +i == 0 ? constraints.top - dragBoxHalfWidth / 4 : constraints.bottom - dragBoxHalfWidth / 4 : (constraints.top + constraints.bottom) / 2 - dragBoxHalfWidth, 
+                +i % 2 == 1 ? dragBoxHalfWidth / 2 : dragBoxHalfWidth * 2, 
+                +i % 2 == 0 ? dragBoxHalfWidth / 2 : dragBoxHalfWidth * 2) 
+      ctx.fill()
+    }
+  }
 
   let mounted = false
   onMount(() => mounted = true)
@@ -110,9 +139,9 @@
     try {
       const img = await blobToImage(cropFiles[0])
       const aspectRatio = img.naturalWidth / img.naturalHeight
-      canvas.width = img.naturalWidth
-      canvas.height = img.naturalHeight
-      if (aspectRatio < 1) {
+      canvas.width = canvasOverlay.width = img.naturalWidth
+      canvas.height = canvasOverlay.height = img.naturalHeight
+      if (aspectRatio >= 1) {
         canvasStyleWidth = window.innerWidth
         canvasStyleHeight = img.naturalHeight * window.innerWidth / img.naturalWidth
       }
@@ -121,12 +150,13 @@
         canvasStyleHeight = window.innerWidth
       }
       canvas.style = `position: absolute; left: 0; top: 0; width: ${ canvasStyleWidth }px; height: ${ canvasStyleHeight }px;`
+      canvasOverlay.style = `position: absolute; left: 0; top: 0; width: ${ canvasStyleWidth }px; height: ${ canvasStyleHeight }px;`
 
       images.push(img)
-      // canvas.getContext('2d').drawImage(img, canvasMargin, canvasMargin, canvas.width - canvasMargin * 2, canvas.height - canvasMargin * 2)
-      const conversion = canvas.width / window.innerWidth 
-      canvas.getContext('2d').drawImage(images[0], canvasMargin * conversion / 2, canvasMargin * conversion / 2, canvas.width - canvasMargin * conversion, canvas.height - canvasMargin * conversion)
-
+      constraints.right = canvas.width - dragBoxHalfWidth
+      constraints.bottom = canvas.height - dragBoxHalfWidth
+      canvas.getContext('2d').drawImage(images[0], canvasMargin, canvasMargin, canvas.width - canvasMargin * 2, canvas.height - canvasMargin * 2)
+      drawConstraints()
     }
     catch (error) { console.error(error) }
 
@@ -183,26 +213,14 @@
 
   {#if cropFiles.length }
 
-    <div style="width: 100vw; height: 100vw; background-color: aquamarine" bind:this={ area }>
-      <canvas bind:this={ canvas } width={ window.innerWidth } height={ window.innerWidth }></canvas>
-    </div>
-  
-    <Motion drag 
-      dragConstraints={{ current:area }} 
-      dragElastic={ 0 } 
-      dragMomentum={ false } 
-      style= { { x: dragBRX, y: dragBRY } }
-      let:motion >
-        <div style="touch-action: none; position: absolute; right: 0; top: calc(100vw - 40px); width: 40px; height: 40px; background-color: red" use:motion />
-    </Motion>
-    <Motion drag 
-      dragConstraints={{ current:area }} 
-      dragElastic={ 0 } 
-      dragMomentum={ false } 
-      style= {{ x: dragTLX, y: dragTLY }}
-      let:motion >
-        <div style="touch-action: none; position: absolute; right: 0; top: calc(100vw - 40px); width: 40px; height: 40px; background-color: blue" use:motion />
-    </Motion>
+    <canvas bind:this={ canvas } width={ window.innerWidth } height={ window.innerWidth }></canvas><!--
+    --><canvas bind:this={ canvasOverlay } 
+        on:pointerdown={ drag } 
+        on:pointermove={ drag } 
+        on:pointerleave={ () => selection = { topDown: 0, leftRight: 0, moving: false } } 
+        on:pointercancel={ () => selection = { topDown: 0, leftRight: 0, moving: false } } 
+        width={ window.innerWidth } 
+        height={ window.innerWidth }></canvas>
 
   {:else}
     <input type="file" id="camera" accept="image/*" capture="application" multiple={ true } bind:files={ files }>
