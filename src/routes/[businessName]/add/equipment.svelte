@@ -19,7 +19,7 @@
   const constraints = { top: dragBoxHalfWidth, left: dragBoxHalfWidth, bottom: 0, right: 0 } 
   let selection = { upDown: 0, leftRight: 0, moving: false, reset: () => selection = { upDown: 0, leftRight: 0, moving: false, reset: selection.reset } }
 
-  const within = (pos, start, end) => pos >= start - dragBoxHalfWidth && pos < end + dragBoxHalfWidth
+  const within = (pos, start, end) => pos >= start - dragBoxHalfWidth * 2 && pos < end + dragBoxHalfWidth * 2
   const onBoundary = (pos, boundary) => pos >= boundary - dragBoxHalfWidth * 2 && pos < boundary + dragBoxHalfWidth * 2
 
 
@@ -95,7 +95,7 @@
 
   function drawConstraints() {
     const ctx = canvasOverlay.getContext('2d')
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.clearRect(0, 0, canvasOverlay.width, canvasOverlay.height)
 
     ctx.fillStyle = 'black'
     const constraintsArr = Object.values(constraints)
@@ -103,8 +103,8 @@
       ctx.beginPath()
       ctx.rect( +i == 3 ? constraints.right - dragBoxHalfWidth : 0, 
                 +i == 2 ? constraints.bottom - dragBoxHalfWidth : 0, 
-                +i == 1 ? constraints.left + dragBoxHalfWidth : canvas.width + 2, 
-                +i == 0 ? constraints.top + dragBoxHalfWidth : canvas.height + 2) 
+                +i == 1 ? constraints.left + dragBoxHalfWidth : canvasOverlay.width + 2, 
+                +i == 0 ? constraints.top + dragBoxHalfWidth : canvasOverlay.height + 2) 
       ctx.fill()
     }
 
@@ -153,19 +153,28 @@
 
       constraints.right = canvasOverlay.width - dragBoxHalfWidth
       constraints.bottom = canvasOverlay.height - dragBoxHalfWidth
-      const imgWidth = img.width, imgHeight = img.height
-      const imgConversion = canvas.width / Math.max(imgWidth, img.height)
+      const imgWidth = img.naturalWidth, imgHeight = img.naturalHeight
+
+      canvas.width = canvas.height = Math.max(imgWidth, imgHeight)
+
+
+      // const imgConversion = canvas.width / imgMax
       const conversion = canvas.width / window.innerWidth
       const ctx = canvas.getContext('2d')
+
+      const wgh = imgWidth > imgHeight
+      const imgWidthMargin = imgWidth - canvasMargin * conversion * 2
+      const imgHeightMargin = imgHeight - canvasMargin * conversion * 2
+
       ctx.fillStyle = 'black'
       ctx.beginPath()
       ctx.rect(0, 0, canvas.width, canvas.height)
       ctx.fill()
       ctx.drawImage(img, 
-                    imgWidth < img.height ? canvas.width / 2 - imgWidth * imgConversion / 2 + canvasMargin * conversion / 2 : canvasMargin * conversion,
-                    imgWidth > img.height ? canvas.width / 2 - img.height * imgConversion / 2 + canvasMargin * conversion / 2 : canvasMargin * conversion,
-                    imgWidth * imgConversion - canvasMargin * conversion, 
-                    img.height * imgConversion - canvasMargin * conversion)
+                    !wgh ? canvas.width / 2 - imgWidth / 2 + canvasMargin * conversion : canvasMargin * conversion,
+                    wgh ? canvas.width / 2 - imgHeight / 2 + canvasMargin * conversion : canvasMargin * conversion,
+                    wgh ? imgWidthMargin : imgWidth / imgHeight * imgHeightMargin, 
+                    !wgh ? imgHeight / imgWidth * imgWidthMargin : imgHeightMargin)
 
       drawConstraints()
     }
