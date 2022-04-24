@@ -148,28 +148,25 @@
     if (!cropFiles.length) return
     
     // Load first canvas image
-    let canvasStyleWidth = 0
-    let canvasStyleHeight = 0
     try {
       const img = await blobToImage(cropFiles[0])
-      const aspectRatio = img.naturalWidth / img.naturalHeight
-      canvas.width = img.naturalWidth
-      canvas.height = img.naturalHeight
-      if (aspectRatio >= 1) {
-        canvasStyleWidth = window.innerWidth
-        canvasStyleHeight = img.naturalHeight * window.innerWidth / img.naturalWidth
-      }
-      else {
-        canvasStyleWidth = aspectRatio * window.innerWidth
-        canvasStyleHeight = window.innerWidth
-      }
-      canvas.style = `position: absolute; left: 0; top: 0; width: ${ canvasStyleWidth }px; height: ${ canvasStyleHeight }px;`
 
       images.push(img)
       constraints.right = canvasOverlay.width - dragBoxHalfWidth
       constraints.bottom = canvasOverlay.height - dragBoxHalfWidth
+      const imgConversion = canvas.width / Math.max(img.naturalWidth, img.naturalHeight)
       const conversion = canvas.width / window.innerWidth
-      canvas.getContext('2d').drawImage(images[0], canvasMargin * conversion, canvasMargin * conversion, canvas.width - canvasMargin * conversion * 2, canvas.height - canvasMargin * conversion * 2)
+      const ctx = canvas.getContext('2d')
+      ctx.fillStyle = 'black'
+      ctx.beginPath()
+      ctx.rect(0, 0, canvas.width, canvas.height)
+      ctx.fill()
+      ctx.drawImage(images[0], 
+                    img.naturalWidth < img.naturalHeight ? canvas.width / 2 - img.naturalWidth * imgConversion / 2 + canvasMargin * conversion / 2 : canvasMargin * conversion,
+                    img.naturalWidth > img.naturalHeight ? canvas.width / 2 - img.naturalHeight * imgConversion / 2 + canvasMargin * conversion / 2 : canvasMargin * conversion,
+                    img.naturalWidth * imgConversion - canvasMargin * conversion, 
+                    img.naturalHeight * imgConversion - canvasMargin * conversion)
+
       drawConstraints()
     }
     catch (error) { console.error(error) }
