@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
 
   function blobToImage(blob) {
     return new Promise(resolve => {
@@ -13,25 +12,23 @@
     });
   }
 
-  let canvas, canvasOverlay, debug
-  const canvasMargin = 60 // Also drag box width/2
+  let canvas, canvasOverlay
+  const canvasMargin = 20 
   const dragBoxHalfWidth = canvasMargin / 2
 
   const constraints = { top: dragBoxHalfWidth, left: dragBoxHalfWidth, bottom: 0, right: 0 } 
-  let selection = { upDown: 0, leftRight: 0, moving: false, reset: () => {  selection = { upDown: 0, leftRight: 0, moving: false, reset: selection.reset } } }
+  let selection = { upDown: 0, leftRight: 0, moving: false, reset: () => selection = { upDown: 0, leftRight: 0, moving: false, reset: selection.reset } }
 
   const within = (pos, start, end) => pos >= start - dragBoxHalfWidth && pos < end + dragBoxHalfWidth
   const onBoundary = (pos, boundary) => pos >= boundary - dragBoxHalfWidth && pos < boundary + dragBoxHalfWidth
 
 
   function pointerDown(e) {
-    console.log('arst', e)
 
     if (selection.upDown !== 0 || selection.leftRight !== 0 || selection.moving === true) return  // Already touched
 
-    const conversion = canvas.width / window.innerWidth 
-    const x = e.x * conversion
-    const y = e.y * conversion
+    const x = e.x
+    const y = e.y
 
     const withinX = within(x, constraints.left, constraints.right)
     const withinY = within(y, constraints.top, constraints.bottom)
@@ -56,19 +53,17 @@
     if (selection.upDown === 0 && selection.leftRight === 0 && selection.moving === false) return
     console.log('drag')
 
-    const conversion = canvas.width / window.innerWidth 
-    const x = e.x * conversion
-    const y = e.y * conversion
+    const x = e.x, y = e.y
 
     
     if (selection.moving) { // Translate entire selection
       selection.moving = true
-      let moveX = e.movementX, moveY = e.movementY
+      let moveX = e.movementX / window.devicePixelRatio, moveY = e.movementY / window.devicePixelRatio
 
       if (constraints.left + moveX < dragBoxHalfWidth) moveX -= constraints.left + moveX - dragBoxHalfWidth
-      else if (constraints.right + moveX >= canvas.width - dragBoxHalfWidth) moveX -= (constraints.right + moveX) - canvas.width + dragBoxHalfWidth
+      else if (constraints.right + moveX >= canvasOverlay.width - dragBoxHalfWidth) moveX -= (constraints.right + moveX) - canvasOverlay.width + dragBoxHalfWidth
       if (constraints.top + moveY < dragBoxHalfWidth) moveY -= constraints.top + moveY - dragBoxHalfWidth
-      else if (constraints.bottom + moveY >= canvas.height - dragBoxHalfWidth) moveY -= (constraints.bottom + moveY) - canvas.height + dragBoxHalfWidth
+      else if (constraints.bottom + moveY >= canvasOverlay.height - dragBoxHalfWidth) moveY -= (constraints.bottom + moveY) - canvasOverlay.height + dragBoxHalfWidth
 
       constraints.left += moveX
       constraints.right += moveX
@@ -84,9 +79,9 @@
 
     // Clamp outer constraints
     constraints.top = Math.max(constraints.top, dragBoxHalfWidth)
-    constraints.bottom = Math.min(constraints.bottom, canvas.height - dragBoxHalfWidth)
+    constraints.bottom = Math.min(constraints.bottom, canvasOverlay.height - dragBoxHalfWidth)
     constraints.left = Math.max(constraints.left, dragBoxHalfWidth)
-    constraints.right = Math.min(constraints.right, canvas.width - dragBoxHalfWidth)
+    constraints.right = Math.min(constraints.right, canvasOverlay.width - dragBoxHalfWidth)
 
     // Clamp inner area
     const spaceBetweenDragBox = canvasMargin * 2
@@ -99,7 +94,6 @@
   }
 
   function drawConstraints() {
-    // console.log(constraints)
     const ctx = canvasOverlay.getContext('2d')
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
@@ -113,17 +107,27 @@
                 +i == 0 ? constraints.top + dragBoxHalfWidth : canvas.height + 2) 
       ctx.fill()
     }
+
     ctx.fillStyle = '#888'
-    ctx.strokeStyle = '#888'
-    ctx.lineWidth = 12
     for (let i in constraintsArr) {   // Draw corner boxes
+
+      ctx.fillStyle = '#888'
       ctx.beginPath()
       ctx.rect(constraintsArr[(+i % 2) * 2 + 1] - dragBoxHalfWidth, 
                constraintsArr[Math.floor(+i / 2) * 2] - dragBoxHalfWidth, 
                dragBoxHalfWidth * 2, 
                dragBoxHalfWidth * 2) 
-      ctx.stroke()
+      ctx.fill()
 
+      ctx.fillStyle = 'black'
+      ctx.beginPath()
+      ctx.rect(constraintsArr[(+i % 2) * 2 + 1] - dragBoxHalfWidth / 2, 
+               constraintsArr[Math.floor(+i / 2) * 2] - dragBoxHalfWidth / 2, 
+               dragBoxHalfWidth, 
+               dragBoxHalfWidth) 
+      ctx.fill()
+
+      ctx.fillStyle = '#888'
       ctx.beginPath()
       ctx.rect( +i % 2 == 1 ? +i == 1 ? constraints.left - dragBoxHalfWidth / 4 : constraints.right - dragBoxHalfWidth / 4 : (constraints.left + constraints.right) / 2 - dragBoxHalfWidth, 
                 +i % 2 == 0 ? +i == 0 ? constraints.top - dragBoxHalfWidth / 4 : constraints.bottom - dragBoxHalfWidth / 4 : (constraints.top + constraints.bottom) / 2 - dragBoxHalfWidth, 
@@ -132,9 +136,6 @@
       ctx.fill()
     }
   }
-
-  let mounted = false
-  onMount(() => mounted = true)
 
   // files is bound to image input
   // cropFiles is array of files user must crop, must be empty to continue
@@ -152,8 +153,8 @@
     try {
       const img = await blobToImage(cropFiles[0])
       const aspectRatio = img.naturalWidth / img.naturalHeight
-      canvas.width = canvasOverlay.width = img.naturalWidth
-      canvas.height = canvasOverlay.height = img.naturalHeight
+      canvas.width = img.naturalWidth
+      canvas.height = img.naturalHeight
       if (aspectRatio >= 1) {
         canvasStyleWidth = window.innerWidth
         canvasStyleHeight = img.naturalHeight * window.innerWidth / img.naturalWidth
@@ -163,12 +164,12 @@
         canvasStyleHeight = window.innerWidth
       }
       canvas.style = `position: absolute; left: 0; top: 0; width: ${ canvasStyleWidth }px; height: ${ canvasStyleHeight }px;`
-      canvasOverlay.style = `position: absolute; left: 0; top: 0; width: ${ canvasStyleWidth }px; height: ${ canvasStyleHeight }px;`
 
       images.push(img)
-      constraints.right = canvas.width - dragBoxHalfWidth
-      constraints.bottom = canvas.height - dragBoxHalfWidth
-      canvas.getContext('2d').drawImage(images[0], canvasMargin, canvasMargin, canvas.width - canvasMargin * 2, canvas.height - canvasMargin * 2)
+      constraints.right = canvasOverlay.width - dragBoxHalfWidth
+      constraints.bottom = canvasOverlay.height - dragBoxHalfWidth
+      const conversion = canvas.width / window.innerWidth
+      canvas.getContext('2d').drawImage(images[0], canvasMargin * conversion, canvasMargin * conversion, canvas.width - canvasMargin * conversion * 2, canvas.height - canvasMargin * conversion * 2)
       drawConstraints()
     }
     catch (error) { console.error(error) }
@@ -221,13 +222,13 @@
 </script>
 
 
-
 <div>
 
   {#if cropFiles.length }
 
     <canvas bind:this={ canvas } width={ window.innerWidth } height={ window.innerWidth }></canvas><!--
     --><canvas bind:this={ canvasOverlay } 
+        id="canvas-overlay"
         on:pointerdown={ pointerDown } 
         on:pointermove={ drag } 
         on:pointerup={ selection.reset } 
@@ -246,9 +247,19 @@
 <style lang="sass">
 
   canvas
-    border: 1px solid black
-  
+    position: absolute
+    left: 0
+    top: 0
+    width: 100vw
+    height: 100vw
+    touch-action: none
 
-
+  #canvas-overlay
+    position: absolute
+    left: 0
+    top: 0
+    width: 100vw
+    height: 100vw
+    touch-action: none
     
 </style>
