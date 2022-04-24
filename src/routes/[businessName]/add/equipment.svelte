@@ -21,7 +21,7 @@ import { xlink_attr } from 'svelte/internal';
     // e.detail.X
     // e.detail.Y
     // e.detail.target
-    debug = JSON.stringify(e)
+    debug = JSON.stringify(e) + ', ' + e?.detail?.X + ', ' + e?.detail?.Y
   }
 
   // let img
