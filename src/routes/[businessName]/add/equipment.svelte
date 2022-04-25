@@ -1,25 +1,15 @@
 <script lang="ts">
 
   import RangeSlider from 'svelte-range-slider-pips'
-  import Compressor from 'compressorjs'
+  import { blobToImage, canvasToBlob, compress } from '$lib/imageProcessing'
+
+  let imageBlobs = []
 
   const SMALL_COMPRESSION_PERCENTAGE = 0.9;
   const SMALL_COMPRESSION_MAX_SIZE = 1200;
 
   const TINY_COMPRESSION_PERCENTAGE = 0.6;
   const TINY_COMPRESSION_MAX_SIZE = 200;
-
-  function blobToImage(blob) {
-    return new Promise(resolve => {
-      const url = URL.createObjectURL(blob);
-      let img = new Image();
-      img.onload = function() {
-        URL.revokeObjectURL(this.src);
-        resolve(this);
-      }
-      img.src = url;
-    });
-  }
 
   let canvas, canvasOverlay
   const canvasMargin = 20 
@@ -170,18 +160,22 @@
   }
 
   // files is bound to image input
-  // cropFiles is array of files user must crop, must be empty to continue
-  let files, cropFiles = []
-  $: if (files) loadImages()
+  let files = null, filePtr = -1
+  $: if (files?.length) {
+    filePtr = files.length-1
+    loadImage()
+  }
 
   // Make user wait until this is complete to add to firestore!
-  async function loadImages() {
-    cropFiles = [...files]
-    if (!cropFiles.length) return
+  async function loadImage() {
+    if (!files.length || filePtr < 0) {
+      
+      return console.log('All images done')
+    }
     
     // Load first canvas image
     try {
-      const img = await blobToImage(cropFiles[0])
+      const img = await blobToImage(files[filePtr])
 
       constraints.right = canvasOverlay.width - dragBoxHalfWidth
       constraints.bottom = canvasOverlay.height - dragBoxHalfWidth
@@ -202,8 +196,8 @@
       ctx.drawImage(img, 
                     !wgh ? canvas.width / 2 - imgWidth / 2 + canvasMargin * conversion : canvasMargin * conversion,
                     wgh ? canvas.width / 2 - imgHeight / 2 + canvasMargin * conversion : canvasMargin * conversion,
-                    wgh ? imgWidthMargin : imgWidth / imgHeight * imgHeightMargin, 
-                    !wgh ? imgHeight / imgWidth * imgWidthMargin : imgHeightMargin)
+                    wgh ? imgWidthMargin : imgWidth / imgHeightMargin * imgHeight, 
+                    !wgh ? imgHeight / imgWidthMargin * imgWidth : imgHeightMargin)
 
       drawConstraints()
     }
@@ -247,29 +241,11 @@
     const smallImgBlob: Blob = await compress(blob, SMALL_COMPRESSION_PERCENTAGE, SMALL_COMPRESSION_MAX_SIZE)
     const tinyImgBlob: Blob = await compress(blob, TINY_COMPRESSION_PERCENTAGE, TINY_COMPRESSION_MAX_SIZE)
 
-    const link = document.createElement('a')
-    link.download = 'EPIC.png';
-    link.href = URL.createObjectURL(smallImgBlob)
+    imageBlobs.push({ small: smallImgBlob, tiny: tinyImgBlob })
 
-    link?.click()
-  }
-
-  function compress(blob, quality, size): Promise<Blob> {
-    return new Promise((resolve, reject) => {
-      new Compressor(blob, {
-        quality: quality,
-        maxWidth: size,
-        maxHeight: size,
-        async success(result) { return resolve(result); },
-        error(error) { reject(error); }
-      });
-    });
-  }
-
-  function canvasToBlob(canvas) {
-    return new Promise(resolve => {
-      canvas.toBlob(resolve);
-    });
+    filePtr--
+    console.log(filePtr)
+    loadImage()
   }
 
 </script>
@@ -277,7 +253,7 @@
 
 <div>
 
-  {#if cropFiles.length }
+  {#if filePtr >= 0 }
 
     <div id="image-area">
       <canvas bind:this={ canvas } width={ window.innerWidth } height={ window.innerWidth }></canvas><!--
