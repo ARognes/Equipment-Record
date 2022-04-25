@@ -1,5 +1,8 @@
 <script lang="ts">
 
+  import RangeSlider from 'svelte-range-slider-pips'
+
+
   function blobToImage(blob) {
     return new Promise(resolve => {
       const url = URL.createObjectURL(blob);
@@ -18,10 +21,10 @@
 
   const constraints = { top: dragBoxHalfWidth, left: dragBoxHalfWidth, bottom: 0, right: 0 } 
   let selection = { upDown: 0, leftRight: 0, moving: false, reset: () => selection = { upDown: 0, leftRight: 0, moving: false, reset: selection.reset } }
+  let pointerOffset = { x: 0, y: 0 }
 
-  const within = (pos, start, end) => pos >= start - dragBoxHalfWidth * 2 && pos < end + dragBoxHalfWidth * 2
-  const onBoundary = (pos, boundary) => pos >= boundary - dragBoxHalfWidth * 2 && pos < boundary + dragBoxHalfWidth * 2
-
+  const within = (pos, start, end) => pos >= start - dragBoxHalfWidth && pos < end + dragBoxHalfWidth
+  const onBoundary = (pos, boundary, dist=dragBoxHalfWidth) => Math.abs(boundary - pos) < dist
 
   function pointerDown(e) {
 
@@ -43,6 +46,10 @@
     
     // Within area, but not on boundary
     if (withinX && withinY && !selection.upDown && !selection.leftRight) selection.moving = true
+    else if (selection.upDown || selection.leftRight) {
+      pointerOffset.x = selection.leftRight === 1 ? constraints.left - x : constraints.right - x
+      pointerOffset.y = selection.upDown === 1 ? constraints.top - y : constraints.bottom - y
+    }
 
     drag(e)
   }
@@ -53,7 +60,7 @@
     if (selection.upDown === 0 && selection.leftRight === 0 && selection.moving === false) return
     console.log('drag')
 
-    const x = e.x, y = e.y
+    const x = e.x + pointerOffset.x, y = e.y + pointerOffset.y
 
     
     if (selection.moving) { // Translate entire selection
@@ -108,9 +115,13 @@
       ctx.fill()
     }
 
-    ctx.fillStyle = '#888'
+
     for (let i in constraintsArr) {   // Draw corner boxes
 
+      // const horizontal = selection.leftRight === (2 - ((+i % 2) * 2 + 1))
+      // const vertical = selection.upDown === (1 - (Math.floor(+i / 2) * 2))
+      // console.log(horizontal, vertical)
+      // ctx.fillStyle = horizontal && vertical ? '#00f' : '#888'
       ctx.fillStyle = '#888'
       ctx.beginPath()
       ctx.rect(constraintsArr[(+i % 2) * 2 + 1] - dragBoxHalfWidth, 
@@ -179,51 +190,22 @@
       drawConstraints()
     }
     catch (error) { console.error(error) }
-
-
-
-    // const remainingImages = 5 - modFiles.length
-
-    // if (files.length >= remainingImages) {
-    //   files = files.slice(0, remainingImages);
-    //   labelImages.hidden = true;
-    //   labelCamera.hidden = true;
-    // }
-
-    // Display each image for user to crop
-    // files.forEach(file => cropImage(file, callback));
-      
-    // async function callback(blob) {
-    //   const i = smallImages.length;
-
-    //   // Compress images to small and tiny versions
-    //   smallImages[i] = await compress(blob, SMALL_COMPRESSION_PERCENTAGE, SMALL_COMPRESSION_MAX_SIZE);
-
-    //   // Render image in HTML
-    //   try {
-    //     const resultImg = await blobToImage(smallImages[i]);
-    //     const divImg = document.createElement('div');
-    //     divImg.setAttribute('class', 'div-image');
-    //     const btnRemove = document.createElement('button');
-    //     divImg.appendChild(resultImg);
-    //     divImg.appendChild(btnRemove);
-    //     divImages.appendChild(divImg);
-    //     images[i] = resultImg;
-    //     btnRemove.onclick = () => {
-    //       images.splice(i, 1);
-    //       smallImages.splice(i, 1);
-    //       tinyImages.splice(i, 1);
-    //       divImg.remove();
-    //       labelImages.hidden = false;
-    //       labelCamera.hidden = false;
-    //     }
-    //   }
-    //   catch (error) { console.error(error) }
-
-    //   tinyImages[i] = await compress(blob, TINY_COMPRESSION_PERCENTAGE, TINY_COMPRESSION_MAX_SIZE);
-
-    // }
   };
+
+  let values = [ 0 ]
+  $: if (canvas?.style) canvas.style.transform = `rotate(${ values[0] }deg)`
+
+
+  function submit() {
+
+
+
+    
+
+
+
+
+  }
 
 </script>
 
@@ -232,17 +214,24 @@
 
   {#if cropFiles.length }
 
-    <canvas bind:this={ canvas } width={ window.innerWidth } height={ window.innerWidth }></canvas><!--
-    --><canvas bind:this={ canvasOverlay } 
-        id="canvas-overlay"
-        on:pointerdown={ pointerDown } 
-        on:pointermove={ drag } 
-        on:pointerup={ selection.reset } 
-        on:pointerout={ selection.reset } 
-        on:pointercancel={ selection.reset } 
-        width={ window.innerWidth } 
-        height={ window.innerWidth }></canvas>
+    <div id="image-area">
+      <canvas bind:this={ canvas } width={ window.innerWidth } height={ window.innerWidth }></canvas><!--
+      --><canvas bind:this={ canvasOverlay } 
+          id="canvas-overlay"
+          on:pointerdown={ pointerDown } 
+          on:pointermove={ drag } 
+          on:pointerup={ selection.reset } 
+          on:pointerout={ selection.reset } 
+          on:pointercancel={ selection.reset } 
+          width={ window.innerWidth } 
+          height={ window.innerWidth }></canvas>
+    </div>
 
+    <div id="body">
+      <RangeSlider bind:values min={ -180 } max={ 180 } float pips pipstep={ 45 } all={ 'label' } suffix={'º'} springValues={ { stiffness: 0.3, damping: 1 } } />
+
+      <button on:click={ submit }>Crop</button>
+    </div>
   {:else}
     <input type="file" id="camera" accept="image/*" capture="application" multiple={ true } bind:files={ files }>
   
@@ -252,7 +241,7 @@
 
 <style lang="sass">
 
-  canvas
+  canvas, #image-area, #canvas-overlay
     position: absolute
     left: 0
     top: 0
@@ -260,12 +249,16 @@
     height: 100vw
     touch-action: none
 
-  #canvas-overlay
+  #image-area
+    background-color: black
+
+
+  #body
     position: absolute
     left: 0
-    top: 0
+    top: 100vw
     width: 100vw
-    height: 100vw
-    touch-action: none
+    height: calc(100vh - 100vw - 60px)
+    background-color: white
     
 </style>
