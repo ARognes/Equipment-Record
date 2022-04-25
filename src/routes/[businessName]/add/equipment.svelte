@@ -49,6 +49,21 @@
     // On boundary
     if (withinX) selection.upDown = +onTop - +onBottom
     if (withinY) selection.leftRight = +onLeft - +onRight
+
+    // Close to corner box
+    let cornerSelection = { upDown: 0, leftRight: 0 }
+    if (onBoundary(y, constraints.top, dragBoxHalfWidth * 3)) {
+      if (onBoundary(x, constraints.left, dragBoxHalfWidth * 3)) cornerSelection = { upDown: 1, leftRight: 1 }
+      else if (onBoundary(x, constraints.right, dragBoxHalfWidth * 3)) cornerSelection = { upDown: 1, leftRight: -1 }
+    }
+    if (onBoundary(y, constraints.bottom, dragBoxHalfWidth * 3)) {
+      if (onBoundary(x, constraints.left, dragBoxHalfWidth * 3)) cornerSelection = { upDown: -1, leftRight: 1 }
+      else if (onBoundary(x, constraints.right, dragBoxHalfWidth * 3)) cornerSelection = { upDown: -1, leftRight: -1 }
+    }
+    if (cornerSelection.upDown !== 0 && cornerSelection.leftRight !== 0) { 
+      selection.upDown = cornerSelection.upDown
+      selection.leftRight = cornerSelection.leftRight
+    }
     
     // Within area, but not on boundary
     if (withinX && withinY && !selection.upDown && !selection.leftRight) selection.moving = true
@@ -201,8 +216,6 @@
 
   async function submit() {
 
-    // const link = await new Promise(async (res, rej) => {
-
     const rotateCanvas = document.createElement('canvas')
     rotateCanvas.width = canvas.width
     rotateCanvas.height = canvas.height
@@ -224,6 +237,7 @@
     tempCanvas.height = (constraints.bottom - constraints.top - dragBoxHalfWidth * 2) * conversion
     const data = rotateCtx.getImageData((constraints.left + dragBoxHalfWidth) * conversion, (constraints.top + dragBoxHalfWidth) * conversion, tempCanvas.width, tempCanvas.height)
 
+    tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height)
     tempCtx.putImageData(data, 0, 0)
     tempCtx.restore()
     
@@ -236,8 +250,6 @@
     const link = document.createElement('a')
     link.download = 'EPIC.png';
     link.href = URL.createObjectURL(smallImgBlob)
-      // res(link)
-    // })
 
     link?.click()
   }
