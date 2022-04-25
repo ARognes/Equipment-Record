@@ -1,7 +1,13 @@
 <script lang="ts">
 
   import RangeSlider from 'svelte-range-slider-pips'
+  import Compressor from 'compressorjs'
 
+  const SMALL_COMPRESSION_PERCENTAGE = 0.9;
+  const SMALL_COMPRESSION_MAX_SIZE = 1200;
+
+  const TINY_COMPRESSION_PERCENTAGE = 0.6;
+  const TINY_COMPRESSION_MAX_SIZE = 200;
 
   function blobToImage(blob) {
     return new Promise(resolve => {
@@ -177,10 +183,7 @@
       const imgWidthMargin = imgWidth - canvasMargin * conversion * 2
       const imgHeightMargin = imgHeight - canvasMargin * conversion * 2
 
-      ctx.fillStyle = 'black'
-      ctx.beginPath()
-      ctx.rect(0, 0, canvas.width, canvas.height)
-      ctx.fill()
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
       ctx.drawImage(img, 
                     !wgh ? canvas.width / 2 - imgWidth / 2 + canvasMargin * conversion : canvasMargin * conversion,
                     wgh ? canvas.width / 2 - imgHeight / 2 + canvasMargin * conversion : canvasMargin * conversion,
@@ -190,21 +193,71 @@
       drawConstraints()
     }
     catch (error) { console.error(error) }
-  };
+  }
 
   let values = [ 0 ]
   $: if (canvas?.style) canvas.style.transform = `rotate(${ values[0] }deg)`
 
 
-  function submit() {
+  async function submit() {
 
+    // const link = await new Promise(async (res, rej) => {
 
-
+    const rotateCanvas = document.createElement('canvas')
+    rotateCanvas.width = canvas.width
+    rotateCanvas.height = canvas.height
+    const rotateCtx = rotateCanvas.getContext('2d')
+    
+    rotateCtx.save()
+    rotateCtx.translate(canvas.width / 2, canvas.height / 2)
+    rotateCtx.rotate(values[0] * Math.PI / 180)
+    rotateCtx.clearRect(0, 0, rotateCanvas.width, rotateCanvas.height)
+    rotateCtx.drawImage(canvas, -canvas.width / 2, -canvas.width / 2)
+    rotateCtx.restore()
     
 
+    // Constraints
+    const tempCanvas = document.createElement('canvas')
+    const tempCtx = tempCanvas.getContext('2d')
+    const conversion = canvas.width / window.innerWidth
+    tempCanvas.width = (constraints.right - constraints.left - dragBoxHalfWidth * 2) * conversion
+    tempCanvas.height = (constraints.bottom - constraints.top - dragBoxHalfWidth * 2) * conversion
+    const data = rotateCtx.getImageData((constraints.left + dragBoxHalfWidth) * conversion, (constraints.top + dragBoxHalfWidth) * conversion, tempCanvas.width, tempCanvas.height)
 
+    tempCtx.putImageData(data, 0, 0)
+    tempCtx.restore()
+    
 
+    const blob = await canvasToBlob(tempCanvas)
 
+    const smallImgBlob: Blob = await compress(blob, SMALL_COMPRESSION_PERCENTAGE, SMALL_COMPRESSION_MAX_SIZE)
+    const tinyImgBlob: Blob = await compress(blob, TINY_COMPRESSION_PERCENTAGE, TINY_COMPRESSION_MAX_SIZE)
+
+    const link = document.createElement('a')
+    link.download = 'EPIC.png';
+    link.href = URL.createObjectURL(smallImgBlob)
+      // res(link)
+    // })
+
+    link?.click()
+  }
+
+  function compress(blob, quality, size): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      new Compressor(blob, {
+        quality: quality,
+        maxWidth: size,
+        maxHeight: size,
+        async success(result) { return resolve(result); },
+        error(error) { reject(error); }
+      });
+    });
+  }
+
+  function canvasToBlob(canvas) {
+    return new Promise(resolve => {
+      canvas.toBlob(resolve);
+    });
   }
 
 </script>
