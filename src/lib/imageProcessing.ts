@@ -1,12 +1,12 @@
 import Compressor from 'compressorjs'
 
 
-export function blobToImage(blob) {
+export function blobToImage(blob: Blob): Promise<HTMLImageElement> {
   return new Promise(resolve => {
-    const url = URL.createObjectURL(blob);
-    let img = new Image();
+    const url = URL.createObjectURL(blob)
+    let img: HTMLImageElement = new Image()
     img.onload = function() {
-      URL.revokeObjectURL(this.src);
+      URL.revokeObjectURL(this.src)
       resolve(this);
     }
     img.src = url;
@@ -25,7 +25,7 @@ export function compress(blob, quality, size): Promise<Blob> {
   });
 }
 
-export function canvasToBlob(canvas) {
+export function canvasToBlob(canvas): Promise<Blob> {
   return new Promise(resolve => {
     canvas.toBlob(resolve);
   });

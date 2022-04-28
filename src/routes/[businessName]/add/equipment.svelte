@@ -2,8 +2,10 @@
 
   import RangeSlider from 'svelte-range-slider-pips'
   import { blobToImage, canvasToBlob, compress } from '$lib/imageProcessing'
+import Gallery from '$lib/components/Gallery.svelte';
 
   let imageBlobs = []
+  let images = []
 
   const SMALL_COMPRESSION_PERCENTAGE = 0.9;
   const SMALL_COMPRESSION_MAX_SIZE = 1200;
@@ -69,7 +71,6 @@
 
     // No touch being tracked
     if (selection.upDown === 0 && selection.leftRight === 0 && selection.moving === false) return
-    console.log('drag')
 
     const x = e.x + pointerOffset.x, y = e.y + pointerOffset.y
 
@@ -161,7 +162,7 @@
 
   // files is bound to image input
   let files = null, filePtr = -1
-  $: if (files?.length) {
+  $: if (files?.length) { 
     filePtr = files.length-1
     loadImage()
   }
@@ -169,7 +170,7 @@
   // Make user wait until this is complete to add to firestore!
   async function loadImage() {
     if (!files.length || filePtr < 0) {
-      
+
       return console.log('All images done')
     }
     
@@ -182,7 +183,6 @@
       const imgWidth = img.naturalWidth, imgHeight = img.naturalHeight
 
       canvas.width = canvas.height = Math.max(imgWidth, imgHeight)
-
 
       // const imgConversion = canvas.width / imgMax
       const conversion = canvas.width / window.innerWidth
@@ -241,10 +241,17 @@
     const smallImgBlob: Blob = await compress(blob, SMALL_COMPRESSION_PERCENTAGE, SMALL_COMPRESSION_MAX_SIZE)
     const tinyImgBlob: Blob = await compress(blob, TINY_COMPRESSION_PERCENTAGE, TINY_COMPRESSION_MAX_SIZE)
 
-    imageBlobs.push({ small: smallImgBlob, tiny: tinyImgBlob })
+    // Compressed blob -> canvas image src
+    const compressedImgBitmap = await createImageBitmap(smallImgBlob)
+    tempCanvas.width = compressedImgBitmap.width
+    tempCanvas.height = compressedImgBitmap.height
+    tempCtx.drawImage(compressedImgBitmap, 0, 0)
+    const src = tempCanvas.toDataURL()
+
+    imageBlobs.push({ smallBlob: smallImgBlob, tinyBlob: tinyImgBlob })
+    images.push({ src, "done": true })
 
     filePtr--
-    console.log(filePtr)
     loadImage()
   }
 
@@ -275,6 +282,15 @@
     </div>
   {:else}
     <input type="file" id="camera" accept="image/*" capture="application" multiple={ true } bind:files={ files }>
+
+    <Gallery bind:images />
+    <!-- <div id="gallery">
+
+      {#each imageBlobs as img, i }
+        <img src={ img.src } alt="" />
+
+      {/each}
+    </div> -->
   
   {/if}
 
@@ -293,7 +309,6 @@
   #image-area
     background-color: black
 
-
   #body
     position: absolute
     left: 0
@@ -301,5 +316,11 @@
     width: 100vw
     height: calc(100vh - 100vw - 60px)
     background-color: white
+
+  #gallery
+
+    img
+      width: 100vw
+      height: 100vw
     
 </style>

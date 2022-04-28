@@ -1,33 +1,7 @@
 <script lang="ts">
-  import Loading from "$lib/components/Loading.svelte";
-  import { getSRC } from "$lib/firebase";
+  import Loading from "$lib/components/Loading.svelte"
 
-  export let item
-
-  let images = []
-  
-  async function init() {
-
-    images = Array(item?.imageOrder?.length || 0).fill({ src: '', done: false })
-    
-    // Get tiny images
-    // if (!item.tinySRC || item.tinySRC.length == 0 || item.tinySRC[0] == null) item.tinySRC = [ await getSRC(item, true, 0) ]
-    for (let i = 0; i < item.tinySRC?.length || 0; i++) 
-        images[i].src = item.tinySRC[i]
-
-    // Get full images one at a time
-    item.imgSRC = []
-    for (let i = 0; i < item?.imageOrder?.length; i++) {
-      item.imgSRC[i] = await getSRC(item, false, i)
-      images[i] = { src: item.imgSRC[i], done: true }
-    }
-  }
-
-  let done = false
-  $: if (item?.imageOrder?.length && !done) {
-    done = true
-    init()
-  }
+  export let images
 
   let imgElem = []
   let btnActive = 0
@@ -45,19 +19,18 @@
 </script>
 
 
-
 <div id="gallery" bind:this={ gallery } on:scroll={ galleryScroll }>
   
   {#if images != null}
   {#each images as img, i}
-  
-    {#if img?.src }
-      <img src={ img.src } class={ img.done ? "noblur" : "blur"} bind:this={ imgElem[i] } alt="">
-    {:else}
-      <div class="loading-container">
-        <Loading />
-      </div>
-    {/if}
+
+  {#if img?.src }
+    <div class={ 'image-container ' + (!img.done ? 'blur' : 'noblur') } style={ `background-image: url(${ img.src })` } bind:this={ imgElem[i] } />
+  {:else}
+    <div class="loading-container">
+      <Loading />
+    </div>
+  {/if}
 
   {/each}
   {/if}
@@ -66,7 +39,7 @@
 {#if images.length > 1}
   <div id="selector">
     {#each images as img, i}
-    <button class={ btnActive == i ? "btnActive" : "" } on:click={ () => slideGallery(i) }></button>
+      <button class={ btnActive == i ? "btnActive" : "" } on:click={ () => slideGallery(i) }></button>
     {/each}
   </div>
 {/if}
@@ -88,32 +61,41 @@
     top: 0
     left: 0
     width: 100vw
-    height: calc(100vw + 12px)
+    height: 100vw
+    display: flex
     overflow-x: auto
     overflow-y: hidden
     white-space: nowrap
     scroll-snap-type: x mandatory
     scrollbar-width: none
+    background-color: black
 
-    img
+    .image-container
       margin: 0
       padding: 0
       position: relative
+      object-fit: contain
+      flex-shrink: 0
       width: 100vw
       height: 100vw
       transition: 250ms filter ease-in
       scroll-snap-stop: always
       scroll-snap-align: start
+      background-size: contain
+      background-repeat: no-repeat
+      background-position: center
 
     .loading-container
       margin: 0
       padding: 0
       position: relative
+      flex-shrink: 0
       width: 100vw
       height: 100vw
       transition: 250ms filter ease-in
       scroll-snap-stop: always
       scroll-snap-align: start
+      background-color: white
 
   #scroll-cover
     margin: 0

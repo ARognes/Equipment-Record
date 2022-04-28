@@ -7,20 +7,22 @@
 	import doneSVG from '$lib/images/done.svg'
 	import closeSVG from '$lib/images/close.svg'
 	import { session } from '$lib/storage'
-	import { getDoc, addDoc, allDocs, updateDoc, changeName } from '$lib/firebase'
+	import { getDoc, addDoc, allDocs, updateDoc, changeName, getSRC } from '$lib/firebase'
 	import { serverTimestamp } from 'firebase/firestore/lite';
   import { page } from '$app/stores'
   import { goto } from '$app/navigation'
 	import { getContext } from 'svelte';
 	import { log } from '$lib/logging';
+	import { deepcopy } from '$lib/lib';
 
 	const userDataStore = getContext('userData')
 
   let equipment = session.getItem('equipment')
 	let itemPointer = equipment?.find(e => e.name == $page.params.equipmentName)
-  let item = itemPointer ? JSON.parse(JSON.stringify(itemPointer)) : null
-	let itemBefore = item ? JSON.parse(JSON.stringify(item)) : null	// Copy item
+  let item = deepcopy(itemPointer)
+	let itemBefore = deepcopy(item)
 	let attributes = item?.attributes || []
+	let images = []
 	let editing = false
 	
 	$: {
@@ -28,11 +30,35 @@
 			equipment = await allDocs($userDataStore.businessID, 'equipment')
 			item = equipment?.find(e => e.name == $page.params.equipmentName)
 			attributes = item?.attributes || []
-			itemBefore = JSON.parse(JSON.stringify(item || {}))	// Copy item
+			itemBefore = deepcopy(item) || {}
 
 			console.log($userDataStore)
 		})()
 	}
+
+	async function init() {
+
+		images = Array(item?.imageOrder?.length || 0).fill({ src: '', done: false })
+
+		// Get tiny images
+		// if (!item.tinySRC || item.tinySRC.length == 0 || item.tinySRC[0] == null) item.tinySRC = [ await getSRC(item, true, 0) ]
+		for (let i = 0; i < item.tinySRC?.length || 0; i++) 
+				images[i].src = item.tinySRC[i]
+
+		// Get full images one at a time
+		item.imgSRC = []
+		for (let i = 0; i < item?.imageOrder?.length; i++) {
+			item.imgSRC[i] = await getSRC(item, false, i)
+			images[i] = { src: item.imgSRC[i], done: true }
+		}
+	}
+
+	let done = false
+	$: if (item?.imageOrder?.length && !done) {
+		done = true
+		init()
+	}
+
 
 	function toggleEditing() {
 		editing = !editing
@@ -156,7 +182,7 @@
   
 	<div style="overflow: hidden">
 		<div style={ `position: relative; top: ${ scrollTop / 2 }px` }>
-			<Gallery bind:item />
+			<Gallery bind:images />
 		</div>
 	</div>
 	<Assignments bind:item bind:editing />
