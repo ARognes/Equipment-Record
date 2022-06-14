@@ -3,7 +3,7 @@
 <h1>Hello World!</h1>
 
 
-<a href="/">Login</a>
+<a sveltekit:prefetch href="/">Login</a>
 
 <style>
 	h1 {

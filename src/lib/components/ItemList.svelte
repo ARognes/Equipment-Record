@@ -1,12 +1,11 @@
 <script lang="ts">
-  import tempSVG from '$lib/images/temp.svg'
+  import tempSVG from '$lib/assets/temp.svg'
 
   export let info
 
 </script>
 
 <div class="item">
-  <!-- <img class="display" src={ tempSVG } alt=""> -->
 
   <div class="name">
     {#each info.nameHighlight as matches}

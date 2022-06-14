@@ -6,7 +6,7 @@
 	 * 
 	 */
 	
-	import addSVG from '$lib/images/add.svg'
+	import AddSVG from '$lib/assets/add.svg'
 	import Navbar from '$lib/components/Navbar.svelte';
 	import ItemContainer from '$lib/components/ItemContainer.svelte'
 	import { allDocs, getSRC } from '$lib/firebase'
@@ -42,7 +42,7 @@
 <ItemContainer bind:items={ equipmentData } />
 
 {#if $userDataStore?.accessLevel && $userDataStore?.accessLevel >= 2 }
-	<a href="add/equipment" id="add-equipment"><img src={ addSVG } alt="+"></a>
+	<a sveltekit:prefetch href="add/equipment" id="add-equipment"><AddSVG /></a>
 {/if}
 
 <Navbar path={ $userDataStore?.businessName }/>

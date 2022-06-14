@@ -7,7 +7,7 @@
 
 <header>
 	<h1>Account</h1>
-	<a href="/on/settings"><button id="settings">Settings</button></a>
+	<a sveltekit:prefetch href="/on/settings"><button id="settings">Settings</button></a>
 </header>
 
 <div id="menu">

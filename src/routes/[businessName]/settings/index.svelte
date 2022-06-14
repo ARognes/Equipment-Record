@@ -4,7 +4,7 @@
 
 <h1>Hello world!</h1>
 
-<a href="/on/account"><button>Back</button></a>
+<a sveltekit:prefetch href="/on/account"><button>Back</button></a>
 
 <style>
 	h1 {

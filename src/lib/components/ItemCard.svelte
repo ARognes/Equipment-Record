@@ -1,5 +1,5 @@
 <script lang="ts">
-  import errorSVG from '$lib/images/error.svg'
+  import ErrorSVG from '$lib/assets/error.svg'
   import Loading from '$lib/components/Loading.svelte';
 
   export let info
@@ -9,7 +9,11 @@
 <div class="item">
   <div class="left">
     {#if info?.tinySRC?.length }
-      <img src={ info?.tinySRC[0] || errorSVG } alt="">
+      {#if info?.tinySRC[0]}
+        <img src={ info?.tinySRC[0] } alt="">
+      {:else}
+        <ErrorSVG />
+      {/if}
     {:else}  
       <Loading />
     {/if}

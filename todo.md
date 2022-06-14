@@ -1,4 +1,4 @@
-Webapp using React and QR code reader
+Webapp using Sveltekit and QR code reader
 Take in pieces of equipment with barcodes, take a picture of the item,
 
 Equipment {
@@ -46,7 +46,7 @@ Different equipment should require different permissions to use.
 
 Equipment may have sub-equipment ex: Dumptruck -> { bucket, tires, computer }
 
-##Activity Diagram
+## Activity Diagram
 
 Base conditions:
   All equipment is added
@@ -69,9 +69,9 @@ Boss starts first project
 
 
 
+---
 
-
-3/14/22
+## 3/14/22
 
 Implement tagging and subtagging system that can be converted into a folder/file system. 
 
@@ -98,9 +98,26 @@ Worker may:
 
 
 
+---
 
-
-3/18/22
+## 3/18/22
 
 End of service equipment + reason why
+
+---
+
+## 6/13/22
+
+Optimizations for [Lighthouse](https://web.dev/measure)
+
+Check out [Web Fundamentals](https://developers.google.com/web)
+
+[picture tag](https://www.w3schools.com/tags/tag_picture.asp)
+
+This guy has a great [reddit post](https://www.reddit.com/r/sveltejs/comments/tb430j/thanks_to_sveltekit_this_site_with_a_lot_of/)
+
+[preconnect](https://developer.mozilla.org/en-US/docs/Web/HTML/Link_types/preconnect)
+
+[images](https://webjeda.com/blog/images-in-webdev)
+
 

@@ -2,10 +2,10 @@
 	import Gallery from '$lib/components/Gallery.svelte'
 	import Assignments from '$lib/components/Assignments.svelte'
 	import Attributes from '$lib/components/Attributes.svelte'
-	import backSVG from '$lib/images/back.svg'
-	import editSVG from '$lib/images/edit.svg'
-	import doneSVG from '$lib/images/done.svg'
-	import closeSVG from '$lib/images/close.svg'
+	import BackSVG from '$lib/assets/back.svg'
+	import EditSVG from '$lib/assets/edit.svg'
+	import DoneSVG from '$lib/assets/done.svg'
+	import CloseSVG from '$lib/assets/close.svg'
 	import { session } from '$lib/storage'
 	import { getDoc, addDoc, allDocs, updateDoc, changeName, getSRC } from '$lib/firebase'
 	import { serverTimestamp } from 'firebase/firestore/lite';
@@ -195,18 +195,18 @@
 
   {#if editing}
     <!-- {#if !attributes || attributes.length < 10 }
-      <button class="add" on:click={ () => attributes = attributes ? [...attributes, { key: '', val: '' }] : [{ key: '', val: '' }] }><img src={ addSVG } alt="Add"></button>
+      <button class="add" on:click={ () => attributes = attributes ? [...attributes, { key: '', val: '' }] : [{ key: '', val: '' }] }><AddSVG /></button>
     {/if} -->
     <div id="controls">
-      <button id="done" on:click={ makeEdits }><img src={ doneSVG } alt="Done"></button>
-      <button id="cancel" on:click={ toggleEditing }><img src={ closeSVG } alt="Cancel"></button>
+      <button id="done" on:click={ makeEdits }><DoneSVG /></button>
+      <button id="cancel" on:click={ toggleEditing }><CloseSVG /></button>
     </div>
   {/if}
   
 </div>
 
 <div id="header">
-  <button on:click={ async () => goto(`/${ $page.params.businessName }/equipment`) }><img src={ backSVG } alt="<"></button>
+  <button on:click={ async () => goto(`/${ $page.params.businessName }/equipment`) }><BackSVG /></button>
   
   {#if !editing}
     <p>{ item?.name || '' }</p>
@@ -214,7 +214,13 @@
     <input type="text" id="name" on:input={ inputName } value={ item?.name } placeholder="Name">
   {/if}
   {#if $userDataStore?.accessLevel && $userDataStore?.accessLevel >= 2 }
-    <button on:click={ toggleEditing }><img src={ editing ? closeSVG : editSVG } alt="Edit"></button>
+    <button on:click={ toggleEditing }>
+			{#if editing }
+				<CloseSVG />
+			{:else}
+				<EditSVG />
+			{/if}
+		</button>
   {/if}
 </div>
 

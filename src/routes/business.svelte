@@ -3,7 +3,7 @@
 <h1>Enter business number</h1>
 
 
-<a href="/">Login</a>
+<a sveltekit:prefetch href="/">Login</a>
 
 <style>
 	h1 {

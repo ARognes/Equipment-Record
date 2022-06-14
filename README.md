@@ -37,9 +37,20 @@ Make sure firebase rules allow use
 firestore.cors.json contains the cors http codes allowed to access the firebase storage bucket.
 
 Use gsutil to set cors for the bucket, [check the docs](https://cloud.google.com/storage/docs/configuring-cors#gsutil_2)
-`gsutil cors set firestore.cors.json gs://...
+
+`
+gsutil cors set firestore.cors.json gs://...
 `
 
+You will need to create a .env file in this directory with:
+```
+VITE_CLIENT_PRIVATE_KEY=''
+ADMIN_PRIVATE_KEY=''
+```
+Client private key can be found in Firebase somewhere...
+Admin private key can be found with the Admin sdk I think ?
+
+---
 
 ## Later TODOs (small things)
 - [x] Load small images of the equipment, if user requests full images then they will be loaded.

@@ -4,11 +4,11 @@
   import { writable } from 'svelte/store'
   import { goto } from '$app/navigation'
 
-  import accountSVG from '$lib/images/account.svg'
-  import emailSVG from '$lib/images/email.svg'
-  import viewSVG from '$lib/images/view.svg'
-  import hideSVG from '$lib/images/hide.svg'
-  import lockSVG from '$lib/images/lock.svg'
+  import AccountSVG from '$lib/assets/account.svg'
+  import EmailSVG from '$lib/assets/email.svg'
+  import ViewSVG from '$lib/assets/view.svg'
+  import HideSVG from '$lib/assets/hide.svg'
+  import LockSVG from '$lib/assets/lock.svg'
   import { getIdTokenResult } from 'firebase/auth';
   import { session } from '$lib/storage';
   
@@ -98,9 +98,15 @@
 
       <p>Need an account? <span class="link" on:click={ () => signIn = false }>Register</span></p>
       <input type="text" spellcheck="false" placeholder="Username or email" on:input={ e => username = e.currentTarget.value }>
-      <img src={ accountSVG } alt="">
+      <AccountSVG />
       <input type={ viewPassword ? 'text' : 'password' } spellcheck="false" placeholder="Password" on:input={ e => password = e.currentTarget.value }>
-      <img src={ viewPassword ? viewSVG : hideSVG } alt="" on:click={() => viewPassword = !viewPassword}>
+      
+      {#if viewPassword} 
+        <ViewSVG on:click={ () => viewPassword = !viewPassword } /> 
+      {:else}
+        <HideSVG on:click={ () => viewPassword = !viewPassword } /> 
+      {/if}
+
       <a id="forgot" href="/forgot">Forgot</a>
       <!-- <div id="div-captcha" hidden="true">
         <div class="g-recaptcha" data-sitekey="6LcRXkccAAAAABcm5OS8HkuDj9_Pi9A__dU_EeTx"></div>
@@ -114,13 +120,20 @@
       <p>Already have an account? <span class="link" on:click={ () => signIn = true }>Sign in</span></p>
 
       <input type="text" spellcheck="false" placeholder="Username" on:input={ e => username = e.currentTarget.value }>
-      <img src={ accountSVG } alt="">
+      <AccountSVG />
       <input type="email" spellcheck="false" placeholder="Email" on:input={ e => email = e.currentTarget.value }>
-      <img src={ emailSVG } alt="">
+      <EmailSVG />
       <input type={ viewPassword ? 'text' : 'password' } spellcheck="false" placeholder="Password" on:input={ e => password = e.currentTarget.value }>
-      <img src={ viewPassword ? viewSVG : hideSVG } alt="" on:click={() => viewPassword = !viewPassword}>
+      
+      {#if viewPassword} 
+        <ViewSVG on:click={ () => viewPassword = !viewPassword } /> 
+      {:else}
+        <HideSVG on:click={ () => viewPassword = !viewPassword } /> 
+      {/if}
+
       <input type={ viewPassword ? 'text' : 'password' } spellcheck="false" placeholder="Confirm password" on:input={ e => confirmPassword = e.currentTarget.value }>
-      <img src={ lockSVG } alt="">
+      <LockSVG />
+      
       <!-- <div id="div-captcha" hidden="true">
         <div class="g-recaptcha" data-sitekey="6LcRXkccAAAAABcm5OS8HkuDj9_Pi9A__dU_EeTx"></div>
       </div> -->

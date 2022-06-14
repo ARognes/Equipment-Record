@@ -69,8 +69,8 @@
 	<div class="scrollable" class:scrollable-more={ showMoreAssignments }>
 		{#each assignments as assn, i}
 			<div class="assignment">
-				<a href={ `/${ $page.params.businessName }/projects/${ assn.projectName }` }>{ assn.projectName || '' }</a>
-				<a href={ `/${ $page.params.businessName }/users/${ assn.username }` }>{ assn.username || '' }</a>
+				<a sveltekit:prefetch href={ `/${ $page.params.businessName }/projects/${ assn.projectName }` }>{ assn.projectName || '' }</a>
+				<a sveltekit:prefetch href={ `/${ $page.params.businessName }/users/${ assn.username }` }>{ assn.username || '' }</a>
 				<p>{ assn.createdAt ? new Date(assn.createdAt.seconds * 1000).toLocaleString() : '' }</p>
 			</div>
 		{/each}
