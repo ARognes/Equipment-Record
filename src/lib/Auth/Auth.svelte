@@ -1,6 +1,7 @@
 <script lang="ts">
   import { auth } from '$lib/Auth/auth'
   import Loading from '$lib/components/Loading.svelte'
+  import ErrorMsg from '$lib/components/ErrorMsg.svelte'
   import { writable } from 'svelte/store'
   import { goto } from '$app/navigation'
 
@@ -9,10 +10,11 @@
   import ViewSVG from '$lib/assets/view.svg'
   import HideSVG from '$lib/assets/hide.svg'
   import LockSVG from '$lib/assets/lock.svg'
-  import { getIdTokenResult } from 'firebase/auth';
-  import { session } from '$lib/storage';
+  import { getIdTokenResult } from 'firebase/auth'
+  import { session } from '$lib/storage'
   
   const loading = writable(false)
+  const errorMsg = writable('')
 
   let signIn = true
   let viewPassword = false
@@ -22,18 +24,21 @@
   let password = ""
   let confirmPassword = ""
 
-  let errorMsg = ""
 
   async function loginEmail() {
     try {
+      console.log('arst')
+      validatePassword(password)
+
+      
       $loading = true
-
-      if (password.length < 12 || password.search(/[a-z0-9]/i) < 0) throw new Error("Password is not valid")
-
-      if (emailValid(username)) await auth.signInEmail(username, password)
+      if (validateEmail(username)) await auth.signInEmail(username, password)
       else await auth.signInUsername(username, password)
     }
-    catch (e) { errorMsg = <string> e; console.error(e) }
+    catch (e) { 
+      $errorMsg = ""
+      $errorMsg = "Incorrect username/email or password"
+    }
     finally { $loading = false }
   }
 
@@ -42,30 +47,33 @@
       $loading = true
       await auth.signInGoogle()
     }
-    catch (e) { errorMsg = <string> e; console.error(e) }
+    catch (e) { $errorMsg = e }
     finally { $loading = false }
   }
 
   async function validateRegistration() {
     try {
       $loading = true
-      if (username.length < 1) throw new Error("Please enter your name")
-      if (email.length < 3) throw new Error("Please enter a valid email")  
-      if (!emailValid(email)) throw new Error("Please enter a valid email")
-      if (password.length < 12) throw new Error("Your password must be at least 12 characters") 
-      if (password.search(/[a-z]/i) < 0) throw new Error("Your password must contain at least one letter") 
-      if (password.search(/[0-9]/) < 0) throw new Error("Your password must contain at least one digit") 
-      //if (p.search(/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/) < 0) throw new Error("Your password must contain at least one special character" 
+      if (username.length <= 2) throw new Error("Please enter your username")
+      if (email.length <= 3 || !validateEmail(email)) throw new Error("Please enter a valid email")
+      validatePassword(password)
       if (password !== confirmPassword) throw new Error("Your passwords do not match")
 
       await auth.register(username, email, password);
 
     }
-    catch (e) { errorMsg = <string> e; console.error(e) }
+    catch (e) { $errorMsg = e }
     finally { $loading = false }
   }
+
+  function validatePassword(password: string) {
+    if (password.length < 12) throw "Your password must be at least 12 characters"
+    if (password.search(/[a-z]/) < 0) throw "Your password must contain at least one lowercase letter"
+    if (password.search(/[A-Z]/) < 0) throw "Your password must contain at least one uppercase letter"
+    if (password.search(/[0-9]|[~`!#$%\^&*+=\-_\[\]\\';,\./{}|\\":<>\?]/) < 0) throw "Your password must contain at least one digit or special character"
+  }
   
-  function emailValid(email: string): boolean {
+  function validateEmail(email: string): boolean {
     return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
   }
 
@@ -81,7 +89,16 @@
       })()
     }
   }
-  
+
+  function enterSignIn(e) {
+    if (e.key === 'Enter') loginEmail()
+  }
+
+  function enterRegister(e) {
+    if (e.key === 'Enter') validateRegistration()
+  }
+
+
 </script>
 
 <!-- Auth status unknown -->
@@ -97,20 +114,21 @@
       <h1>Sign In</h1>
 
       <p>Need an account? <span class="link" on:click={ () => signIn = false }>Register</span></p>
-      <input type="text" spellcheck="false" placeholder="Username or email" on:input={ e => username = e.currentTarget.value }>
-      <AccountSVG />
-      <input type={ viewPassword ? 'text' : 'password' } spellcheck="false" placeholder="Password" on:input={ e => password = e.currentTarget.value }>
-      
-      {#if viewPassword} 
-        <ViewSVG on:click={ () => viewPassword = !viewPassword } /> 
-      {:else}
-        <HideSVG on:click={ () => viewPassword = !viewPassword } /> 
-      {/if}
-
-      <a id="forgot" href="/forgot">Forgot</a>
+      <input type="text" spellcheck="false" placeholder="Username or email" on:keypress={ enterSignIn } on:input={ e => username = e.currentTarget.value }>
+      <div class="image"><AccountSVG /></div>
+      <div id="password-forgot">
+        <input id="password-short" type={ viewPassword ? 'text' : 'password' } spellcheck="false" placeholder="Password" on:keypress={ enterSignIn } on:input={ e => password = e.currentTarget.value }>
+        <a id="forgot" href="/forgot">Forgot</a>
+        {#if viewPassword} 
+          <div class="image" on:click={ () => viewPassword = !viewPassword } ><ViewSVG /></div>
+        {:else}
+          <div class="image" on:click={ () => viewPassword = !viewPassword } ><HideSVG /></div>
+        {/if}
+      </div>
       <!-- <div id="div-captcha" hidden="true">
         <div class="g-recaptcha" data-sitekey="6LcRXkccAAAAABcm5OS8HkuDj9_Pi9A__dU_EeTx"></div>
       </div> -->
+
       <button id="sign-in" on:click={ loginEmail }>Sign In</button>
 
     {:else}
@@ -119,20 +137,20 @@
 
       <p>Already have an account? <span class="link" on:click={ () => signIn = true }>Sign in</span></p>
 
-      <input type="text" spellcheck="false" placeholder="Username" on:input={ e => username = e.currentTarget.value }>
-      <AccountSVG />
-      <input type="email" spellcheck="false" placeholder="Email" on:input={ e => email = e.currentTarget.value }>
-      <EmailSVG />
-      <input type={ viewPassword ? 'text' : 'password' } spellcheck="false" placeholder="Password" on:input={ e => password = e.currentTarget.value }>
+      <input type="text" spellcheck="false" placeholder="Username" on:keypress={ enterRegister } on:input={ e => username = e.currentTarget.value }>
+      <div class="image"><AccountSVG /></div>
+      <input type="email" spellcheck="false" placeholder="Email" on:keypress={ enterRegister } on:input={ e => email = e.currentTarget.value }>
+      <div class="image"><EmailSVG /></div>
+      <input type={ viewPassword ? 'text' : 'password' } spellcheck="false" placeholder="Password" on:keypress={ enterRegister } on:input={ e => password = e.currentTarget.value }>
       
       {#if viewPassword} 
-        <ViewSVG on:click={ () => viewPassword = !viewPassword } /> 
+        <div class="image" on:click={ () => viewPassword = !viewPassword } ><ViewSVG /></div>
       {:else}
-        <HideSVG on:click={ () => viewPassword = !viewPassword } /> 
+        <div class="image" on:click={ () => viewPassword = !viewPassword } ><HideSVG /></div>
       {/if}
 
-      <input type={ viewPassword ? 'text' : 'password' } spellcheck="false" placeholder="Confirm password" on:input={ e => confirmPassword = e.currentTarget.value }>
-      <LockSVG />
+      <input type="password" spellcheck="false" placeholder="Confirm password" on:keypress={ enterRegister } on:input={ e => confirmPassword = e.currentTarget.value }>
+      <div class="image"><LockSVG /></div>
       
       <!-- <div id="div-captcha" hidden="true">
         <div class="g-recaptcha" data-sitekey="6LcRXkccAAAAABcm5OS8HkuDj9_Pi9A__dU_EeTx"></div>
@@ -141,14 +159,16 @@
       <button id="register" on:click={ validateRegistration }>Register</button>
     
     {/if}
+
     <button id="google" on:click={ loginGoogle }>Authenticate with Google</button>
 
+    <ErrorMsg errorMsg={errorMsg} />
+  
 
-    <p id="errorMsg">{ errorMsg }</p>
   </div>
 
   {#if $loading}
-  <Loading />
+    <Loading />
   {/if}
 
 {:else} <!-- Auth found, Logged in  -->
@@ -198,9 +218,20 @@
     &:focus 
       outline: none
 
-  img 
+  #password-forgot
+    width: 100%
+    height: 32px
+    font-size: 20px
+    border: none
+    border-bottom: 3px solid #888
+    margin: -10px 0 -10px 0
+
+    #password-short
+      width: calc(100% - 125px)
+
+  .image
     position: relative
-    top: -30px
+    top: -24px
     left: 6px
     align-self: flex-start
     opacity: 50%
@@ -225,7 +256,7 @@
 #forgot 
   float: right
   position: relative
-  top: -28px
+  top: 0
   right: 6px
   height: 40px
   color: blue
@@ -233,14 +264,9 @@
   text-decoration: none
 
 
-#errorMsg 
-  color: #a00
-  font-weight: bold
-
 .link
   color: #00f
   &:hover
     font-weight: bold
-  
 
 </style>

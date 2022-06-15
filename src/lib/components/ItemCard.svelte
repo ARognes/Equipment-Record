@@ -10,9 +10,9 @@
   <div class="left">
     {#if info?.tinySRC?.length }
       {#if info?.tinySRC[0]}
-        <img src={ info?.tinySRC[0] } alt="">
+        <img loading="lazy" src={ info?.tinySRC[0] } alt="">
       {:else}
-        <ErrorSVG />
+        <ErrorSVG width="40" height="40" />
       {/if}
     {:else}  
       <Loading />
@@ -72,6 +72,8 @@ $item-height: 80px
   height: $item-height
   width: $item-height
   margin: 0
+  display: grid
+  place-items: center
 
   img
     height: $item-height

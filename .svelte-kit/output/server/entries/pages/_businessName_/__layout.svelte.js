@@ -1,5 +1,5 @@
 import { c as create_ssr_component, a as subscribe, s as setContext, v as validate_component } from "../../../chunks/index-1e667dfc.js";
-import { N as Navbar } from "../../../chunks/Navbar-06dd95bc.js";
+import { N as Navbar } from "../../../chunks/Navbar-a5d80635.js";
 import { a as auth } from "../../../chunks/auth-0ef6715f.js";
 import { g as goto } from "../../../chunks/navigation-92f05dd6.js";
 import { b as browser } from "../../../chunks/env-838bf73b.js";

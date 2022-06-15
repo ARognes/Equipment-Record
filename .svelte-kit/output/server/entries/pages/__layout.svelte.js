@@ -1,7 +1,6 @@
 import { c as create_ssr_component, a as subscribe, b as set_store_value } from "../../chunks/index-1e667dfc.js";
 import { n as navigating } from "../../chunks/stores-ed515c98.js";
 /* empty css                                                           */import { w as writable } from "../../chunks/index-bb50f2da.js";
-var app = "";
 var __layout_svelte_svelte_type_style_lang = "";
 const css = {
   code: ':root{font-family:"Poppins", sans-serif}',

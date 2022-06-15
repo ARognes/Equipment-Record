@@ -1,5 +1,5 @@
 import { c as create_ssr_component, f as spread, h as escape_object, i as add_attribute, v as validate_component, j as each, e as escape, g as getContext, a as subscribe } from "../../../../chunks/index-1e667dfc.js";
-import { N as Navbar } from "../../../../chunks/Navbar-06dd95bc.js";
+import { N as Navbar } from "../../../../chunks/Navbar-a5d80635.js";
 import { L as Loading } from "../../../../chunks/Loading-d732ebf6.js";
 import { a as allDocs, g as getSRC } from "../../../../chunks/firebase-01a4cca1.js";
 import { s as session } from "../../../../chunks/storage-7a99a8c4.js";
@@ -38,7 +38,7 @@ const ItemCard = create_ssr_component(($$result, $$props, $$bindings, slots) => 
   if ($$props.info === void 0 && $$bindings.info && info !== void 0)
     $$bindings.info(info);
   $$result.css.add(css$2);
-  return `<div class="${"item svelte-k9pbl1"}"><div class="${"left svelte-k9pbl1"}">${info?.tinySRC?.length ? `${info?.tinySRC[0] ? `<img${add_attribute("src", info?.tinySRC[0], 0)} alt="${""}" class="${"svelte-k9pbl1"}">` : `${validate_component(Error, "ErrorSVG").$$render($$result, {}, {}, {})}`}` : `${validate_component(Loading, "Loading").$$render($$result, {}, {}, {})}`}</div>
+  return `<div class="${"item svelte-k9pbl1"}"><div class="${"left svelte-k9pbl1"}">${info?.tinySRC?.length ? `${info?.tinySRC[0] ? `<img loading="${"lazy"}"${add_attribute("src", info?.tinySRC[0], 0)} alt="${""}" class="${"svelte-k9pbl1"}">` : `${validate_component(Error, "ErrorSVG").$$render($$result, {}, {}, {})}`}` : `${validate_component(Loading, "Loading").$$render($$result, {}, {}, {})}`}</div>
   <div class="${"middle svelte-k9pbl1"}"><div class="${"name"}">${each(info?.nameHighlight, (matches) => {
     return `<span class="${["svelte-k9pbl1", matches.highlight ? "highlight" : ""].join(" ").trim()}">${escape(matches.text)}</span>`;
   })}</div>

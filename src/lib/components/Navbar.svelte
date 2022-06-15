@@ -11,19 +11,19 @@
 
 <nav id="navbar">
 	<a sveltekit:prefetch href="/{ path }/projects">
-		<ProjectsSVG width="40" height="40" />
+		<ProjectsSVG width="30" height="30" style="margin-top: 14px" />
 	</a>
 	<a sveltekit:prefetch href="/{ path }/equipment">
-		<EquipmentSVG width="40" height="40" />
+		<EquipmentSVG width="30" height="30" style="margin-top: 14px" />
 	</a>
 	<a sveltekit:prefetch href="/{ path }/home">
-		<HomeSVG width="40" height="40" />
+		<HomeSVG width="30" height="30" style="margin-top: 14px" />
 	</a>
 	<a sveltekit:prefetch href="/{ path }/history">
-		<HistorySVG width="40" height="40" />
+		<HistorySVG width="30" height="30" style="margin-top: 14px" />
 	</a>
 	<a sveltekit:prefetch href="/{ path }/account">
-		<AccountSVG width="40" height="40" />
+		<AccountSVG width="30" height="30" style="margin-top: 14px" />
 	</a>
 </nav>
 
@@ -40,7 +40,7 @@
 
 	#navbar a {
 		margin: 0;
-		padding: 0;
+		padding: auto;
 		border: 0;
 		width: 20vw;
 		height: 60px;
