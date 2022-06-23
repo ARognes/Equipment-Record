@@ -4,25 +4,28 @@
 	import HomeSVG from '$lib/assets/home.svg'
 	import HistorySVG from '$lib/assets/history.svg'
 	import AccountSVG from '$lib/assets/account.svg'
+	import { page } from '$app/stores'
+
+	console.log($page.url)
 
   export let path : string = 'on'
 </script>
 
 
 <nav id="navbar">
-	<a sveltekit:prefetch href={ `/${ path }/projects` }>
+	<a sveltekit:prefetch href={ `//${ $page.url.host }/${ path }/projects` }>
 		<ProjectsSVG width="30" height="30" style="margin-top: 14px" />
 	</a>
-	<a sveltekit:prefetch href={ `/${ path }/equipment` }>
+	<a sveltekit:prefetch href={ `${ $page.url.origin }/${ path }/equipment` }>
 		<EquipmentSVG width="30" height="30" style="margin-top: 14px" />
 	</a>
-	<a sveltekit:prefetch href={ `/${ path }/home` }>
+	<a sveltekit:prefetch href={ `${ $page.url.host }/${ path }/home` }>
 		<HomeSVG width="30" height="30" style="margin-top: 14px" />
 	</a>
 	<a sveltekit:prefetch href={ `/${ path }/history` }>
 		<HistorySVG width="30" height="30" style="margin-top: 14px" />
 	</a>
-	<a sveltekit:prefetch href={ `/${ path }/account` }>
+	<a sveltekit:prefetch href={ `${ path }/account` }>
 		<AccountSVG width="30" height="30" style="margin-top: 14px" />
 	</a>
 </nav>
