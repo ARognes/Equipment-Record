@@ -13,19 +13,19 @@
 
 
 <nav id="navbar">
-	<a sveltekit:prefetch href={ `//${ $page.url.host }/${ path }/projects` }>
+	<a sveltekit:prefetch href={ `//${ $page.url.host }/${ path ||  'on' }/projects` }>
 		<ProjectsSVG width="30" height="30" style="margin-top: 14px" />
 	</a>
-	<a sveltekit:prefetch href={ `${ $page.url.origin }/${ path }/equipment` }>
+	<a sveltekit:prefetch href={ `//${ $page.url.host }/${ path ||  'on' }/equipment` }>
 		<EquipmentSVG width="30" height="30" style="margin-top: 14px" />
 	</a>
-	<a sveltekit:prefetch href={ `${ $page.url.host }/${ path }/home` }>
+	<a sveltekit:prefetch href={ `//${ $page.url.host }/${ path ||  'on' }/home` }>
 		<HomeSVG width="30" height="30" style="margin-top: 14px" />
 	</a>
-	<a sveltekit:prefetch href={ `/${ path }/history` }>
+	<a sveltekit:prefetch href={ `//${ $page.url.host }/history` }>
 		<HistorySVG width="30" height="30" style="margin-top: 14px" />
 	</a>
-	<a sveltekit:prefetch href={ `${ path }/account` }>
+	<a sveltekit:prefetch href={ `//${ $page.url.host }/account` }>
 		<AccountSVG width="30" height="30" style="margin-top: 14px" />
 	</a>
 </nav>

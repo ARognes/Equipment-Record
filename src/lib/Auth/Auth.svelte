@@ -118,7 +118,6 @@
     });
   }
   
-  
   function enterSignIn(e) {
     if (e.key === 'Enter') loginEmail()
   }
