@@ -41,7 +41,7 @@
     "base64-arraybuffer": "^1.0.2",
     "compressorjs": "^1.1.1",
     "cookie": "^0.4.2",
-    "dotenv": "^16.0.0",
+    "dotenv": "^16.0.1",
     "encrypt-storage": "^2.2.6"
   }
 }

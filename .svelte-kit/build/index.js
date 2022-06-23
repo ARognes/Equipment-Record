@@ -5,7 +5,7 @@ import { set_paths, assets, base } from '/Users/austinrognes/Documents/Projects/
 import { set_prerendering } from '/Users/austinrognes/Documents/Projects/ER/equipment-record/.svelte-kit/runtime/env.js';
 import * as user_hooks from "./hooks.js";
 
-const template = ({ head, body, assets, nonce }) => "<!DOCTYPE html>\n<html lang=\"en\">\n\t<head>\n\t\t<meta charset=\"utf-8\" />\n\t\t<meta name=\"description\" content=\"\" />\n\t\t<link rel=\"icon\" href=\"" + assets + "/favicon.png\" />\n\t\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n\t\t" + head + "\n\t</head>\n\t<body>\n\t\t<div style=\"position: absolute; left: 0; right: 0; top: 0; bottom: 0; margin: 0; overflow: hidden\">" + body + "</div>\n\t</body>\n</html>\n";
+const template = ({ head, body, assets, nonce }) => "<!DOCTYPE html>\n<html lang=\"en\">\n\t<head>\n\t\t<meta charset=\"utf-8\" />\n\t\t<meta name=\"description\" content=\"\" />\n\t\t<link rel=\"icon\" href=\"" + assets + "/favicon.png\" />\n\t\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n\t\t" + head + "\n\t</head>\n\t<body style=\"margin: 0; overflow: hidden\">\n\t\t" + body + "\n\t</body>\n</html>\n";
 
 let read = null;
 

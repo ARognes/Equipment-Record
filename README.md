@@ -19,7 +19,7 @@
   
 * Individual businesses have their own separate data
 
-## Installation
+## Setup
 
 Clone this repository 
 ``` bash
@@ -32,7 +32,7 @@ npm run build/deploy/deploy-debug
 ```
 Make sure firebase rules allow use
 
-## Dev Installation Other Info
+## Dev Setup Other Info
 
 firestore.cors.json contains the cors http codes allowed to access the firebase storage bucket.
 

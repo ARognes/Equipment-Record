@@ -12,7 +12,12 @@
   import LockSVG from '$lib/assets/lock.svg'
   import { getIdTokenResult } from 'firebase/auth'
   import { session } from '$lib/storage'
-  
+  import { onMount } from 'svelte'
+  import { dev } from '$app/env'
+
+  const SITE_KEY = dev ? import.meta.env.VITE_DEV_RECAPTCHA_SITE_KEY : import.meta.env.VITE_PROD_RECAPTCHA_SITE_KEY
+  const SITE_KEY_URL = `https://www.google.com/recaptcha/api.js?render=${ SITE_KEY }`
+
   const loading = writable(false)
   const errorMsg = writable('')
 
@@ -27,13 +32,13 @@
 
   async function loginEmail() {
     try {
-      console.log('arst')
       validatePassword(password)
-
+      
       
       $loading = true
       if (validateEmail(username)) await auth.signInEmail(username, password)
       else await auth.signInUsername(username, password)
+      console.log('login')
     }
     catch (e) { 
       $errorMsg = ""
@@ -90,6 +95,30 @@
     }
   }
 
+  onMount(() => {
+    recaptchaLoaded()
+  })
+
+  function recaptchaLoaded() {
+    console.log('recaptcha start')
+    grecaptcha.ready(async () => {
+      let token = await grecaptcha.execute(SITE_KEY, {action: 'submit'})
+      console.log('recaptcha token')
+      let verification = await fetch(`http://${ window.location.host }/endpoints/auth`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: `{"response":"${ token }"}`
+      })
+      console.log('recaptcha verification')
+
+      console.log(await verification.json())
+    });
+  }
+  
+  
   function enterSignIn(e) {
     if (e.key === 'Enter') loginEmail()
   }
@@ -98,8 +127,19 @@
     if (e.key === 'Enter') validateRegistration()
   }
 
+  let signInSaveUsername = ''
+  let registerSaveUsername = ''
+  let registerSaveEmail = ''
 
 </script>
+
+<svelte:head>
+  <link rel="preconnect" href="https://www.google.com">
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+
+  <link rel="preload" as="script" href={ SITE_KEY_URL } />
+  <script src={ SITE_KEY_URL } on:load={ recaptchaLoaded }></script> <!-- Dev -->
+</svelte:head>
 
 <!-- Auth status unknown -->
 {#if $auth === undefined}
@@ -114,7 +154,7 @@
       <h1>Sign In</h1>
 
       <p>Need an account? <span class="link" on:click={ () => signIn = false }>Register</span></p>
-      <input type="text" spellcheck="false" placeholder="Username or email" on:keypress={ enterSignIn } on:input={ e => username = e.currentTarget.value }>
+      <input type="text" spellcheck="false" placeholder="Username or email" on:keypress={ enterSignIn } bind:value={ signInSaveUsername } on:input={ e => username = e.currentTarget.value }>
       <div class="image"><AccountSVG /></div>
       <div id="password-forgot">
         <input id="password-short" type={ viewPassword ? 'text' : 'password' } spellcheck="false" placeholder="Password" on:keypress={ enterSignIn } on:input={ e => password = e.currentTarget.value }>
@@ -125,9 +165,6 @@
           <div class="image" on:click={ () => viewPassword = !viewPassword } ><HideSVG /></div>
         {/if}
       </div>
-      <!-- <div id="div-captcha" hidden="true">
-        <div class="g-recaptcha" data-sitekey="6LcRXkccAAAAABcm5OS8HkuDj9_Pi9A__dU_EeTx"></div>
-      </div> -->
 
       <button id="sign-in" on:click={ loginEmail }>Sign In</button>
 
@@ -137,9 +174,9 @@
 
       <p>Already have an account? <span class="link" on:click={ () => signIn = true }>Sign in</span></p>
 
-      <input type="text" spellcheck="false" placeholder="Username" on:keypress={ enterRegister } on:input={ e => username = e.currentTarget.value }>
+      <input type="text" spellcheck="false" placeholder="Username" on:keypress={ enterRegister } bind:value={ registerSaveUsername } on:input={ e => username = e.currentTarget.value }>
       <div class="image"><AccountSVG /></div>
-      <input type="email" spellcheck="false" placeholder="Email" on:keypress={ enterRegister } on:input={ e => email = e.currentTarget.value }>
+      <input type="email" spellcheck="false" placeholder="Email" on:keypress={ enterRegister } bind:value={ registerSaveEmail } on:input={ e => email = e.currentTarget.value }>
       <div class="image"><EmailSVG /></div>
       <input type={ viewPassword ? 'text' : 'password' } spellcheck="false" placeholder="Password" on:keypress={ enterRegister } on:input={ e => password = e.currentTarget.value }>
       
@@ -151,10 +188,6 @@
 
       <input type="password" spellcheck="false" placeholder="Confirm password" on:keypress={ enterRegister } on:input={ e => confirmPassword = e.currentTarget.value }>
       <div class="image"><LockSVG /></div>
-      
-      <!-- <div id="div-captcha" hidden="true">
-        <div class="g-recaptcha" data-sitekey="6LcRXkccAAAAABcm5OS8HkuDj9_Pi9A__dU_EeTx"></div>
-      </div> -->
 
       <button id="register" on:click={ validateRegistration }>Register</button>
     
@@ -249,8 +282,10 @@
 #google 
   background-color: #f77
 
-#div-captcha 
+.div-captcha 
   width: auto
+  height: 100px
+  display: inline
   align-self: flex-start
 
 #forgot 

@@ -10,6 +10,11 @@
       ".svelte-kit/build/hooks.js"
     ]
   },
+  "src/routes/endpoints/auth.ts": {
+    "file": "entries/endpoints/endpoints/auth.ts.js",
+    "src": "src/routes/endpoints/auth.ts",
+    "isEntry": true
+  },
   "src/routes/__layout.svelte": {
     "file": "entries/pages/__layout.svelte.js",
     "src": "src/routes/__layout.svelte",
@@ -46,7 +51,7 @@
       "_storage-7a99a8c4.js"
     ],
     "css": [
-      "assets/entries/pages/index.svelte-1f036913.css",
+      "assets/entries/pages/index.svelte-eb6593dc.css",
       "assets/Loading.svelte_svelte_type_style_lang-1bbaa133.css"
     ]
   },
@@ -125,7 +130,7 @@
       "src/lib/app.ts"
     ],
     "css": [
-      "assets/entries/pages/_businessName_/equipment/index.svelte-9f60d9ec.css",
+      "assets/entries/pages/_businessName_/equipment/index.svelte-4ca978e6.css",
       "assets/Navbar.svelte_svelte_type_style_lang-b56d500c.css",
       "assets/Loading.svelte_svelte_type_style_lang-1bbaa133.css"
     ]

@@ -3,7 +3,7 @@ export const manifest = {
 	assets: new Set(["favicon.png"]),
 	mimeTypes: {".png":"image/png"},
 	_: {
-		entry: {"file":"start-db4ce3c8.js","js":["start-db4ce3c8.js","chunks/vendor-5a111b6e.js","chunks/preload-helper-e4860ae8.js","chunks/singletons-d1fb5791.js"],"css":["assets/vendor-dc74a490.css"]},
+		entry: {"file":"start-f68f20d6.js","js":["start-f68f20d6.js","chunks/vendor-ec885462.js","chunks/preload-helper-e4860ae8.js","chunks/singletons-d1fb5791.js"],"css":["assets/vendor-dc74a490.css"]},
 		nodes: [
 			() => import('./nodes/0.js'),
 			() => import('./nodes/1.js'),
@@ -33,6 +33,14 @@ export const manifest = {
 				shadow: null,
 				a: [0,2],
 				b: [1]
+			},
+			{
+				type: 'endpoint',
+				id: "endpoints/auth",
+				pattern: /^\/endpoints\/auth\/?$/,
+				names: [],
+				types: [],
+				load: () => import('./entries/endpoints/endpoints/auth.ts.js')
 			},
 			{
 				type: 'page',

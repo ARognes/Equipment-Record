@@ -30,7 +30,7 @@ const Error = create_ssr_component(($$result, $$props, $$bindings, slots) => {
 });
 var ItemCard_svelte_svelte_type_style_lang = "";
 const css$2 = {
-  code: ".highlight.svelte-k9pbl1.svelte-k9pbl1{color:white;background-color:#888;border-width:20px;padding:1px}.item.svelte-k9pbl1.svelte-k9pbl1{position:relative;display:flex;margin:0 0 2px 0;left:0;width:100%;height:80px;background-color:#eee}.left.svelte-k9pbl1.svelte-k9pbl1{height:80px;width:80px;margin:0}.left.svelte-k9pbl1 img.svelte-k9pbl1{height:80px}.middle.svelte-k9pbl1.svelte-k9pbl1{height:80px;margin:0 auto 0 10px}.middle.svelte-k9pbl1 .attr.svelte-k9pbl1{font-size:12px}.right.svelte-k9pbl1.svelte-k9pbl1{height:80px;margin:0 10px 0 auto;color:blue;font-weight:bold;font-size:12px}",
+  code: ".highlight.svelte-10ul3u8.svelte-10ul3u8{color:white;background-color:#888;border-width:20px;padding:1px}.item.svelte-10ul3u8.svelte-10ul3u8{position:relative;display:flex;margin:0 0 2px 0;left:0;width:100%;height:80px;background-color:#eee}.left.svelte-10ul3u8.svelte-10ul3u8{height:80px;width:80px;margin:0;display:grid;place-items:center}.left.svelte-10ul3u8 img.svelte-10ul3u8{height:80px}.middle.svelte-10ul3u8.svelte-10ul3u8{height:80px;margin:0 auto 0 10px}.middle.svelte-10ul3u8 .attr.svelte-10ul3u8{font-size:12px}.right.svelte-10ul3u8.svelte-10ul3u8{height:80px;margin:0 10px 0 auto;color:blue;font-weight:bold;font-size:12px}",
   map: null
 };
 const ItemCard = create_ssr_component(($$result, $$props, $$bindings, slots) => {
@@ -38,20 +38,20 @@ const ItemCard = create_ssr_component(($$result, $$props, $$bindings, slots) => 
   if ($$props.info === void 0 && $$bindings.info && info !== void 0)
     $$bindings.info(info);
   $$result.css.add(css$2);
-  return `<div class="${"item svelte-k9pbl1"}"><div class="${"left svelte-k9pbl1"}">${info?.tinySRC?.length ? `${info?.tinySRC[0] ? `<img loading="${"lazy"}"${add_attribute("src", info?.tinySRC[0], 0)} alt="${""}" class="${"svelte-k9pbl1"}">` : `${validate_component(Error, "ErrorSVG").$$render($$result, {}, {}, {})}`}` : `${validate_component(Loading, "Loading").$$render($$result, {}, {}, {})}`}</div>
-  <div class="${"middle svelte-k9pbl1"}"><div class="${"name"}">${each(info?.nameHighlight, (matches) => {
-    return `<span class="${["svelte-k9pbl1", matches.highlight ? "highlight" : ""].join(" ").trim()}">${escape(matches.text)}</span>`;
+  return `<div class="${"item svelte-10ul3u8"}"><div class="${"left svelte-10ul3u8"}">${info?.tinySRC?.length ? `${info?.tinySRC[0] ? `<img loading="${"lazy"}"${add_attribute("src", info?.tinySRC[0], 0)} alt="${""}" class="${"svelte-10ul3u8"}">` : `${validate_component(Error, "ErrorSVG").$$render($$result, { width: "40", height: "40" }, {}, {})}`}` : `${validate_component(Loading, "Loading").$$render($$result, {}, {}, {})}`}</div>
+  <div class="${"middle svelte-10ul3u8"}"><div class="${"name"}">${each(info?.nameHighlight, (matches) => {
+    return `<span class="${["svelte-10ul3u8", matches.highlight ? "highlight" : ""].join(" ").trim()}">${escape(matches.text)}</span>`;
   })}</div>
 
-    <div class="${"attr svelte-k9pbl1"}">${each(info?.attrHighlight, (attr) => {
+    <div class="${"attr svelte-10ul3u8"}">${each(info?.attrHighlight, (attr) => {
     return `<div>${each(attr, (matches) => {
-      return `<span class="${["svelte-k9pbl1", matches.highlight ? "highlight" : ""].join(" ").trim()}">${escape(matches.text)}</span>`;
+      return `<span class="${["svelte-10ul3u8", matches.highlight ? "highlight" : ""].join(" ").trim()}">${escape(matches.text)}</span>`;
     })}
         </div>`;
   })}</div>
 
     </div>
-  <div class="${"right svelte-k9pbl1"}"><p>${escape(info?.userAssigned || "")}<br>${escape(info?.projectAssigned || "")}</p></div>
+  <div class="${"right svelte-10ul3u8"}"><p>${escape(info?.userAssigned || "")}<br>${escape(info?.projectAssigned || "")}</p></div>
 </div>`;
 });
 var ItemContainer_svelte_svelte_type_style_lang = "";
