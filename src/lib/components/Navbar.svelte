@@ -6,8 +6,6 @@
 	import AccountSVG from '$lib/assets/account.svg'
 	import { page } from '$app/stores'
 
-	console.log($page.url)
-
   export let path : string = 'on'
 </script>
 
@@ -22,10 +20,10 @@
 	<a sveltekit:prefetch href={ `//${ $page.url.host }/${ path ||  'on' }/home` }>
 		<HomeSVG width="30" height="30" style="margin-top: 14px" />
 	</a>
-	<a sveltekit:prefetch href={ `//${ $page.url.host }/history` }>
+	<a sveltekit:prefetch href={ `//${ $page.url.host }/${ path ||  'on' }/history` }>
 		<HistorySVG width="30" height="30" style="margin-top: 14px" />
 	</a>
-	<a sveltekit:prefetch href={ `//${ $page.url.host }/account` }>
+	<a sveltekit:prefetch href={ `//${ $page.url.host }/${ path ||  'on' }/account` }>
 		<AccountSVG width="30" height="30" style="margin-top: 14px" />
 	</a>
 </nav>

@@ -34,9 +34,13 @@
     try {
       validatePassword(password)
       
-      
       $loading = true
-      if (validateEmail(username)) await auth.signInEmail(username, password)
+      const arst = await recaptcha()
+
+      console.log(arst)
+      return
+
+      if (isEmail(username)) await auth.signInEmail(username, password)
       else await auth.signInUsername(username, password)
       console.log('login')
     }
@@ -60,7 +64,7 @@
     try {
       $loading = true
       if (username.length <= 2) throw new Error("Please enter your username")
-      if (email.length <= 3 || !validateEmail(email)) throw new Error("Please enter a valid email")
+      if (email.length <= 3 || !isEmail(email)) throw new Error("Please enter a valid email")
       validatePassword(password)
       if (password !== confirmPassword) throw new Error("Your passwords do not match")
 
@@ -78,7 +82,7 @@
     if (password.search(/[0-9]|[~`!#$%\^&*+=\-_\[\]\\';,\./{}|\\":<>\?]/) < 0) throw "Your password must contain at least one digit or special character"
   }
   
-  function validateEmail(email: string): boolean {
+  function isEmail(email: string): boolean {
     return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
   }
 
@@ -96,26 +100,34 @@
   }
 
   onMount(() => {
-    recaptchaLoaded()
+    // recaptchaLoaded()
   })
 
-  function recaptchaLoaded() {
-    console.log('recaptcha start')
-    grecaptcha.ready(async () => {
-      let token = await grecaptcha.execute(SITE_KEY, {action: 'submit'})
-      console.log('recaptcha token')
-      let verification = await fetch(`http://${ window.location.host }/endpoints/auth`, {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: `{"response":"${ token }"}`
-      })
-      console.log('recaptcha verification')
+  let recaptchaReady = false
 
-      console.log(await verification.json())
+
+  async function recaptcha() {
+    console.log('recaptcha start')
+
+    return await new Promise((res, rej) => {
+      grecaptcha.ready(async () => {
+        let token = await grecaptcha.execute(SITE_KEY, {action: 'submit'})
+
+        console.log('recaptcha token')
+        
+        let verification = await fetch(`http://${ window.location.host }/endpoints/auth`, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: `{"response":"${ token }"}`
+        })
+        console.log('recaptcha verification')
+        res(await verification.json())
+      })
     });
+
   }
   
   function enterSignIn(e) {
@@ -137,7 +149,7 @@
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 
   <link rel="preload" as="script" href={ SITE_KEY_URL } />
-  <script src={ SITE_KEY_URL } on:load={ recaptchaLoaded }></script> <!-- Dev -->
+  <script src={ SITE_KEY_URL } on:load={ () => recaptchaReady = true } /> <!-- Dev -->
 </svelte:head>
 
 <!-- Auth status unknown -->
