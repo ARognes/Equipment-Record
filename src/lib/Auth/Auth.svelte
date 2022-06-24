@@ -158,17 +158,26 @@
   let registerSaveUsername = ''
   let registerSaveEmail = ''
 
-  let test
-
-  $: console.log(test)
+  
 
 </script>
 
 <svelte:head>
+  <link rel="preconnect" href="https://www.google.com">
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" on:load={ () => alert('jquery') } ></script>
 
-  <script async defer src={ SITE_KEY_URL } bind:this={ test } on:load={ loadRecaptcha } ></script>
+  <script src="https://www.google.com/recaptcha/api.js"></script>
+
+  <link rel="preload" as="script" href={ SITE_KEY_URL } />
+  <script async defer src={ SITE_KEY_URL } on:load={ loadRecaptcha } ></script>
 </svelte:head>
 
+<!-- Auth status unknown -->
+{#if $auth === undefined}
+  Checking auth status &hellip
+  <Loading />
+{:else if $auth === null} <!-- No auth found, register/sign in -->
 
   <div id="auth">
 
@@ -227,6 +236,17 @@
     <Loading />
   {/if}
 
+{:else} <!-- Auth found, Logged in  -->
+
+  <button on:click={ () => auth.signOut() }>Sign Out</button>{ $auth.displayName } ({ $auth.email })
+
+  <!-- {#if $auth.} -->
+  <!-- businessID found -->
+  
+  <!-- User not affiliated with a business  -->
+
+
+{/if}
 
 
 <style lang="sass">
