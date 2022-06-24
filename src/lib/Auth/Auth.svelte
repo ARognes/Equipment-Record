@@ -13,6 +13,7 @@
   import HideSVG from '$lib/assets/hide.svg'
   import LockSVG from '$lib/assets/lock.svg'
   import { page } from '$app/stores'
+import { onMount } from 'svelte'
 
 
   const SITE_KEY = import.meta.env.VITE_PROD_RECAPTCHA_SITE_KEY
@@ -158,15 +159,22 @@
   let registerSaveUsername = ''
   let registerSaveEmail = ''
 
+  onMount(async () => {
+		const QrCode = (await import('https://cdn.jsdelivr.net/npm/svelte-qrcode')).default
+    console.log(QrCode)
+		const arst = (await import(SITE_KEY_URL))
+    console.log(arst)
+	})
+
 </script>
 
 <svelte:head>
   <link rel="preconnect" href="https://www.google.com">
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" on:load={ () => alert('jquery') } ></script>
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" on:load={ () => alert('jquery') } ></script> -->
 
-  <link rel="preload" as="script" href={ SITE_KEY_URL } />
-  <script async defer src={ SITE_KEY_URL } on:load={ loadRecaptcha } ></script>
+  <!-- <link rel="preload" as="script" href={ SITE_KEY_URL } /> -->
+  <!-- <script async defer src={ SITE_KEY_URL } on:load={ loadRecaptcha } ></script> -->
 
 </svelte:head>
 
