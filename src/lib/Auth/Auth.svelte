@@ -111,6 +111,8 @@
 
     return await new Promise((res, rej) => {
       grecaptcha.ready(async () => {
+        console.log('recaptcha ready')
+
         let token = await grecaptcha.execute(SITE_KEY, {action: 'submit'})
 
         console.log('recaptcha token')
@@ -123,7 +125,7 @@
           },
           body: `{"response":"${ token }"}`
         })
-        console.log('recaptcha verification')
+        console.log('recaptcha verified')
         res(await verification.json())
       })
     });
