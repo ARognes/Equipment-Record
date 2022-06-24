@@ -12,7 +12,7 @@
   import ViewSVG from '$lib/assets/view.svg'
   import HideSVG from '$lib/assets/hide.svg'
   import LockSVG from '$lib/assets/lock.svg'
-import { page } from '$app/stores';
+  import { page } from '$app/stores'
 
 
   const SITE_KEY = import.meta.env.VITE_PROD_RECAPTCHA_SITE_KEY
@@ -25,12 +25,17 @@ import { page } from '$app/stores';
 
   let signIn = true
   let viewPassword = false
-  let recaptchaReady = false
+  let recaptchaLoaded = false
 
   let username = ""
   let email = ""
   let password = ""
   let confirmPassword = ""
+
+  function loadRecaptcha() {
+    recaptchaLoaded = true
+    console.log('recaptcha loaded')
+  }
 
 
   async function loginEmail() {
@@ -157,11 +162,10 @@ import { page } from '$app/stores';
 
 <svelte:head>
   <link rel="preconnect" href="https://www.google.com">
-  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin="use-credentials">
 
   <link rel="preload" as="script" href={ SITE_KEY_URL } />
-  <script defer src={ SITE_KEY_URL } on:load={ () => recaptchaReady = true } />
-
+  <script async defer src={ SITE_KEY_URL } on:load={ loadRecaptcha } ></script>
 </svelte:head>
 
 <!-- Auth status unknown -->

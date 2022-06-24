@@ -82,7 +82,7 @@ const Auth = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   $$unsubscribe_auth();
   $$unsubscribe_loading();
   $$unsubscribe_errorMsg();
-  return `${$$result.head += `<link rel="${"preconnect"}" href="${"https://www.google.com"}" data-svelte="svelte-1ec9kc4"><link rel="${"preconnect"}" href="${"https://www.gstatic.com"}" crossorigin data-svelte="svelte-1ec9kc4"><link rel="${"preload"}" as="${"script"}"${add_attribute("href", SITE_KEY_URL, 0)} data-svelte="svelte-1ec9kc4"><script defer${add_attribute("src", SITE_KEY_URL, 0)} data-svelte="svelte-1ec9kc4"><\/script>`, ""}
+  return `${$$result.head += `<link rel="${"preconnect"}" href="${"https://www.google.com"}" data-svelte="svelte-boam82"><link rel="${"preconnect"}" href="${"https://www.gstatic.com"}" crossorigin="${"use-credentials"}" data-svelte="svelte-boam82"><link rel="${"preload"}" as="${"script"}"${add_attribute("href", SITE_KEY_URL, 0)} data-svelte="svelte-boam82"><script async defer${add_attribute("src", SITE_KEY_URL, 0)} data-svelte="svelte-boam82"><\/script>`, ""}
 
 
 ${$auth === void 0 ? `Checking auth status \u2026
