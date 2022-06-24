@@ -12,6 +12,7 @@
   import ViewSVG from '$lib/assets/view.svg'
   import HideSVG from '$lib/assets/hide.svg'
   import LockSVG from '$lib/assets/lock.svg'
+import { page } from '$app/stores';
 
 
   const SITE_KEY = import.meta.env.VITE_PROD_RECAPTCHA_SITE_KEY
@@ -117,7 +118,7 @@
 
           console.log('recaptcha token:', token)
           
-          let verificationRes = await fetch(`https://${ window.location.host }/endpoints/auth`, {
+          let verificationRes = await fetch(`//${ $page.url.host }/endpoints/auth`, {
             method: 'POST',
             credentials: 'same-origin',
             headers: {

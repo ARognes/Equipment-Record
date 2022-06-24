@@ -48,7 +48,8 @@
       "_auth-0ef6715f.js",
       "_navigation-92f05dd6.js",
       "_storage-7a99a8c4.js",
-      "_account-5b395066.js"
+      "_account-5b395066.js",
+      "_stores-ed515c98.js"
     ],
     "css": [
       "assets/entries/pages/index.svelte-69994e54.css",
