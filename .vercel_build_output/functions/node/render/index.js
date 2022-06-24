@@ -18348,7 +18348,7 @@ var index_svelte_exports = {};
 __export(index_svelte_exports, {
   default: () => Routes
 });
-var css$1, ErrorMsg, Hide, css5, Auth, Routes;
+var css$1, ErrorMsg, Hide, css5, Routes;
 var init_index_svelte = __esm({
   ".svelte-kit/output/server/entries/pages/index.svelte.js"() {
     init_index_1e667dfc();
@@ -18401,7 +18401,7 @@ var init_index_svelte = __esm({
       code: '#auth.svelte-zjx7pb.svelte-zjx7pb{position:relative;top:5%;left:5%;width:90%;font-family:"Poppins", sans-serif}#auth.svelte-zjx7pb h1.svelte-zjx7pb{font-size:60px;margin:0 0 10px 0;padding:0}#auth.svelte-zjx7pb button.svelte-zjx7pb{width:100%;height:40px;font-size:20px;font-family:"Poppins", sans-serif;border:none;margin:10px 0 0 0}#auth.svelte-zjx7pb input.svelte-zjx7pb{padding-left:44px;width:calc(100% - 44px);height:32px;font-size:20px;border:none;border-bottom:3px solid #888;margin:-10px 0 -10px 0}#auth.svelte-zjx7pb input.svelte-zjx7pb:focus{outline:none}#auth.svelte-zjx7pb #password-forgot.svelte-zjx7pb{width:100%;height:32px;font-size:20px;border:none;border-bottom:3px solid #888;margin:-10px 0 -10px 0}#auth.svelte-zjx7pb #password-forgot #password-short.svelte-zjx7pb{width:calc(100% - 125px);border:none;height:30px}#auth.svelte-zjx7pb #password-forgot #forgot.svelte-zjx7pb{float:right;position:relative;top:0;right:6px;height:40px;color:blue;font-size:20px;text-decoration:none}#auth.svelte-zjx7pb .image.svelte-zjx7pb{position:relative;top:-24px;left:6px;align-self:flex-start;opacity:50%;width:30px;height:30px}#register.svelte-zjx7pb.svelte-zjx7pb{background-color:#aaf}#sign-in.svelte-zjx7pb.svelte-zjx7pb{background-color:#aaf}#google.svelte-zjx7pb.svelte-zjx7pb{background-color:#f77}.link.svelte-zjx7pb.svelte-zjx7pb{color:#00f}.link.svelte-zjx7pb.svelte-zjx7pb:hover{font-weight:bold}',
       map: null
     };
-    Auth = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+    Routes = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       let $$unsubscribe_page;
       let $auth, $$unsubscribe_auth;
       let $loading, $$unsubscribe_loading;
@@ -18475,9 +18475,6 @@ ${$auth === void 0 ? `Checking auth status \u2026
 
 `;
     });
-    Routes = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-      return `${validate_component(Auth, "Auth").$$render($$result, {}, {}, {})}`;
-    });
   }
 });
 
@@ -18493,8 +18490,8 @@ var entry3, js3, css6;
 var init__3 = __esm({
   ".svelte-kit/output/server/nodes/2.js"() {
     init_index_svelte();
-    entry3 = "pages/index.svelte-49933ad6.js";
-    js3 = ["pages/index.svelte-49933ad6.js", "chunks/vendor-7483cdb5.js", "chunks/Loading-a6633037.js", "chunks/auth-887b2c39.js", "chunks/preload-helper-e4860ae8.js", "chunks/navigation-0e6511d1.js", "chunks/singletons-d1fb5791.js", "chunks/storage-c0d15549.js", "chunks/account-e554063a.js", "chunks/stores-0399aab1.js"];
+    entry3 = "pages/index.svelte-d0052821.js";
+    js3 = ["pages/index.svelte-d0052821.js", "chunks/vendor-7483cdb5.js", "chunks/Loading-a6633037.js", "chunks/auth-887b2c39.js", "chunks/preload-helper-e4860ae8.js", "chunks/navigation-0e6511d1.js", "chunks/singletons-d1fb5791.js", "chunks/storage-c0d15549.js", "chunks/account-e554063a.js", "chunks/stores-0399aab1.js"];
     css6 = ["assets/pages/index.svelte-f35b40b8.css", "assets/Loading.svelte_svelte_type_style_lang-8d43aad4.css", "assets/vendor-dc74a490.css"];
   }
 });
@@ -18536,7 +18533,7 @@ var init__4 = __esm({
     init_business_svelte();
     entry4 = "pages/business.svelte-1d4564c2.js";
     js4 = ["pages/business.svelte-1d4564c2.js", "chunks/vendor-7483cdb5.js"];
-    css8 = ["assets/pages/forgot.svelte-9f6c3866.css", "assets/vendor-dc74a490.css"];
+    css8 = ["assets/pages/business.svelte-84a610ef.css", "assets/vendor-dc74a490.css"];
   }
 });
 
@@ -18577,7 +18574,7 @@ var init__5 = __esm({
     init_forgot_svelte();
     entry5 = "pages/forgot.svelte-a5ccd87f.js";
     js5 = ["pages/forgot.svelte-a5ccd87f.js", "chunks/vendor-7483cdb5.js"];
-    css10 = ["assets/pages/forgot.svelte-9f6c3866.css", "assets/vendor-dc74a490.css"];
+    css10 = ["assets/pages/business.svelte-84a610ef.css", "assets/vendor-dc74a490.css"];
   }
 });
 
@@ -20292,7 +20289,7 @@ var init__12 = __esm({
     init_index_svelte4();
     entry12 = "pages/_businessName_/settings/index.svelte-975057a9.js";
     js12 = ["pages/_businessName_/settings/index.svelte-975057a9.js", "chunks/vendor-7483cdb5.js"];
-    css23 = ["assets/pages/forgot.svelte-9f6c3866.css", "assets/vendor-dc74a490.css"];
+    css23 = ["assets/pages/business.svelte-84a610ef.css", "assets/vendor-dc74a490.css"];
   }
 });
 
@@ -23963,7 +23960,7 @@ var manifest = {
   assets: /* @__PURE__ */ new Set(["favicon.png"]),
   mimeTypes: { ".png": "image/png" },
   _: {
-    entry: { "file": "start-2a686bc3.js", "js": ["start-2a686bc3.js", "chunks/vendor-7483cdb5.js", "chunks/preload-helper-e4860ae8.js", "chunks/singletons-d1fb5791.js"], "css": ["assets/vendor-dc74a490.css"] },
+    entry: { "file": "start-f6115377.js", "js": ["start-f6115377.js", "chunks/vendor-7483cdb5.js", "chunks/preload-helper-e4860ae8.js", "chunks/singletons-d1fb5791.js"], "css": ["assets/vendor-dc74a490.css"] },
     nodes: [
       () => Promise.resolve().then(() => (init__(), __exports)),
       () => Promise.resolve().then(() => (init__2(), __exports2)),

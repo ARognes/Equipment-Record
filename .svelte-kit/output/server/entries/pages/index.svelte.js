@@ -45,12 +45,12 @@ const Hide = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     escape_object($$props)
   ], {})}><path d="${"M0 0h24v24H0V0zm0 0h24v24H0V0zm0 0h24v24H0V0zm0 0h24v24H0V0z"}" fill="${"none"}"></path><path d="${"M12 6a9.77 9.77 0 0 1 8.82 5.5 9.647 9.647 0 0 1-2.41 3.12l1.41 1.41c1.39-1.23 2.49-2.77 3.18-4.53C21.27 7.11 17 4 12 4c-1.27 0-2.49.2-3.64.57l1.65 1.65C10.66 6.09 11.32 6 12 6zm-1.07 1.14L13 9.21c.57.25 1.03.71 1.28 1.28l2.07 2.07c.08-.34.14-.7.14-1.07C16.5 9.01 14.48 7 12 7c-.37 0-.72.05-1.07.14zM2.01 3.87l2.68 2.68A11.738 11.738 0 0 0 1 11.5C2.73 15.89 7 19 12 19c1.52 0 2.98-.29 4.32-.82l3.42 3.42 1.41-1.41L3.42 2.45 2.01 3.87zm7.5 7.5 2.61 2.61c-.04.01-.08.02-.12.02a2.5 2.5 0 0 1-2.5-2.5c0-.05.01-.08.01-.13zm-3.4-3.4 1.75 1.75a4.6 4.6 0 0 0-.36 1.78 4.507 4.507 0 0 0 6.27 4.14l.98.98c-.88.24-1.8.38-2.75.38a9.77 9.77 0 0 1-8.82-5.5c.7-1.43 1.72-2.61 2.93-3.53z"}"></path></svg>`;
 });
-var Auth_svelte_svelte_type_style_lang = "";
+var index_svelte_svelte_type_style_lang = "";
 const css = {
   code: '#auth.svelte-zjx7pb.svelte-zjx7pb{position:relative;top:5%;left:5%;width:90%;font-family:"Poppins", sans-serif}#auth.svelte-zjx7pb h1.svelte-zjx7pb{font-size:60px;margin:0 0 10px 0;padding:0}#auth.svelte-zjx7pb button.svelte-zjx7pb{width:100%;height:40px;font-size:20px;font-family:"Poppins", sans-serif;border:none;margin:10px 0 0 0}#auth.svelte-zjx7pb input.svelte-zjx7pb{padding-left:44px;width:calc(100% - 44px);height:32px;font-size:20px;border:none;border-bottom:3px solid #888;margin:-10px 0 -10px 0}#auth.svelte-zjx7pb input.svelte-zjx7pb:focus{outline:none}#auth.svelte-zjx7pb #password-forgot.svelte-zjx7pb{width:100%;height:32px;font-size:20px;border:none;border-bottom:3px solid #888;margin:-10px 0 -10px 0}#auth.svelte-zjx7pb #password-forgot #password-short.svelte-zjx7pb{width:calc(100% - 125px);border:none;height:30px}#auth.svelte-zjx7pb #password-forgot #forgot.svelte-zjx7pb{float:right;position:relative;top:0;right:6px;height:40px;color:blue;font-size:20px;text-decoration:none}#auth.svelte-zjx7pb .image.svelte-zjx7pb{position:relative;top:-24px;left:6px;align-self:flex-start;opacity:50%;width:30px;height:30px}#register.svelte-zjx7pb.svelte-zjx7pb{background-color:#aaf}#sign-in.svelte-zjx7pb.svelte-zjx7pb{background-color:#aaf}#google.svelte-zjx7pb.svelte-zjx7pb{background-color:#f77}.link.svelte-zjx7pb.svelte-zjx7pb{color:#00f}.link.svelte-zjx7pb.svelte-zjx7pb:hover{font-weight:bold}',
   map: null
 };
-const Auth = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const Routes = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $$unsubscribe_page;
   let $auth, $$unsubscribe_auth;
   let $loading, $$unsubscribe_loading;
@@ -122,8 +122,5 @@ ${$auth === void 0 ? `Checking auth status \u2026
   `}`}
 
 `;
-});
-const Routes = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `${validate_component(Auth, "Auth").$$render($$result, {}, {}, {})}`;
 });
 export { Routes as default };
