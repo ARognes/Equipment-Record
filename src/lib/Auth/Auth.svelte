@@ -24,6 +24,7 @@
 
   let signIn = true
   let viewPassword = false
+  let recaptchaReady = false
 
   let username = ""
   let email = ""
@@ -158,7 +159,7 @@
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 
   <link rel="preload" as="script" href={ SITE_KEY_URL } />
-  <script defer src={ SITE_KEY_URL } />
+  <script defer src={ SITE_KEY_URL } on:load={ recaptchaReady = true } />
 
 </svelte:head>
 
