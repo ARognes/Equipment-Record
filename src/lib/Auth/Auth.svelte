@@ -35,6 +35,11 @@
   function loadRecaptcha() {
     recaptchaLoaded = true
     console.log('recaptcha loaded')
+    grecaptcha.ready(() => {
+      grecaptcha.render("container", {
+        sitekey: SITE_KEY
+      })
+    })
   }
 
 
@@ -166,8 +171,6 @@
   <link rel="preconnect" href="https://www.google.com">
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" on:load={ () => alert('jquery') } ></script>
-
-  <script src="https://www.google.com/recaptcha/api.js"></script>
 
   <link rel="preload" as="script" href={ SITE_KEY_URL } />
   <script async defer src={ SITE_KEY_URL } on:load={ loadRecaptcha } ></script>
