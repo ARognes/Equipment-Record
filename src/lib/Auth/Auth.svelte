@@ -41,7 +41,7 @@
     recaptchaLoaded = true
     console.log('recaptcha loaded')
     grecaptcha.ready(() => {
-      grecaptcha.render("div-container", {
+      grecaptcha.render("div-recaptcha", {
         sitekey: SITE_KEY
       })
     })
