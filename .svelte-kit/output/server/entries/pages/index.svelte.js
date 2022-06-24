@@ -50,6 +50,9 @@ const css = {
   code: '#auth.svelte-zjx7pb.svelte-zjx7pb{position:relative;top:5%;left:5%;width:90%;font-family:"Poppins", sans-serif}#auth.svelte-zjx7pb h1.svelte-zjx7pb{font-size:60px;margin:0 0 10px 0;padding:0}#auth.svelte-zjx7pb button.svelte-zjx7pb{width:100%;height:40px;font-size:20px;font-family:"Poppins", sans-serif;border:none;margin:10px 0 0 0}#auth.svelte-zjx7pb input.svelte-zjx7pb{padding-left:44px;width:calc(100% - 44px);height:32px;font-size:20px;border:none;border-bottom:3px solid #888;margin:-10px 0 -10px 0}#auth.svelte-zjx7pb input.svelte-zjx7pb:focus{outline:none}#auth.svelte-zjx7pb #password-forgot.svelte-zjx7pb{width:100%;height:32px;font-size:20px;border:none;border-bottom:3px solid #888;margin:-10px 0 -10px 0}#auth.svelte-zjx7pb #password-forgot #password-short.svelte-zjx7pb{width:calc(100% - 125px);border:none;height:30px}#auth.svelte-zjx7pb #password-forgot #forgot.svelte-zjx7pb{float:right;position:relative;top:0;right:6px;height:40px;color:blue;font-size:20px;text-decoration:none}#auth.svelte-zjx7pb .image.svelte-zjx7pb{position:relative;top:-24px;left:6px;align-self:flex-start;opacity:50%;width:30px;height:30px}#register.svelte-zjx7pb.svelte-zjx7pb{background-color:#aaf}#sign-in.svelte-zjx7pb.svelte-zjx7pb{background-color:#aaf}#google.svelte-zjx7pb.svelte-zjx7pb{background-color:#f77}.link.svelte-zjx7pb.svelte-zjx7pb{color:#00f}.link.svelte-zjx7pb.svelte-zjx7pb:hover{font-weight:bold}',
   map: null
 };
+function onSubmit(token) {
+  alert("thanks " + token);
+}
 const Auth = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $$unsubscribe_page;
   let $auth, $$unsubscribe_auth;
@@ -64,10 +67,19 @@ const Auth = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   $$unsubscribe_loading = subscribe(loading, (value) => $loading = value);
   const errorMsg = writable("");
   $$unsubscribe_errorMsg = subscribe(errorMsg, (value) => value);
+  function loadRecaptcha() {
+    console.log("recaptcha loaded");
+    grecaptcha.ready(() => {
+      grecaptcha.render("div-recaptcha", { sitekey: SITE_KEY });
+    });
+  }
   let signInSaveUsername = "";
   $$result.css.add(css);
   {
-    console.log(typeof grecaptcha === "undefined");
+    if (typeof grecaptcha !== "undefined") {
+      console.log(typeof grecaptcha === "undefined");
+      loadRecaptcha();
+    }
   }
   {
     {
@@ -85,7 +97,15 @@ const Auth = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   $$unsubscribe_auth();
   $$unsubscribe_loading();
   $$unsubscribe_errorMsg();
-  return `${$$result.head += `<link rel="${"preconnect"}" href="${"https://www.google.com"}" data-svelte="svelte-15y9rqv"><link rel="${"preconnect"}" href="${"https://www.gstatic.com"}" crossorigin data-svelte="svelte-15y9rqv"><script src="${"https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"}" data-svelte="svelte-15y9rqv"><\/script><link rel="${"preload"}" as="${"script"}"${add_attribute("href", SITE_KEY_URL, 0)} data-svelte="svelte-15y9rqv"><script async defer${add_attribute("src", SITE_KEY_URL, 0)} data-svelte="svelte-15y9rqv"><\/script>`, ""}
+  return `${$$result.head += `<script src="${"https://www.google.com/recaptcha/api.js"}" async defer data-svelte="svelte-1wp3kjd"><\/script>`, ""}
+
+<form>Name: (required) <input id="${"field"}" name="${"field"}">
+  <div id="${"recaptcha"}" class="${"g-recaptcha"}"${add_attribute("data-sitekey", SITE_KEY, 0)}${add_attribute("data-callback", onSubmit, 0)} data-size="${"invisible"}"></div>
+  <button id="${"submit"}">submit</button></form>
+
+
+
+
 
 
 ${$auth === void 0 ? `Checking auth status \u2026
@@ -113,7 +133,9 @@ ${$auth === void 0 ? `Checking auth status \u2026
   
   
   
-  `}`}`;
+  `}`}
+
+<div id="${"div-recaptcha"}"></div>`;
 });
 const Routes = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `${validate_component(Auth, "Auth").$$render($$result, {}, {}, {})}`;
