@@ -46,7 +46,7 @@ const Hide = create_ssr_component(($$result, $$props, $$bindings, slots) => {
 });
 var Auth_svelte_svelte_type_style_lang = "";
 const css = {
-  code: '#auth.svelte-9wrl1y.svelte-9wrl1y{position:relative;top:5%;left:5%;width:90%;font-family:"Poppins", sans-serif}#auth.svelte-9wrl1y h1.svelte-9wrl1y{font-size:60px;margin:0 0 10px 0;padding:0}#auth.svelte-9wrl1y button.svelte-9wrl1y{width:100%;height:40px;font-size:20px;font-family:"Poppins", sans-serif;border:none;margin:10px 0 0 0}#auth.svelte-9wrl1y input.svelte-9wrl1y{padding-left:44px;width:calc(100% - 44px);height:32px;font-size:20px;border:none;border-bottom:3px solid #888;margin:-10px 0 -10px 0}#auth.svelte-9wrl1y input.svelte-9wrl1y:focus{outline:none}#auth.svelte-9wrl1y #password-forgot.svelte-9wrl1y{width:100%;height:32px;font-size:20px;border:none;border-bottom:3px solid #888;margin:-10px 0 -10px 0}#auth.svelte-9wrl1y #password-forgot #password-short.svelte-9wrl1y{width:calc(100% - 125px)}#auth.svelte-9wrl1y .image.svelte-9wrl1y{position:relative;top:-24px;left:6px;align-self:flex-start;opacity:50%;width:30px;height:30px}#register.svelte-9wrl1y.svelte-9wrl1y{background-color:#aaf}#sign-in.svelte-9wrl1y.svelte-9wrl1y{background-color:#aaf}#google.svelte-9wrl1y.svelte-9wrl1y{background-color:#f77}#forgot.svelte-9wrl1y.svelte-9wrl1y{float:right;position:relative;top:0;right:6px;height:40px;color:blue;font-size:20px;text-decoration:none}.link.svelte-9wrl1y.svelte-9wrl1y{color:#00f}.link.svelte-9wrl1y.svelte-9wrl1y:hover{font-weight:bold}',
+  code: '#auth.svelte-zjx7pb.svelte-zjx7pb{position:relative;top:5%;left:5%;width:90%;font-family:"Poppins", sans-serif}#auth.svelte-zjx7pb h1.svelte-zjx7pb{font-size:60px;margin:0 0 10px 0;padding:0}#auth.svelte-zjx7pb button.svelte-zjx7pb{width:100%;height:40px;font-size:20px;font-family:"Poppins", sans-serif;border:none;margin:10px 0 0 0}#auth.svelte-zjx7pb input.svelte-zjx7pb{padding-left:44px;width:calc(100% - 44px);height:32px;font-size:20px;border:none;border-bottom:3px solid #888;margin:-10px 0 -10px 0}#auth.svelte-zjx7pb input.svelte-zjx7pb:focus{outline:none}#auth.svelte-zjx7pb #password-forgot.svelte-zjx7pb{width:100%;height:32px;font-size:20px;border:none;border-bottom:3px solid #888;margin:-10px 0 -10px 0}#auth.svelte-zjx7pb #password-forgot #password-short.svelte-zjx7pb{width:calc(100% - 125px);border:none;height:30px}#auth.svelte-zjx7pb #password-forgot #forgot.svelte-zjx7pb{float:right;position:relative;top:0;right:6px;height:40px;color:blue;font-size:20px;text-decoration:none}#auth.svelte-zjx7pb .image.svelte-zjx7pb{position:relative;top:-24px;left:6px;align-self:flex-start;opacity:50%;width:30px;height:30px}#register.svelte-zjx7pb.svelte-zjx7pb{background-color:#aaf}#sign-in.svelte-zjx7pb.svelte-zjx7pb{background-color:#aaf}#google.svelte-zjx7pb.svelte-zjx7pb{background-color:#f77}.link.svelte-zjx7pb.svelte-zjx7pb{color:#00f}.link.svelte-zjx7pb.svelte-zjx7pb:hover{font-weight:bold}',
   map: null
 };
 const Auth = create_ssr_component(($$result, $$props, $$bindings, slots) => {
@@ -77,24 +77,24 @@ const Auth = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   $$unsubscribe_auth();
   $$unsubscribe_loading();
   $$unsubscribe_errorMsg();
-  return `${$$result.head += `<link rel="${"preconnect"}" href="${"https://www.google.com"}" data-svelte="svelte-v6ug8g"><link rel="${"preconnect"}" href="${"https://www.gstatic.com"}" crossorigin data-svelte="svelte-v6ug8g"><link rel="${"preload"}" as="${"script"}"${add_attribute("href", SITE_KEY_URL, 0)} data-svelte="svelte-v6ug8g"><script${add_attribute("src", SITE_KEY_URL, 0)} data-svelte="svelte-v6ug8g"><\/script>`, ""}
+  return `${$$result.head += `<link rel="${"preconnect"}" href="${"https://www.google.com"}" data-svelte="svelte-1u0g3dk"><link rel="${"preconnect"}" href="${"https://www.gstatic.com"}" crossorigin data-svelte="svelte-1u0g3dk"><link rel="${"preload"}" as="${"script"}"${add_attribute("href", SITE_KEY_URL, 0)} data-svelte="svelte-1u0g3dk"><script${add_attribute("src", SITE_KEY_URL, 0)} data-svelte="svelte-1u0g3dk"><\/script>`, ""}
 
 
 ${$auth === void 0 ? `Checking auth status \u2026
   ${validate_component(Loading, "Loading").$$render($$result, {}, {}, {})}` : `${$auth === null ? `
 
-  <div id="${"auth"}" class="${"svelte-9wrl1y"}">${`<h1 class="${"svelte-9wrl1y"}">Sign In</h1>
+  <div id="${"auth"}" class="${"svelte-zjx7pb"}">${`<h1 class="${"svelte-zjx7pb"}">Sign In</h1>
 
-      <p>Need an account? <span class="${"link svelte-9wrl1y"}">Register</span></p>
-      <input type="${"text"}" spellcheck="${"false"}" placeholder="${"Username or email"}" class="${"svelte-9wrl1y"}"${add_attribute("value", signInSaveUsername, 0)}>
-      <div class="${"image svelte-9wrl1y"}">${validate_component(Account, "AccountSVG").$$render($$result, {}, {}, {})}</div>
-      <div id="${"password-forgot"}" class="${"svelte-9wrl1y"}"><input id="${"password-short"}"${add_attribute("type", "password", 0)} spellcheck="${"false"}" placeholder="${"Password"}" class="${"svelte-9wrl1y"}">
-        <a id="${"forgot"}" href="${"/forgot"}" class="${"svelte-9wrl1y"}">Forgot</a>
-        ${`<div class="${"image svelte-9wrl1y"}">${validate_component(Hide, "HideSVG").$$render($$result, {}, {}, {})}</div>`}</div>
+      <p>Need an account? <span class="${"link svelte-zjx7pb"}">Register</span></p>
+      <input type="${"text"}" spellcheck="${"false"}" placeholder="${"Username or email"}" class="${"svelte-zjx7pb"}"${add_attribute("value", signInSaveUsername, 0)}>
+      <div class="${"image svelte-zjx7pb"}">${validate_component(Account, "AccountSVG").$$render($$result, {}, {}, {})}</div>
+      <div id="${"password-forgot"}" class="${"svelte-zjx7pb"}"><input id="${"password-short"}"${add_attribute("type", "password", 0)} spellcheck="${"false"}" placeholder="${"Password"}" class="${"svelte-zjx7pb"}">
+        <a id="${"forgot"}" href="${"/forgot"}" class="${"svelte-zjx7pb"}">Forgot</a>
+        ${`<div class="${"image svelte-zjx7pb"}">${validate_component(Hide, "HideSVG").$$render($$result, {}, {}, {})}</div>`}</div>
 
-      <button id="${"sign-in"}" class="${"svelte-9wrl1y"}">Sign In</button>`}
+      <button id="${"sign-in"}" class="${"svelte-zjx7pb"}">Sign In</button>`}
 
-    <button id="${"google"}" class="${"svelte-9wrl1y"}">Authenticate with Google</button>
+    <button id="${"google"}" class="${"svelte-zjx7pb"}">Authenticate with Google</button>
 
     ${validate_component(ErrorMsg, "ErrorMsg").$$render($$result, { errorMsg }, {}, {})}</div>
 

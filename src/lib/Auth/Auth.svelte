@@ -113,7 +113,7 @@
       grecaptcha.ready(async () => {
         console.log('recaptcha ready')
 
-        let token = await grecaptcha.execute(SITE_KEY, {action: 'submit'})
+        let token = await grecaptcha.execute(SITE_KEY, {action: 'contactForm'})
 
         console.log('recaptcha token')
         
@@ -151,7 +151,8 @@
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 
   <link rel="preload" as="script" href={ SITE_KEY_URL } />
-  <script src={ SITE_KEY_URL } on:load={ () => recaptchaReady = true } /> <!-- Dev -->
+  <script src={ SITE_KEY_URL } on:load={ () => recaptchaReady = true } />
+
 </svelte:head>
 
 <!-- Auth status unknown -->
@@ -274,6 +275,18 @@
 
     #password-short
       width: calc(100% - 125px)
+      border: none
+      height: 30px
+
+    #forgot 
+      float: right
+      position: relative
+      top: 0
+      right: 6px
+      height: 40px
+      color: blue
+      font-size: 20px
+      text-decoration: none
 
   .image
     position: relative
@@ -300,16 +313,6 @@
   height: 100px
   display: inline
   align-self: flex-start
-
-#forgot 
-  float: right
-  position: relative
-  top: 0
-  right: 6px
-  height: 40px
-  color: blue
-  font-size: 20px
-  text-decoration: none
 
 
 .link
