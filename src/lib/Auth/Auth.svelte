@@ -147,10 +147,10 @@
 </script>
 
 <svelte:head>
-  <link rel="preconnect" href="https://www.google.com">
-  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <!-- <link rel="preconnect" href="https://www.google.com">
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin> -->
 
-  <link rel="preload" as="script" href={ SITE_KEY_URL } />
+  <!-- <link rel="preload" as="script" href={ SITE_KEY_URL } /> -->
   <script defer src={ SITE_KEY_URL } on:load={ () => recaptchaReady = true } />
 
 </svelte:head>
