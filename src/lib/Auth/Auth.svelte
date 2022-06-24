@@ -169,11 +169,6 @@
   <script async defer src={ SITE_KEY_URL } bind:this={ test } on:load={ loadRecaptcha } ></script>
 </svelte:head>
 
-<!-- Auth status unknown -->
-{#if $auth === undefined}
-  Checking auth status &hellip
-  <Loading />
-{:else if $auth === null} <!-- No auth found, register/sign in -->
 
   <div id="auth">
 
@@ -232,17 +227,6 @@
     <Loading />
   {/if}
 
-{:else} <!-- Auth found, Logged in  -->
-
-  <button on:click={ () => auth.signOut() }>Sign Out</button>{ $auth.displayName } ({ $auth.email })
-
-  <!-- {#if $auth.} -->
-  <!-- businessID found -->
-  
-  <!-- User not affiliated with a business  -->
-
-
-{/if}
 
 
 <style lang="sass">

@@ -89,9 +89,6 @@ const Auth = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `${$$result.head += `<script async defer${add_attribute("src", SITE_KEY_URL, 0)}${add_attribute("this", test, 0)} data-svelte="svelte-xl9iww"><\/script>`, ""}
 
 
-${$auth === void 0 ? `Checking auth status \u2026
-  ${validate_component(Loading, "Loading").$$render($$result, {}, {}, {})}` : `${$auth === null ? `
-
   <div id="${"auth"}" class="${"svelte-zjx7pb"}">${`<h1 class="${"svelte-zjx7pb"}">Sign In</h1>
 
       <p>Need an account? <span class="${"link svelte-zjx7pb"}">Register</span></p>
@@ -107,14 +104,7 @@ ${$auth === void 0 ? `Checking auth status \u2026
 
     ${validate_component(ErrorMsg, "ErrorMsg").$$render($$result, { errorMsg }, {}, {})}</div>
 
-  ${$loading ? `${validate_component(Loading, "Loading").$$render($$result, {}, {}, {})}` : ``}` : `
-
-  <button>Sign Out</button>${escape($auth.displayName)} (${escape($auth.email)})
-
-  
-  
-  
-  `}`}`;
+  ${$loading ? `${validate_component(Loading, "Loading").$$render($$result, {}, {}, {})}` : ``}`;
 });
 const Routes = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `${validate_component(Auth, "Auth").$$render($$result, {}, {}, {})}`;
