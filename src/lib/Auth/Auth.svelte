@@ -117,7 +117,7 @@
 
           console.log('recaptcha token:', token)
           
-          let verificationRes = await fetch(`http://${ window.location.host }/endpoints/auth`, {
+          let verificationRes = await fetch(`https://${ window.location.host }/endpoints/auth`, {
             method: 'POST',
             credentials: 'same-origin',
             headers: {
