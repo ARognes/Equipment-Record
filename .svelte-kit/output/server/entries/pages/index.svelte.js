@@ -77,7 +77,7 @@ const Auth = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   $$unsubscribe_auth();
   $$unsubscribe_loading();
   $$unsubscribe_errorMsg();
-  return `${$$result.head += `<link rel="${"preconnect"}" href="${"https://www.google.com"}" data-svelte="svelte-afgrys"><link rel="${"preconnect"}" href="${"https://www.gstatic.com"}" crossorigin data-svelte="svelte-afgrys"><link rel="${"preload"}" as="${"script"}"${add_attribute("href", SITE_KEY_URL, 0)} data-svelte="svelte-afgrys"><script${add_attribute("src", SITE_KEY_URL, 0)} data-svelte="svelte-afgrys"><\/script>`, ""}
+  return `${$$result.head += `<link rel="${"preconnect"}" href="${"https://www.google.com"}" data-svelte="svelte-v6ug8g"><link rel="${"preconnect"}" href="${"https://www.gstatic.com"}" crossorigin data-svelte="svelte-v6ug8g"><link rel="${"preload"}" as="${"script"}"${add_attribute("href", SITE_KEY_URL, 0)} data-svelte="svelte-v6ug8g"><script${add_attribute("src", SITE_KEY_URL, 0)} data-svelte="svelte-v6ug8g"><\/script>`, ""}
 
 
 ${$auth === void 0 ? `Checking auth status \u2026
