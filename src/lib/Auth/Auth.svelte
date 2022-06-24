@@ -32,6 +32,11 @@
   let password = ""
   let confirmPassword = ""
 
+  $: if (typeof grecaptcha !== 'undefined') {
+    console.log(typeof grecaptcha === 'undefined')
+    loadRecaptcha()
+  } 
+
   function loadRecaptcha() {
     recaptchaLoaded = true
     console.log('recaptcha loaded')

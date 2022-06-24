@@ -67,6 +67,9 @@ const Auth = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let signInSaveUsername = "";
   $$result.css.add(css);
   {
+    console.log(typeof grecaptcha === "undefined");
+  }
+  {
     {
       if ($auth) {
         (async () => {
