@@ -41,7 +41,7 @@
     recaptchaLoaded = true
     console.log('recaptcha loaded')
     grecaptcha.ready(() => {
-      grecaptcha.render("container", {
+      grecaptcha.render("div-container", {
         sitekey: SITE_KEY
       })
     })
@@ -255,6 +255,8 @@
 
 
 {/if}
+
+<div id="div-recaptcha"></div>
 
 
 <style lang="sass">
