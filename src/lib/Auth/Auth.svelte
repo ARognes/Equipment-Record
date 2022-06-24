@@ -151,7 +151,7 @@
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 
   <link rel="preload" as="script" href={ SITE_KEY_URL } />
-  <script src={ SITE_KEY_URL } on:load={ () => recaptchaReady = true } />
+  <script defer src={ SITE_KEY_URL } on:load={ () => recaptchaReady = true } />
 
 </svelte:head>
 
