@@ -40,11 +40,11 @@
   function loadRecaptcha() {
     recaptchaLoaded = true
     console.log('recaptcha loaded')
-    grecaptcha.ready(() => {
-      grecaptcha.render("div-recaptcha", {
-        sitekey: SITE_KEY
-      })
-    })
+    // grecaptcha.ready(() => {
+    //   grecaptcha.render("div-container", {
+    //     sitekey: SITE_KEY
+    //   })
+    // })
   }
 
 
@@ -170,49 +170,16 @@
 
   
 
-
-
-    function onSubmit(token) {
-      alert('thanks ' + token)
-    }
-
-    function validate(event) {
-      event.preventDefault()
-      grecaptcha.execute()
-    }
-
-    function onload() {
-      console.log('loaded !!!!')
-
-    }
-
-    // onload()
-
 </script>
 
-<svelte:head>  
-  <script src="https://www.google.com/recaptcha/api.js" async defer on:load={ onload }></script>
-</svelte:head>
-
-<form>
-  Name: (required) <input id="field" name="field">
-  <div id='recaptcha' class="g-recaptcha"
-      data-sitekey={ SITE_KEY }
-      data-callback={ onSubmit }
-      data-size="invisible"></div>
-  <button id='submit' on:click={ validate } >submit</button>
-</form>
-
-
-
-<!-- <svelte:head>
+<svelte:head>
   <link rel="preconnect" href="https://www.google.com">
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" on:load={ () => alert('jquery') } ></script>
 
   <link rel="preload" as="script" href={ SITE_KEY_URL } />
   <script async defer src={ SITE_KEY_URL } on:load={ loadRecaptcha } ></script>
-</svelte:head> -->
+</svelte:head>
 
 <!-- Auth status unknown -->
 {#if $auth === undefined}
@@ -289,7 +256,7 @@
 
 {/if}
 
-<div id="div-recaptcha"></div>
+<!-- <div id="div-recaptcha"></div> -->
 
 
 <style lang="sass">
