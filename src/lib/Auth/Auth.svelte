@@ -158,11 +158,15 @@
   let registerSaveUsername = ''
   let registerSaveEmail = ''
 
+  let test
+
+  $: console.log(test)
+
 </script>
 
 <svelte:head>
 
-  <script src={ SITE_KEY_URL } on:load={ loadRecaptcha } ></script>
+  <script async defer src={ SITE_KEY_URL } bind:this={ test } on:load={ loadRecaptcha } ></script>
 </svelte:head>
 
 <!-- Auth status unknown -->

@@ -65,6 +65,7 @@ const Auth = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   const errorMsg = writable("");
   $$unsubscribe_errorMsg = subscribe(errorMsg, (value) => value);
   let signInSaveUsername = "";
+  let test;
   $$result.css.add(css);
   {
     {
@@ -78,11 +79,14 @@ const Auth = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       }
     }
   }
+  {
+    console.log(test);
+  }
   $$unsubscribe_page();
   $$unsubscribe_auth();
   $$unsubscribe_loading();
   $$unsubscribe_errorMsg();
-  return `${$$result.head += `<script${add_attribute("src", SITE_KEY_URL, 0)} data-svelte="svelte-w88b2y"><\/script>`, ""}
+  return `${$$result.head += `<script async defer${add_attribute("src", SITE_KEY_URL, 0)}${add_attribute("this", test, 0)} data-svelte="svelte-xl9iww"><\/script>`, ""}
 
 
 ${$auth === void 0 ? `Checking auth status \u2026
