@@ -162,7 +162,7 @@
 
 <svelte:head>
 
-  <script async defer src={ SITE_KEY_URL } on:load={ loadRecaptcha } ></script>
+  <script src={ SITE_KEY_URL } on:load={ loadRecaptcha } ></script>
 </svelte:head>
 
 <!-- Auth status unknown -->
