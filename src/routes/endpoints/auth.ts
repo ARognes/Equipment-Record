@@ -1,11 +1,10 @@
 import 'dotenv/config'
-import { dev } from '$app/env'
 
 /** @type {import('./__types/auth').RequestHandler} */
 export async function post({ request }) {
 
   console.log(request)
-  const SECRET_KEY = dev ? process.env.DEV_RECAPTCHA_SECRET_KEY : process.env.PROD_RECAPTCHA_SECRET_KEY
+  const SECRET_KEY = process.env.PROD_RECAPTCHA_SECRET_KEY
 
   const data = await request.json()
 

@@ -19,6 +19,8 @@
   
 * Individual businesses have their own separate data
 
+---
+
 ## Setup
 
 Clone this repository 
@@ -31,6 +33,8 @@ npm run build/deploy/deploy-debug
 
 ```
 Make sure firebase rules allow use
+
+---
 
 ## Dev Setup Other Info
 
@@ -46,11 +50,30 @@ You will need to create a .env file in this directory with:
 ```
 VITE_CLIENT_PRIVATE_KEY=''
 ADMIN_PRIVATE_KEY=''
+
+VITE_PROD_RECAPTCHA_SITE_KEY=''
+PROD_RECAPTCHA_SECRET_KEY=''
 ```
 Client private key can be found in Firebase somewhere...
 Admin private key can be found with the Admin sdk I think ?
 
+Recaptcha v3 keys are from the Google api.
+
+Make sure to also put these into Vercel or wherever you host this!
+
 ---
+
+## Run
+
+Dev: 
+```
+npm run dev
+```
+Prod: 
+```
+npm run build
+npm run preview
+```
 
 ## Later TODOs (small things)
 - [x] Load small images of the equipment, if user requests full images then they will be loaded.

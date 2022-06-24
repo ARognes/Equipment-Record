@@ -1,11 +1,11 @@
 import { c as create_ssr_component, a as subscribe, b as set_store_value, e as escape, f as spread, h as escape_object, i as add_attribute, v as validate_component } from "../../chunks/index-1e667dfc.js";
-import { a as auth } from "../../chunks/auth-0ef6715f.js";
 import { L as Loading } from "../../chunks/Loading-d732ebf6.js";
 import { w as writable } from "../../chunks/index-bb50f2da.js";
+import { a as auth } from "../../chunks/auth-0ef6715f.js";
 import { g as goto } from "../../chunks/navigation-92f05dd6.js";
-import { A as Account } from "../../chunks/account-5b395066.js";
 import { getIdTokenResult } from "firebase/auth";
 import { s as session } from "../../chunks/storage-7a99a8c4.js";
+import { A as Account } from "../../chunks/account-5b395066.js";
 /* empty css                                                           */var ErrorMsg_svelte_svelte_type_style_lang = "";
 const css$1 = {
   code: "#errorMsg.svelte-mtbq9j{position:absolute;color:#a00;font-weight:bold;padding:0 2px}#errorMsg-active.svelte-mtbq9j{position:absolute;color:white;font-weight:bold;background-color:#f00;padding:0 2px}",
@@ -56,6 +56,7 @@ const Auth = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   $$unsubscribe_auth = subscribe(auth, (value) => $auth = value);
   const SITE_KEY = "6LfizpIgAAAAAKsRfVHPurszakBAiFLdW-CwLxaD";
   const SITE_KEY_URL = `https://www.google.com/recaptcha/api.js?render=${SITE_KEY}`;
+  console.log(SITE_KEY_URL);
   const loading = writable(false);
   $$unsubscribe_loading = subscribe(loading, (value) => $loading = value);
   const errorMsg = writable("");
@@ -77,7 +78,7 @@ const Auth = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   $$unsubscribe_auth();
   $$unsubscribe_loading();
   $$unsubscribe_errorMsg();
-  return `${$$result.head += `<link rel="${"preconnect"}" href="${"https://www.google.com"}" data-svelte="svelte-1ec9kc4"><link rel="${"preconnect"}" href="${"https://www.gstatic.com"}" crossorigin data-svelte="svelte-1ec9kc4"><link rel="${"preload"}" as="${"script"}"${add_attribute("href", SITE_KEY_URL, 0)} data-svelte="svelte-1ec9kc4"><script defer${add_attribute("src", SITE_KEY_URL, 0)} data-svelte="svelte-1ec9kc4"><\/script>`, ""}
+  return `${$$result.head += `<link rel="${"preconnect"}" href="${"https://www.google.com"}" data-svelte="svelte-9mr2dv"><link rel="${"preconnect"}" href="${"https://www.gstatic.com"}" crossorigin data-svelte="svelte-9mr2dv"><link rel="${"preload"}" as="${"script"}"${add_attribute("href", SITE_KEY_URL, 0)} data-svelte="svelte-9mr2dv"><script defer${add_attribute("src", SITE_KEY_URL, 0)} data-svelte="svelte-9mr2dv"><\/script>`, ""}
 
 
 ${$auth === void 0 ? `Checking auth status \u2026

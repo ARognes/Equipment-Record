@@ -1,22 +1,23 @@
 <script lang="ts">
-  import { auth } from '$lib/Auth/auth'
   import Loading from '$lib/components/Loading.svelte'
   import ErrorMsg from '$lib/components/ErrorMsg.svelte'
+  import { auth } from '$lib/Auth/auth'
   import { writable } from 'svelte/store'
   import { goto } from '$app/navigation'
+  import { getIdTokenResult } from 'firebase/auth'
+  import { session } from '$lib/storage'
 
   import AccountSVG from '$lib/assets/account.svg'
   import EmailSVG from '$lib/assets/email.svg'
   import ViewSVG from '$lib/assets/view.svg'
   import HideSVG from '$lib/assets/hide.svg'
   import LockSVG from '$lib/assets/lock.svg'
-  import { getIdTokenResult } from 'firebase/auth'
-  import { session } from '$lib/storage'
-  import { onMount } from 'svelte'
-  import { dev } from '$app/env'
 
-  const SITE_KEY = dev ? import.meta.env.VITE_DEV_RECAPTCHA_SITE_KEY : import.meta.env.VITE_PROD_RECAPTCHA_SITE_KEY
+
+  const SITE_KEY = import.meta.env.VITE_PROD_RECAPTCHA_SITE_KEY
   const SITE_KEY_URL = `https://www.google.com/recaptcha/api.js?render=${ SITE_KEY }`
+
+  console.log(SITE_KEY_URL)
 
   const loading = writable(false)
   const errorMsg = writable('')
@@ -35,11 +36,11 @@
       validatePassword(password)
       
       $loading = true
-      const arst = await recaptcha()
-
-      console.log(arst)
-      return
-
+      await recaptcha()
+      
+      // Report to analytics or stop user and get recaptcha v2
+      // return
+      
       if (isEmail(username)) await auth.signInEmail(username, password)
       else await auth.signInUsername(username, password)
       console.log('login')
@@ -68,7 +69,10 @@
       validatePassword(password)
       if (password !== confirmPassword) throw new Error("Your passwords do not match")
 
-      await auth.register(username, email, password);
+      await recaptcha()
+     
+
+      await auth.register(username, email, password)
 
     }
     catch (e) { $errorMsg = e }
@@ -99,37 +103,40 @@
     }
   }
 
-  onMount(() => {
-    // recaptchaLoaded()
-  })
-
-  let recaptchaReady = false
-
-
   async function recaptcha() {
-    console.log('recaptcha start')
 
-    return await new Promise((res, rej) => {
-      grecaptcha.ready(async () => {
-        console.log('recaptcha ready')
+    try {
+      console.log('recaptcha start')
 
-        let token = await grecaptcha.execute(SITE_KEY, {action: 'contactForm'})
+      const recaptchaV3 = await new Promise((res, rej) => {
+        grecaptcha.ready(async () => {
+          console.log('recaptcha ready')
 
-        console.log('recaptcha token')
-        
-        let verification = await fetch(`http://${ window.location.host }/endpoints/auth`, {
-          method: 'POST',
-          credentials: 'same-origin',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: `{"response":"${ token }"}`
+          let token = await grecaptcha.execute(SITE_KEY, {action: 'contactForm'})
+
+          console.log('recaptcha token:', token)
+          
+          let verificationRes = await fetch(`http://${ window.location.host }/endpoints/auth`, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: `{"response":"${ token }"}`
+          })
+          const verification = await verificationRes.json()
+          if (!verification.success || verification.action !== 'contactForm' || verification.score < 0.5) return rej(verification)
+          console.log('recaptcha verified: ', verification)
+          return res(verification)
         })
-        console.log('recaptcha verified')
-        res(await verification.json())
       })
-    });
+      return recaptchaV3
+    }
+    catch (e) { // Something went wrong, use two step verification
+      console.log(e)
+      
 
+    }
   }
   
   function enterSignIn(e) {
@@ -147,11 +154,11 @@
 </script>
 
 <svelte:head>
-  <!-- <link rel="preconnect" href="https://www.google.com">
-  <link rel="preconnect" href="https://www.gstatic.com" crossorigin> -->
+  <link rel="preconnect" href="https://www.google.com">
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 
-  <!-- <link rel="preload" as="script" href={ SITE_KEY_URL } /> -->
-  <script defer src={ SITE_KEY_URL } on:load={ () => recaptchaReady = true } />
+  <link rel="preload" as="script" href={ SITE_KEY_URL } />
+  <script defer src={ SITE_KEY_URL } />
 
 </svelte:head>
 
