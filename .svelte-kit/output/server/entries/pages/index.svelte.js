@@ -68,6 +68,7 @@ const Routes = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     console.log("recaptcha loaded");
   }
   let signInSaveUsername = "";
+  let test;
   $$result.css.add(css);
   {
     if (typeof grecaptcha !== "undefined") {
@@ -91,11 +92,9 @@ const Routes = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   $$unsubscribe_auth();
   $$unsubscribe_loading();
   $$unsubscribe_errorMsg();
-  return `${$$result.head += `<link rel="${"preconnect"}" href="${"https://www.google.com"}" data-svelte="svelte-15y9rqv"><link rel="${"preconnect"}" href="${"https://www.gstatic.com"}" crossorigin data-svelte="svelte-15y9rqv"><script src="${"https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"}" data-svelte="svelte-15y9rqv"><\/script><link rel="${"preload"}" as="${"script"}"${add_attribute("href", SITE_KEY_URL, 0)} data-svelte="svelte-15y9rqv"><script async defer${add_attribute("src", SITE_KEY_URL, 0)} data-svelte="svelte-15y9rqv"><\/script>`, ""}
+  return `${$$result.head += `<link rel="${"preconnect"}" href="${"https://www.google.com"}" data-svelte="svelte-1cnbecj"><link rel="${"preconnect"}" href="${"https://www.gstatic.com"}" crossorigin data-svelte="svelte-1cnbecj"><script src="${"https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"}" data-svelte="svelte-1cnbecj"><\/script><link rel="${"preload"}" as="${"script"}"${add_attribute("href", SITE_KEY_URL, 0)} data-svelte="svelte-1cnbecj"><script async defer${add_attribute("src", SITE_KEY_URL, 0)}${add_attribute("this", test, 0)} data-svelte="svelte-1cnbecj"><\/script>`, ""}
 
 
-${$auth === void 0 ? `Checking auth status \u2026
-  ${validate_component(Loading, "Loading").$$render($$result, {}, {}, {})}` : `${$auth === null ? `
 
   <div id="${"auth"}" class="${"svelte-zjx7pb"}">${`<h1 class="${"svelte-zjx7pb"}">Sign In</h1>
 
@@ -112,14 +111,8 @@ ${$auth === void 0 ? `Checking auth status \u2026
 
     ${validate_component(ErrorMsg, "ErrorMsg").$$render($$result, { errorMsg }, {}, {})}</div>
 
-  ${$loading ? `${validate_component(Loading, "Loading").$$render($$result, {}, {}, {})}` : ``}` : `
+  ${$loading ? `${validate_component(Loading, "Loading").$$render($$result, {}, {}, {})}` : ``}
 
-  <button>Sign Out</button>${escape($auth.displayName)} (${escape($auth.email)})
-
-  
-  
-  
-  `}`}
 
 `;
 });

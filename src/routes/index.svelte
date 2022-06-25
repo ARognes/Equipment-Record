@@ -168,7 +168,7 @@
   let registerSaveUsername = ''
   let registerSaveEmail = ''
 
-  
+  let test  
 
 </script>
 
