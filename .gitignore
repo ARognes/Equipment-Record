@@ -7,4 +7,5 @@
 **/._.DS_Store
 .env
 .svelte-kit/output
-/.vercel_build_output
+.vercel_build_output
+build
