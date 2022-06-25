@@ -21,3 +21,8 @@ declare module '*.svg?url' {
   const content: string
   export default content
 }
+
+// type Theme = {
+//   system: boolean
+//   dark: boolean
+// }

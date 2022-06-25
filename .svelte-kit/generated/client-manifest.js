@@ -5,6 +5,7 @@ export const components = [
 	() => import("../runtime/components/error.svelte"),
 	() => import("../../src/routes/index.svelte"),
 	() => import("../../src/routes/business.svelte"),
+	() => import("../../src/routes/register.svelte"),
 	() => import("../../src/routes/forgot.svelte"),
 	() => import("../../src/routes/[businessName]/__layout.svelte"),
 	() => import("../../src/routes/[businessName]/equipment/__layout.reset.svelte"),
@@ -22,13 +23,14 @@ export const components = [
 export const dictionary = {
 	"": [[0, 2], [1]],
 	"business": [[0, 3], [1]],
-	"forgot": [[0, 4], [1]],
-	"[businessName]/equipment": [[6, 7], []],
-	"[businessName]/equipment/[equipmentName]": [[6, 8], []],
-	"[businessName]/projects": [[0, 5, 9], [1]],
-	"[businessName]/settings": [[10, 11], []],
-	"[businessName]/account": [[0, 5, 12], [1]],
-	"[businessName]/history": [[0, 5, 13], [1]],
-	"[businessName]/home": [[0, 5, 14], [1]],
-	"[businessName]/add/equipment": [[0, 5, 15], [1]]
+	"register": [[0, 4], [1]],
+	"forgot": [[0, 5], [1]],
+	"[businessName]/equipment": [[7, 8], []],
+	"[businessName]/equipment/[equipmentName]": [[7, 9], []],
+	"[businessName]/projects": [[0, 6, 10], [1]],
+	"[businessName]/settings": [[11, 12], []],
+	"[businessName]/account": [[0, 6, 13], [1]],
+	"[businessName]/history": [[0, 6, 14], [1]],
+	"[businessName]/home": [[0, 6, 15], [1]],
+	"[businessName]/add/equipment": [[0, 6, 16], [1]]
 };

@@ -3,24 +3,25 @@ export const manifest = {
 	assets: new Set(["favicon.png"]),
 	mimeTypes: {".png":"image/png"},
 	_: {
-		entry: {"file":"start-f867124c.js","js":["start-f867124c.js","chunks/vendor-9b548983.js","chunks/preload-helper-e4860ae8.js","chunks/singletons-d1fb5791.js"],"css":["assets/vendor-dc74a490.css"]},
+		entry: {"file":"start-4f204c15.js","js":["start-4f204c15.js","chunks/vendor-70ec1dc1.js","chunks/preload-helper-e4860ae8.js","chunks/singletons-d1fb5791.js"],"css":["assets/vendor-dc74a490.css"]},
 		nodes: [
 			() => import('./nodes/0.js'),
 			() => import('./nodes/1.js'),
 			() => import('./nodes/2.js'),
 			() => import('./nodes/3.js'),
 			() => import('./nodes/4.js'),
-			() => import('./nodes/6.js'),
+			() => import('./nodes/5.js'),
 			() => import('./nodes/7.js'),
 			() => import('./nodes/8.js'),
-			() => import('./nodes/5.js'),
 			() => import('./nodes/9.js'),
+			() => import('./nodes/6.js'),
 			() => import('./nodes/10.js'),
 			() => import('./nodes/11.js'),
 			() => import('./nodes/12.js'),
 			() => import('./nodes/13.js'),
 			() => import('./nodes/14.js'),
-			() => import('./nodes/15.js')
+			() => import('./nodes/15.js'),
+			() => import('./nodes/16.js')
 		],
 		routes: [
 			{
@@ -55,13 +56,24 @@ export const manifest = {
 			},
 			{
 				type: 'page',
+				id: "register",
+				pattern: /^\/register\/?$/,
+				names: [],
+				types: [],
+				path: "/register",
+				shadow: null,
+				a: [0,4],
+				b: [1]
+			},
+			{
+				type: 'page',
 				id: "forgot",
 				pattern: /^\/forgot\/?$/,
 				names: [],
 				types: [],
 				path: "/forgot",
 				shadow: null,
-				a: [0,4],
+				a: [0,5],
 				b: [1]
 			},
 			{
@@ -72,7 +84,7 @@ export const manifest = {
 				types: [null],
 				path: null,
 				shadow: null,
-				a: [5,6],
+				a: [6,7],
 				b: []
 			},
 			{
@@ -83,7 +95,7 @@ export const manifest = {
 				types: [null,null],
 				path: null,
 				shadow: null,
-				a: [5,7],
+				a: [6,8],
 				b: []
 			},
 			{
@@ -94,7 +106,7 @@ export const manifest = {
 				types: [null],
 				path: null,
 				shadow: null,
-				a: [0,8,9],
+				a: [0,9,10],
 				b: [1]
 			},
 			{
@@ -105,7 +117,7 @@ export const manifest = {
 				types: [null],
 				path: null,
 				shadow: null,
-				a: [10,11],
+				a: [11,12],
 				b: []
 			},
 			{
@@ -116,7 +128,7 @@ export const manifest = {
 				types: [null],
 				path: null,
 				shadow: null,
-				a: [0,8,12],
+				a: [0,9,13],
 				b: [1]
 			},
 			{
@@ -127,7 +139,7 @@ export const manifest = {
 				types: [null],
 				path: null,
 				shadow: null,
-				a: [0,8,13],
+				a: [0,9,14],
 				b: [1]
 			},
 			{
@@ -138,7 +150,7 @@ export const manifest = {
 				types: [null],
 				path: null,
 				shadow: null,
-				a: [0,8,14],
+				a: [0,9,15],
 				b: [1]
 			},
 			{
@@ -149,7 +161,7 @@ export const manifest = {
 				types: [null],
 				path: null,
 				shadow: null,
-				a: [0,8,15],
+				a: [0,9,16],
 				b: [1]
 			}
 		],

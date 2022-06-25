@@ -9,8 +9,10 @@
   import { session } from '$lib/storage'
 
   import AccountSVG from '$lib/assets/account.svg'
+  import EmailSVG from '$lib/assets/email.svg'
   import ViewSVG from '$lib/assets/view.svg'
   import HideSVG from '$lib/assets/hide.svg'
+  import LockSVG from '$lib/assets/lock.svg'
 
   const loading = writable(false)
   const errorMsg = writable('')
@@ -18,34 +20,32 @@
   let viewPassword = false
 
   let username = ""
+  let email = ""
   let password = ""
-
-
-  async function loginEmail() {
-    try {
-      validatePassword(password)
-      
-      $loading = true
-      await recaptcha()
-      
-      // Report to analytics or stop user and get recaptcha v2
-      // return
-      
-      if (isEmail(username)) await auth.signInEmail(username, password)
-      else await auth.signInUsername(username, password)
-      console.log('login')
-    }
-    catch (e) { 
-      $errorMsg = ""
-      $errorMsg = "Incorrect username/email or password"
-    }
-    finally { $loading = false }
-  }
+  let confirmPassword = ""
 
   async function loginGoogle() {
     try {
       $loading = true
       await auth.signInGoogle()
+    }
+    catch (e) { $errorMsg = e }
+    finally { $loading = false }
+  }
+
+  async function validateRegistration() {
+    try {
+      $loading = true
+      if (username.length <= 2) throw new Error("Please enter your username")
+      if (email.length <= 3 || !isEmail(email)) throw new Error("Please enter a valid email")
+      validatePassword(password)
+      if (password !== confirmPassword) throw new Error("Your passwords do not match")
+
+      await recaptcha()
+     
+
+      await auth.register(username, email, password)
+
     }
     catch (e) { $errorMsg = e }
     finally { $loading = false }
@@ -64,79 +64,71 @@
 
   $: {
     if ($auth) {
-      (async () => {
+      // (async () => {
 
-        const token = await getIdTokenResult($auth)
-        session.clear()
-        session.setItem('accessLevel', token?.claims?.accessLevel || 0)
-        goto('/on/home')
-      })()
+      //   const token = await getIdTokenResult($auth)
+      //   session.clear()
+      //   session.setItem('accessLevel', token?.claims?.accessLevel || 0)
+      //   goto('/on/home')
+      // })()
     }
   }
 
-  
-  function enterSignIn(e) {
-    if (e.key === 'Enter') loginEmail()
+  function enterRegister(e) {
+    if (e.key === 'Enter') validateRegistration()
   }
 
   let signInSaveUsername = ''
+  let registerSaveUsername = ''
+  let registerSaveEmail = ''
 
-  let recaptchaV2SignIn
-
-
+  let recaptchaV2Register
 
 </script>
 
-<Recaptcha v2Container={ recaptchaV2SignIn } />
-
-<!-- Auth status unknown -->
-{#if $auth === undefined}
-  Checking auth status &hellip
-  <Loading />
-{:else if $auth === null} <!-- No auth found, register/sign in -->
-
-  <div id="auth">
-
-    <h1>Sign In</h1>
-
-    <p>Need an account? <a sveltekit:prefetch href="/register" class="link">Register</a></p>
-
-    <input type="text" spellcheck="false" placeholder="Username or email" on:keypress={ enterSignIn } bind:value={ signInSaveUsername } on:input={ e => username = e.currentTarget.value }>
-    <div class="image"><AccountSVG /></div>
-    <div id="password-forgot">
-      <input id="password-short" type={ viewPassword ? 'text' : 'password' } spellcheck="false" placeholder="Password" on:keypress={ enterSignIn } on:input={ e => password = e.currentTarget.value }>
-      <a id="forgot" href="/forgot">Forgot</a>
-      {#if viewPassword} 
-        <div class="image" on:click={ () => viewPassword = !viewPassword } ><ViewSVG /></div>
-      {:else}
-        <div class="image" on:click={ () => viewPassword = !viewPassword } ><HideSVG /></div>
-      {/if}
-    </div>
-
-    <div class="div-recaptcha" bind:this={ recaptchaV2SignIn } ></div>
+<Recaptcha v2Container={ recaptchaV2Register } />
 
 
-    <button id="sign-in" on:click={ loginEmail } >Sign In</button>
+<div id="register">
 
-    <button id="google" on:click={ loginGoogle }>Authenticate with Google</button>
+  <h1>Register</h1>
 
-    <ErrorMsg errorMsg={errorMsg} />
+  <p>Already have an account? <a sveltekit:prefetch href="/" class="link">Sign In</a></p>
+  
 
-  </div>
-
-  {#if $loading}
-    <Loading />
+  <input type="text" spellcheck="false" placeholder="Username" on:keypress={ enterRegister } bind:value={ registerSaveUsername } on:input={ e => username = e.currentTarget.value }>
+  <div class="image"><AccountSVG /></div>
+  <input type="email" spellcheck="false" placeholder="Email" on:keypress={ enterRegister } bind:value={ registerSaveEmail } on:input={ e => email = e.currentTarget.value }>
+  <div class="image"><EmailSVG /></div>
+  <input type={ viewPassword ? 'text' : 'password' } spellcheck="false" placeholder="Password" on:keypress={ enterRegister } on:input={ e => password = e.currentTarget.value }>
+  
+  {#if viewPassword} 
+    <div class="image" on:click={ () => viewPassword = !viewPassword } ><ViewSVG /></div>
+  {:else}
+    <div class="image" on:click={ () => viewPassword = !viewPassword } ><HideSVG /></div>
   {/if}
 
-{:else} <!-- Auth found, Logged in  -->
+  <input type="password" spellcheck="false" placeholder="Confirm password" on:keypress={ enterRegister } on:input={ e => confirmPassword = e.currentTarget.value }>
+  <div class="image"><LockSVG /></div>
 
-  <button on:click={ () => auth.signOut() }>Sign Out</button>{ $auth.displayName } ({ $auth.email })
+  <div class="div-recaptcha" bind:this={ recaptchaV2Register } ></div>
 
+  <button id="btn-register" on:click={ validateRegistration }>Register</button>
+
+
+  <button id="google" on:click={ loginGoogle }>Authenticate with Google</button>
+
+  <ErrorMsg errorMsg={errorMsg} />
+
+</div>
+
+{#if $loading}
+  <Loading />
 {/if}
 
 <style lang="sass">
 
-#auth
+#register
   position: relative
   top: 5%
   left: 5%
@@ -200,7 +192,7 @@
     width: 30px
     height: 30px
 
-#register 
+#btn-register 
   background-color: #aaf
 
 
