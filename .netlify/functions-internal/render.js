@@ -1,26 +1,28 @@
-export const manifest = {
+const { init } = require('../serverless.js');
+
+exports.handler = init({
 	appDir: "_app",
 	assets: new Set(["favicon.png"]),
 	mimeTypes: {".png":"image/png"},
 	_: {
 		entry: {"file":"start-b19ee27a.js","js":["start-b19ee27a.js","chunks/vendor-7483cdb5.js","chunks/preload-helper-e4860ae8.js","chunks/singletons-d1fb5791.js"],"css":["assets/vendor-dc74a490.css"]},
 		nodes: [
-			() => import('./nodes/0.js'),
-			() => import('./nodes/1.js'),
-			() => import('./nodes/2.js'),
-			() => import('./nodes/3.js'),
-			() => import('./nodes/4.js'),
-			() => import('./nodes/6.js'),
-			() => import('./nodes/7.js'),
-			() => import('./nodes/8.js'),
-			() => import('./nodes/5.js'),
-			() => import('./nodes/9.js'),
-			() => import('./nodes/10.js'),
-			() => import('./nodes/11.js'),
-			() => import('./nodes/12.js'),
-			() => import('./nodes/13.js'),
-			() => import('./nodes/14.js'),
-			() => import('./nodes/15.js')
+			() => Promise.resolve().then(() => require('../server/nodes/0.js')),
+			() => Promise.resolve().then(() => require('../server/nodes/1.js')),
+			() => Promise.resolve().then(() => require('../server/nodes/2.js')),
+			() => Promise.resolve().then(() => require('../server/nodes/3.js')),
+			() => Promise.resolve().then(() => require('../server/nodes/4.js')),
+			() => Promise.resolve().then(() => require('../server/nodes/6.js')),
+			() => Promise.resolve().then(() => require('../server/nodes/7.js')),
+			() => Promise.resolve().then(() => require('../server/nodes/8.js')),
+			() => Promise.resolve().then(() => require('../server/nodes/5.js')),
+			() => Promise.resolve().then(() => require('../server/nodes/9.js')),
+			() => Promise.resolve().then(() => require('../server/nodes/10.js')),
+			() => Promise.resolve().then(() => require('../server/nodes/11.js')),
+			() => Promise.resolve().then(() => require('../server/nodes/12.js')),
+			() => Promise.resolve().then(() => require('../server/nodes/13.js')),
+			() => Promise.resolve().then(() => require('../server/nodes/14.js')),
+			() => Promise.resolve().then(() => require('../server/nodes/15.js'))
 		],
 		routes: [
 			{
@@ -40,7 +42,7 @@ export const manifest = {
 				pattern: /^\/endpoints\/auth\/?$/,
 				names: [],
 				types: [],
-				load: () => import('./entries/endpoints/endpoints/auth.ts.js')
+				load: () => Promise.resolve().then(() => require('../server/entries/endpoints/endpoints/auth.ts.js'))
 			},
 			{
 				type: 'page',
@@ -158,4 +160,4 @@ export const manifest = {
 			return {  };
 		}
 	}
-};
+});
