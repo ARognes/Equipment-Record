@@ -4,7 +4,7 @@ import 'dotenv/config'
 export async function post({ request }) {
 
   console.log(request)
-  const SECRET_KEY = process.env.PROD_RECAPTCHA_SECRET_KEY
+  const SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY
 
   const data = await request.json()
 

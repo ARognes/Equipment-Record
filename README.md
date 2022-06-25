@@ -51,15 +51,19 @@ You will need to create a .env file in this directory with:
 VITE_CLIENT_PRIVATE_KEY=''
 ADMIN_PRIVATE_KEY=''
 
-VITE_PROD_RECAPTCHA_SITE_KEY=''
-PROD_RECAPTCHA_SECRET_KEY=''
+VITE_RECAPTCHA_SITE_KEY='recaptcha v3 site key'
+RECAPTCHA_SECRET_KEY='recaptcha v3 secret key'
+
+VITE_RECAPTCHA_BOX_SITE_KEY='recaptcha v2 site key'
+RECAPTCHA_SECRET_KEY='recaptcha v2 secret key'
 ```
+
 Client private key can be found in Firebase somewhere...
 Admin private key can be found with the Admin sdk I think ?
 
-Recaptcha v3 keys are from the Google api.
+Recaptcha keys are from the Google api.
 
-Make sure to also put these into Vercel or wherever you host this!
+Make sure to also put these into environment variables of Vercel or wherever you host this!
 
 ---
 

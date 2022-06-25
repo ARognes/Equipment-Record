@@ -15,7 +15,7 @@
   import { page } from '$app/stores'
 
 
-  const SITE_KEY = import.meta.env.VITE_PROD_RECAPTCHA_SITE_KEY
+  const SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY
   const SITE_KEY_URL = `https://www.google.com/recaptcha/api.js?render=${ SITE_KEY }`
 
   console.log(SITE_KEY_URL)

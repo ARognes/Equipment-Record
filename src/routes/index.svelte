@@ -6,46 +6,31 @@
   import { goto } from '$app/navigation'
   import { getIdTokenResult } from 'firebase/auth'
   import { session } from '$lib/storage'
+  import { page } from '$app/stores'
+  import { onMount } from 'svelte'
 
   import AccountSVG from '$lib/assets/account.svg'
   import EmailSVG from '$lib/assets/email.svg'
   import ViewSVG from '$lib/assets/view.svg'
   import HideSVG from '$lib/assets/hide.svg'
   import LockSVG from '$lib/assets/lock.svg'
-  import { page } from '$app/stores'
 
 
-  const SITE_KEY = import.meta.env.VITE_PROD_RECAPTCHA_SITE_KEY
+  const SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY
   const SITE_KEY_URL = `https://www.google.com/recaptcha/api.js?render=${ SITE_KEY }`
+  const SITE_KEY_V2 = import.meta.env.VITE_RECAPTCHA_V2_SITE_KEY
 
-  console.log(SITE_KEY_URL)
 
   const loading = writable(false)
   const errorMsg = writable('')
 
   let signIn = true
   let viewPassword = false
-  let recaptchaLoaded = false
 
   let username = ""
   let email = ""
   let password = ""
   let confirmPassword = ""
-
-  $: if (typeof grecaptcha !== 'undefined') {
-    console.log(typeof grecaptcha === 'undefined')
-    loadRecaptcha()
-  } 
-
-  function loadRecaptcha() {
-    recaptchaLoaded = true
-    console.log('recaptcha loaded')
-    // grecaptcha.ready(() => {
-    //   grecaptcha.render("div-container", {
-    //     sitekey: SITE_KEY
-    //   })
-    // })
-  }
 
 
   async function loginEmail() {
@@ -168,20 +153,50 @@
   let registerSaveUsername = ''
   let registerSaveEmail = ''
 
-  let test  
+  onMount(() => {
+    const head = document.getElementsByTagName('head')[0]
+    const script = document.createElement('script')
+    script.src = SITE_KEY_URL
+    script.async = true
+    script.defer = true
+    head.appendChild(script)
+
+    const script2 = document.createElement('script')
+    script2.src = 'https://www.google.com/recaptcha/api.js?render=explicit'
+    script2.async = true
+    script2.defer = true
+    script2.onload = loadRecaptchaV2
+    head.appendChild(script2)
+  })
+  
+  function loadRecaptchaV2() {
+    console.log('load')
+
+    const recaptchaDiv = document.createElement('div')
+    recaptchaDiv.id = 'div-recaptcha'
+    document.body.appendChild(recaptchaDiv)
+
+    grecaptcha.ready(function(){
+      grecaptcha.render('div-recaptcha', {
+        sitekey: SITE_KEY_V2
+      })
+    })
+  }
 
 </script>
 
 <svelte:head>
   <link rel="preconnect" href="https://www.google.com">
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" on:load={ () => alert('jquery') } ></script>
 
   <link rel="preload" as="script" href={ SITE_KEY_URL } />
-  <script async defer src={ SITE_KEY_URL } on:load={ loadRecaptcha } bind:this={ test } ></script>
 </svelte:head>
 
-
+<!-- Auth status unknown -->
+{#if $auth === undefined}
+  Checking auth status &hellip
+  <Loading />
+{:else if $auth === null} <!-- No auth found, register/sign in -->
 
   <div id="auth">
 
@@ -225,6 +240,7 @@
       <input type="password" spellcheck="false" placeholder="Confirm password" on:keypress={ enterRegister } on:input={ e => confirmPassword = e.currentTarget.value }>
       <div class="image"><LockSVG /></div>
 
+
       <button id="register" on:click={ validateRegistration }>Register</button>
     
     {/if}
@@ -232,7 +248,6 @@
     <button id="google" on:click={ loginGoogle }>Authenticate with Google</button>
 
     <ErrorMsg errorMsg={errorMsg} />
-  
 
   </div>
 
@@ -240,8 +255,13 @@
     <Loading />
   {/if}
 
+{:else} <!-- Auth found, Logged in  -->
 
-<!-- <div id="div-recaptcha"></div> -->
+  <button on:click={ () => auth.signOut() }>Sign Out</button>{ $auth.displayName } ({ $auth.email })
+
+{/if}
+
+
 
 
 <style lang="sass">
