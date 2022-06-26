@@ -1,7 +1,6 @@
 <script lang="ts">
   import Loading from '$lib/components/Loading.svelte'
   import ErrorMsg from '$lib/components/ErrorMsg.svelte'
-  import Recaptcha from '$lib/components/recaptcha.svelte'
   import { auth } from '$lib/Auth/auth'
   import { writable } from 'svelte/store'
   import { goto } from '$app/navigation'
@@ -41,9 +40,6 @@
       validatePassword(password)
       if (password !== confirmPassword) throw new Error("Your passwords do not match")
 
-      await recaptcha()
-     
-
       await auth.register(username, email, password)
 
     }
@@ -78,16 +74,7 @@
     if (e.key === 'Enter') validateRegistration()
   }
 
-  let signInSaveUsername = ''
-  let registerSaveUsername = ''
-  let registerSaveEmail = ''
-
-  let recaptchaV2Register
-
 </script>
-
-<Recaptcha v2Container={ recaptchaV2Register } />
-
 
 <div id="register">
 
@@ -96,9 +83,9 @@
   <p>Already have an account? <a sveltekit:prefetch href="/" class="link">Sign In</a></p>
   
 
-  <input type="text" spellcheck="false" placeholder="Username" on:keypress={ enterRegister } bind:value={ registerSaveUsername } on:input={ e => username = e.currentTarget.value }>
+  <input type="text" spellcheck="false" placeholder="Username" on:keypress={ enterRegister } on:input={ e => username = e.currentTarget.value }>
   <div class="image"><AccountSVG /></div>
-  <input type="email" spellcheck="false" placeholder="Email" on:keypress={ enterRegister } bind:value={ registerSaveEmail } on:input={ e => email = e.currentTarget.value }>
+  <input type="email" spellcheck="false" placeholder="Email" on:keypress={ enterRegister } on:input={ e => email = e.currentTarget.value }>
   <div class="image"><EmailSVG /></div>
   <input type={ viewPassword ? 'text' : 'password' } spellcheck="false" placeholder="Password" on:keypress={ enterRegister } on:input={ e => password = e.currentTarget.value }>
   
@@ -111,10 +98,7 @@
   <input type="password" spellcheck="false" placeholder="Confirm password" on:keypress={ enterRegister } on:input={ e => confirmPassword = e.currentTarget.value }>
   <div class="image"><LockSVG /></div>
 
-  <div class="div-recaptcha" bind:this={ recaptchaV2Register } ></div>
-
   <button id="btn-register" on:click={ validateRegistration }>Register</button>
-
 
   <button id="google" on:click={ loginGoogle }>Authenticate with Google</button>
 

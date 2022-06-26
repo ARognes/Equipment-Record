@@ -1,12 +1,11 @@
 <script lang="ts">
-  import Loading from '$lib/components/Loading.svelte'
   import ErrorMsg from '$lib/components/ErrorMsg.svelte'
-  import Recaptcha from '$lib/components/recaptcha.svelte'
   import { auth } from '$lib/Auth/auth'
   import { writable } from 'svelte/store'
   import { goto } from '$app/navigation'
   import { getIdTokenResult } from 'firebase/auth'
   import { session } from '$lib/storage'
+  import Button from '$lib/components/Button.svelte'
 
   import AccountSVG from '$lib/assets/account.svg'
   import ViewSVG from '$lib/assets/view.svg'
@@ -26,10 +25,6 @@
       validatePassword(password)
       
       $loading = true
-      await recaptcha()
-      
-      // Report to analytics or stop user and get recaptcha v2
-      // return
       
       if (isEmail(username)) await auth.signInEmail(username, password)
       else await auth.signInUsername(username, password)
@@ -79,33 +74,26 @@
     if (e.key === 'Enter') loginEmail()
   }
 
-  let signInSaveUsername = ''
-
-  let recaptchaV2SignIn
-
-
+  let test
 
 </script>
-
-<Recaptcha v2Container={ recaptchaV2SignIn } />
 
 <!-- Auth status unknown -->
 {#if $auth === undefined}
   Checking auth status &hellip
-  <Loading />
+  <!-- <CircularProgress style="height: 100px; width: 100px;" indeterminate /> -->
 {:else if $auth === null} <!-- No auth found, register/sign in -->
 
   <div id="auth">
 
     <h1>Sign In</h1>
 
-    <p>Need an account? <a sveltekit:prefetch href="/register" class="link">Register</a></p>
 
-    <input type="text" spellcheck="false" placeholder="Username or email" on:keypress={ enterSignIn } bind:value={ signInSaveUsername } on:input={ e => username = e.currentTarget.value }>
+    <input type="text" spellcheck="false" placeholder="Username or email" on:keypress={ enterSignIn } on:input={ e => username = e.currentTarget.value }>
     <div class="image"><AccountSVG /></div>
     <div id="password-forgot">
       <input id="password-short" type={ viewPassword ? 'text' : 'password' } spellcheck="false" placeholder="Password" on:keypress={ enterSignIn } on:input={ e => password = e.currentTarget.value }>
-      <a id="forgot" href="/forgot">Forgot</a>
+      <a sveltekit:prefetch href="/forgot" id="forgot"><Button mode="clear">Forgot</Button></a>
       {#if viewPassword} 
         <div class="image" on:click={ () => viewPassword = !viewPassword } ><ViewSVG /></div>
       {:else}
@@ -113,19 +101,22 @@
       {/if}
     </div>
 
-    <div class="div-recaptcha" bind:this={ recaptchaV2SignIn } ></div>
 
+    <Button on:click={ loginEmail } width="100%" mode="outline">Sign In</Button>
+    
+    <Button on:click={ loginGoogle } width="100%">Authenticate with Google</Button>
 
-    <button id="sign-in" on:click={ loginEmail } >Sign In</button>
+    <a sveltekit:prefetch href="/register" class="link"><Button>Create account</Button></a>
 
-    <button id="google" on:click={ loginGoogle }>Authenticate with Google</button>
 
     <ErrorMsg errorMsg={errorMsg} />
+
+    
 
   </div>
 
   {#if $loading}
-    <Loading />
+    <!-- <CircularProgress style="height: 100px; width: 100px;" indeterminate /> -->
   {/if}
 
 {:else} <!-- Auth found, Logged in  -->
@@ -147,14 +138,6 @@
     font-size: 60px
     margin: 0 0 10px 0
     padding: 0
-
-  button
-    width: 100%
-    height: 40px
-    font-size: 20px
-    font-family: 'Poppins', sans-serif
-    border: none
-    margin: 10px 0 0 0
 
   input 
     padding-left: 44px
@@ -199,17 +182,6 @@
     opacity: 50%
     width: 30px
     height: 30px
-
-#register 
-  background-color: #aaf
-
-
-#sign-in 
-  background-color: #aaf
-
-
-#google 
-  background-color: #f77
 
 .div-recaptcha 
   width: 100%

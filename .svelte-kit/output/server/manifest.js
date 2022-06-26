@@ -1,9 +1,9 @@
 export const manifest = {
 	appDir: "_app",
-	assets: new Set(["favicon.png"]),
-	mimeTypes: {".png":"image/png"},
+	assets: new Set(["favicon.png","smui.css"]),
+	mimeTypes: {".png":"image/png",".css":"text/css"},
 	_: {
-		entry: {"file":"start-4f204c15.js","js":["start-4f204c15.js","chunks/vendor-70ec1dc1.js","chunks/preload-helper-e4860ae8.js","chunks/singletons-d1fb5791.js"],"css":["assets/vendor-dc74a490.css"]},
+		entry: {"file":"start-cffaea19.js","js":["start-cffaea19.js","chunks/vendor-6c4a06dd.js","chunks/preload-helper-e4860ae8.js","chunks/singletons-d1fb5791.js"],"css":["assets/vendor-dc74a490.css"]},
 		nodes: [
 			() => import('./nodes/0.js'),
 			() => import('./nodes/1.js'),
