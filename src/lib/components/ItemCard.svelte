@@ -1,6 +1,6 @@
 <script lang="ts">
   import ErrorSVG from '$lib/assets/error.svg'
-  import Loading from '$lib/components/Loading.svelte';
+  import Loading from '$lib/components/materialish/Loading.svelte';
 
   export let info
 

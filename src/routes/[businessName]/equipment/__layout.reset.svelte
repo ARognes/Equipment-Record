@@ -9,7 +9,6 @@
 	import { setContext } from 'svelte'
 	import { session } from '$lib/storage'
 	import { navigating } from '$app/stores'
-	import Loading from '$lib/components/Loading.svelte'
 
 	const loading = writable(false)
 

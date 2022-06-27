@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Loading from '$lib/components/Loading.svelte'
+  import Loading from '$lib/components/materialish/Loading.svelte'
   import ErrorMsg from '$lib/components/ErrorMsg.svelte'
   import { auth } from '$lib/Auth/auth'
   import { writable } from 'svelte/store'

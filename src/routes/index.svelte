@@ -5,11 +5,14 @@
   import { goto } from '$app/navigation'
   import { getIdTokenResult } from 'firebase/auth'
   import { session } from '$lib/storage'
-  import Button from '$lib/components/Button.svelte'
+  import Button from '$lib/components/materialish/Button.svelte'
+  import Loading from '$lib/components/materialish/Loading.svelte'
 
   import AccountSVG from '$lib/assets/account.svg'
   import ViewSVG from '$lib/assets/view.svg'
   import HideSVG from '$lib/assets/hide.svg'
+  import GoogleSVG from '$lib/assets/google.svg'
+  import TextField from '$lib/components/materialish/TextField.svelte'
 
   const loading = writable(false)
   const errorMsg = writable('')
@@ -74,22 +77,29 @@
     if (e.key === 'Enter') loginEmail()
   }
 
-  let test
-
 </script>
 
 <!-- Auth status unknown -->
 {#if $auth === undefined}
   Checking auth status &hellip
-  <!-- <CircularProgress style="height: 100px; width: 100px;" indeterminate /> -->
+  <Loading />
+
 {:else if $auth === null} <!-- No auth found, register/sign in -->
 
   <div id="auth">
 
     <h1>Sign In</h1>
 
+    <TextField label="Username or email"><AccountSVG /></TextField>
+    <TextField label="Password" type={ viewPassword ? 'text' : 'password' }>
+      {#if viewPassword} 
+        <div on:click={ () => viewPassword = !viewPassword } ><ViewSVG /></div>
+      {:else}
+        <div on:click={ () => viewPassword = !viewPassword } ><HideSVG /></div>
+      {/if}
+    </TextField>
 
-    <input type="text" spellcheck="false" placeholder="Username or email" on:keypress={ enterSignIn } on:input={ e => username = e.currentTarget.value }>
+    <!-- <input type="text" spellcheck="false" placeholder="Username or email" on:keypress={ enterSignIn } on:input={ e => username = e.currentTarget.value }>
     <div class="image"><AccountSVG /></div>
     <div id="password-forgot">
       <input id="password-short" type={ viewPassword ? 'text' : 'password' } spellcheck="false" placeholder="Password" on:keypress={ enterSignIn } on:input={ e => password = e.currentTarget.value }>
@@ -99,14 +109,14 @@
       {:else}
         <div class="image" on:click={ () => viewPassword = !viewPassword } ><HideSVG /></div>
       {/if}
-    </div>
+    </div> -->
 
 
-    <Button on:click={ loginEmail } width="100%" mode="outline">Sign In</Button>
+    <Button on:click={ loginEmail } width="100%" bgColor="255, 14, 25">Sign In</Button>
     
-    <Button on:click={ loginGoogle } width="100%">Authenticate with Google</Button>
+    <Button on:click={ loginGoogle } width="100%" bgColor="20, 20, 25"><GoogleSVG />&nbsp;&nbsp;Google Sign In</Button>
 
-    <a sveltekit:prefetch href="/register" class="link"><Button>Create account</Button></a>
+    <a sveltekit:prefetch href="/register" class="link"><Button mode="clear">Create account</Button></a>
 
 
     <ErrorMsg errorMsg={errorMsg} />
@@ -116,8 +126,11 @@
   </div>
 
   {#if $loading}
-    <!-- <CircularProgress style="height: 100px; width: 100px;" indeterminate /> -->
+    <Loading />
   {/if}
+  
+  <Loading />
+
 
 {:else} <!-- Auth found, Logged in  -->
 

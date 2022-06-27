@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Loading from "$lib/components/Loading.svelte"
+  import Loading from "$lib/components/materialish/Loading.svelte"
 
   export let images
 
