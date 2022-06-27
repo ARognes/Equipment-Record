@@ -26,7 +26,9 @@
 						 shadow = '0 5px 5px -2px rgba(0, 0, 0, 0.4)',
 						 shadowHover = '0 5px 15px -2px rgba(0, 0, 0, 0.5)',
 						 shadowActive = '0 10px 20px -3px rgba(0, 0, 0, 0.6)',
-						 margin = '10px 0'
+						 margin = '10px 0',
+						 href='',
+						 noPrefetch = null
 
 	if (mode === 'outline') {
 		color = '#000'
@@ -53,6 +55,18 @@
 		shadowHover = ''
 		shadowActive = ''
 	}
+	else if (mode === 'link') {
+		color = '#00f'
+		bgColor = '0, 0, 255',
+		rippleColor = 'rgba(0, 0, 255, 0.3)',
+		opacity = '0',
+		opacityFocus = '0.05',
+		opacityActive = '0.05',
+		opacityIn = 0.3,
+		shadow = ''
+		shadowHover = ''
+		shadowActive = ''
+	}
 
 	if (flat) {
 		shadow = ''
@@ -71,7 +85,7 @@
 
 	export const ripples = handleRipple()
 	
-	let rect, rippleBtn, w, h, offsetX, offsetY, deltaX, deltaY, locationY, locationX, scale_ratio, rippleComps = []
+	let rect, rippleBtn, w, h, offsetX, offsetY, deltaX, deltaY, locationY, locationX, scale_ratio, rippleComps = [], pressTime = 0
 	
 	let coords = { x: 50, y: 50 }
 	
@@ -82,17 +96,17 @@
 		 scale_ratio = Math.sqrt(Math.pow(deltaX, 2.2) + Math.pow(deltaY, 2.2))
 
 	function press(event) {
+		pressTime = Date.now()
 		release(event)
 		if (event instanceof MouseEvent) 
 			ripples.add({ x: event.pageX - locationX, y: event.pageY - locationY, size: scale_ratio, startEnd: event.button !== 0 })
-		
 		else 
 			ripples.add({ x: event.changedTouches[0].clientX - locationX, y: event.changedTouches[0].clientY - locationY, size: scale_ratio, startEnd: false })
 	}
 
 	function release(event) {
+		if (Date.now() - pressTime < 10) return	// Debounce
 		rippleComps.forEach(ripple => ripple.end())
-		console.log('released')
 	}
 	
 	onMount(()=> {
@@ -104,24 +118,50 @@
 	})
 </script>
 
-<svelte:window on:mouseup={ release } on:touchend={ release } />
+<svelte:window on:mousedown={ release } on:touchstart={ release } />
 
-<button bind:this={ rippleBtn } 
-				on:touchstart={ press }  
-				on:mousedown={ press }
-				on:touchend={ release }  
-				on:mouseup={ release }
-				on:click
-				style="--color: {color};--font-size: {fontSize};--border: {border};--borderFocus: {borderFocus};--borderActive: {borderActive};--bg-color: {bgColor};--opacity: {opacity};--opacity-focus: {opacityFocus};--opacity-active: {opacityActive};--radius: {round};--ripple: {rippleColor};--height: {height};--width: {width};--shadow: { shadow };--shadow-h: { shadowHover };--shadow-a: { shadowActive };--margin: {margin}">
-	<span>
-		<slot></slot>
-	</span>	
-	<svg>
-		{#each $ripples as ripple, index}
-			<Ripple bind:this={ rippleComps[index] } x="{ripple.x}" y="{ripple.y}" size={ripple.size} startEnd={ripple.startEnd} speed={ speed * 0.8 * Math.sqrt(w * h) } sizeIn={ sizeIn * w * h / 2000 } {opacityIn} {rippleBlur} />
-		{/each}
-	</svg>
-</button>
+{#if href.length}
+
+	<a href={ href } sveltekit:prefetch={noPrefetch ? undefined : true} class="link">
+		<button bind:this={ rippleBtn } 
+						on:touchstart={ press }  
+						on:mousedown={ press }
+						on:touchend={ release }  
+						on:mouseup={ release }
+						on:click
+						style="--color: {color};--font-size: {fontSize};--border: {border};--borderFocus: {borderFocus};--borderActive: {borderActive};--bg-color: {bgColor};--opacity: {opacity};--opacity-focus: {opacityFocus};--opacity-active: {opacityActive};--radius: {round};--ripple: {rippleColor};--height: {height};--width: {width};--shadow: { shadow };--shadow-h: { shadowHover };--shadow-a: { shadowActive };--margin: {margin}">
+			<span>
+				<slot></slot>
+			</span>	
+			<svg>
+				{#each $ripples as ripple, index}
+					<Ripple bind:this={ rippleComps[index] } x="{ripple.x}" y="{ripple.y}" size={ripple.size} startEnd={ripple.startEnd} speed={ speed * 0.8 * Math.sqrt(w * h) } sizeIn={ sizeIn * w * h / 2000 } {opacityIn} {rippleBlur} />
+				{/each}
+			</svg>
+		</button>
+	</a>
+
+{:else}
+
+	<button bind:this={ rippleBtn } 
+					on:touchstart={ press }  
+					on:mousedown={ press }
+					on:touchend={ release }  
+					on:mouseup={ release }
+					on:click
+					style="--color: {color};--font-size: {fontSize};--border: {border};--borderFocus: {borderFocus};--borderActive: {borderActive};--bg-color: {bgColor};--opacity: {opacity};--opacity-focus: {opacityFocus};--opacity-active: {opacityActive};--radius: {round};--ripple: {rippleColor};--height: {height};--width: {width};--shadow: { shadow };--shadow-h: { shadowHover };--shadow-a: { shadowActive };--margin: {margin}">
+		<span>
+			<slot></slot>
+		</span>	
+		<svg>
+			{#each $ripples as ripple, index}
+				<Ripple bind:this={ rippleComps[index] } x="{ripple.x}" y="{ripple.y}" size={ripple.size} startEnd={ripple.startEnd} speed={ speed * 0.8 * Math.sqrt(w * h) } sizeIn={ sizeIn * w * h / 2000 } {opacityIn} {rippleBlur} />
+			{/each}
+		</svg>
+	</button>
+
+{/if}
+
 
 <style lang="sass">
 	button 
@@ -129,7 +169,7 @@
 		-moz-appearance: none
 		appearance: none
 		border: var(--border)
-		font-weight: 500
+		font-weight: normal
 		color: var(--color)
 		font-size: var(--font-size)
 		height: var(--height)
@@ -187,4 +227,10 @@
 		left: 0
 		z-index: 0
 	
+	.link .link:hover .link:focus .link:active
+		text-decoration: none
+
+	a
+		-webkit-tap-highlight-color: transparent
+
 </style>

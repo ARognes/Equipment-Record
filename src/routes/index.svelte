@@ -87,36 +87,28 @@
 {:else if $auth === null} <!-- No auth found, register/sign in -->
 
   <div id="auth">
-
+    <Button mode="link" href="https://app.equipment-record.com" noPrefetch={true}>Link to main page</Button>
     <h1>Sign In</h1>
 
-    <TextField label="Username or email"><AccountSVG /></TextField>
-    <TextField label="Password" type={ viewPassword ? 'text' : 'password' }>
+    <TextField label="Username or email" on:keypress={ enterSignIn } on:input={ e => username = e.currentTarget.value }><AccountSVG /></TextField>
+    <TextField label="Password" type={ viewPassword ? 'text' : 'password' } on:keypress={ enterSignIn } on:input={ e => password = e.currentTarget.value }>
       {#if viewPassword} 
         <div on:click={ () => viewPassword = !viewPassword } ><ViewSVG /></div>
       {:else}
         <div on:click={ () => viewPassword = !viewPassword } ><HideSVG /></div>
       {/if}
     </TextField>
+    <Button mode="link" href="/forgot" margin="0 0 10px 0">Forgot password?</Button>
 
-    <!-- <input type="text" spellcheck="false" placeholder="Username or email" on:keypress={ enterSignIn } on:input={ e => username = e.currentTarget.value }>
-    <div class="image"><AccountSVG /></div>
-    <div id="password-forgot">
-      <input id="password-short" type={ viewPassword ? 'text' : 'password' } spellcheck="false" placeholder="Password" on:keypress={ enterSignIn } on:input={ e => password = e.currentTarget.value }>
-      <a sveltekit:prefetch href="/forgot" id="forgot"><Button mode="clear">Forgot</Button></a>
-      {#if viewPassword} 
-        <div class="image" on:click={ () => viewPassword = !viewPassword } ><ViewSVG /></div>
-      {:else}
-        <div class="image" on:click={ () => viewPassword = !viewPassword } ><HideSVG /></div>
-      {/if}
-    </div> -->
-
+    <br>
 
     <Button on:click={ loginEmail } width="100%" bgColor="255, 14, 25">Sign In</Button>
     
     <Button on:click={ loginGoogle } width="100%" bgColor="20, 20, 25"><GoogleSVG />&nbsp;&nbsp;Google Sign In</Button>
 
-    <a sveltekit:prefetch href="/register" class="link"><Button mode="clear">Create account</Button></a>
+
+    <Button mode="link" href="/register">Create account</Button>
+
 
 
     <ErrorMsg errorMsg={errorMsg} />
@@ -128,8 +120,6 @@
   {#if $loading}
     <Loading />
   {/if}
-  
-  <Loading />
 
 
 {:else} <!-- Auth found, Logged in  -->
@@ -149,7 +139,7 @@
 
   h1
     font-size: 60px
-    margin: 0 0 10px 0
+    margin: 0px 0 10px 0
     padding: 0
 
   input 
@@ -177,16 +167,6 @@
       border: none
       height: 30px
 
-    #forgot 
-      float: right
-      position: relative
-      top: 0
-      right: 6px
-      height: 40px
-      color: blue
-      font-size: 20px
-      text-decoration: none
-
   .image
     position: relative
     top: -24px
@@ -203,10 +183,10 @@
   justify-content: center
   align-items: center
 
-.link
-  color: #00f
+.link .link:hover .link:focus .link:active
   text-decoration: none
-  &:hover
-    font-weight: bold
+
+a
+  -webkit-tap-highlight-color: transparent
 
 </style>

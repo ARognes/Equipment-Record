@@ -34,23 +34,30 @@ import { writable } from 'svelte/store'
 		 scale_ratio = Math.sqrt(Math.pow(deltaX, 2.2) + Math.pow(deltaY, 2.2))
 
   
-  let focussed = false, labelHighlight = false
+  let focussed = false, labelHighlight = false, focusInput = () => {}, focusTime = Date.now()
 	function press(event) {
 		release(event)
 		if (event instanceof MouseEvent) 
 			ripples.add({ x: event.pageX - locationX, y: event.pageY - locationY, size: scale_ratio, startEnd: event.button !== 0 })
-		
-		else 
+		else if (event instanceof TouchEvent)
 			ripples.add({ x: event.changedTouches[0].clientX - locationX, y: event.changedTouches[0].clientY - locationY, size: scale_ratio, startEnd: false })
+    else 
+			ripples.add({ x: w / 2, y: h / 2, size: scale_ratio, startEnd: false })
 
     focussed = true
     labelHighlight = true
+    setTimeout(() => inputValue.focus(), 2) // Circumvent a11y restrictions
+    console.log('focus')
+    focusTime = Date.now()
 	}
 
 	function release(event) {
+    console.log(Date.now() - focusTime)
+    if (Date.now() - focusTime < 10) return
 		rippleComps.forEach(ripple => ripple.end())
     if (!inputValue.value.length) focussed = false
     labelHighlight = false
+    console.log('release__')
 	}
 	
 	onMount(()=> {
@@ -64,10 +71,13 @@ import { writable } from 'svelte/store'
 
 </script>
 
-<div class="textfield">
+<svelte:window on:mousedown={ release } />
+
+
+<div class="textfield" on:mousedown={press}>
   <div class="main">
     <div class="slot"><slot /></div>
-    <input { type } spellcheck="false" bind:this={ inputValue } on:mousedown={press} on:blur={release} on:keypress on:input>
+    <input { type } spellcheck="false" bind:this={ inputValue } on:focus={press} on:blur={release} on:keypress on:input>
   </div>
   <div class="underline-ripple" bind:this={ rippleUnderline } style="--ripple: {rippleColor}">
     <div class="underline"></div>
