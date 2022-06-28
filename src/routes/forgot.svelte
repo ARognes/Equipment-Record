@@ -48,10 +48,6 @@
 		verified = true
 	}
 
-	function captchaError(error) {
-		console.log(error)
-	}
-
 </script>
 
 <div id="forgot">
@@ -69,7 +65,7 @@
 		{/if}
 
 		<!-- <div bind:this={captcha} class="frc-captcha" data-sitekey="FCMJTEBHUU20DHJ9"></div> -->
-		<Captcha {captcha} {captchaError} />
+		<Captcha {captcha} />
 
 
 

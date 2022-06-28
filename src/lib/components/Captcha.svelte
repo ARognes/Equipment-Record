@@ -3,12 +3,14 @@
 import { WidgetInstance } from 'friendly-challenge'
 import { page } from '$app/stores'
 import { onMount } from 'svelte'  
+import { goto } from '$app/navigation'
   
 const SITE_KEY = import.meta.env.VITE_FRIENDLY_CAPTCHA_SITE_KEY
+const rerouteDir = '/noBots'
 
 let divCaptcha: HTMLDivElement
 
-export let captcha = (verification) => {}, captchaError = (er) => {}
+export let captcha = (verification) => {}
 
 async function done(solution: string) {
   console.log(solution)
@@ -23,11 +25,15 @@ async function done(solution: string) {
   captcha(verification)
 }
 
+function error(e) {
+  goto(rerouteDir)
+}
+
 onMount(() => {
   const widget = new WidgetInstance(divCaptcha, {
   startMode: 'auto',
   doneCallback: done,
-  errorCallback: captchaError,
+  errorCallback: error,
 })
 
 return widget.destroy
