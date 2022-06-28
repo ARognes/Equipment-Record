@@ -85,7 +85,7 @@
 
 
   <div id="auth">
-    <Button mode="link" href="https://app.equipment-record.com" noPrefetch={true}>Link to main page</Button>
+    <Button mode="link" noPrefetch href="https://google.com">Equipment-Record</Button>
     <h1>Sign in</h1>
 
     <TextField label="Username or email" on:keypress={ enterSignIn } on:input={ e => username = e.currentTarget.value } startFocus><AccountSVG /></TextField>
@@ -128,7 +128,7 @@
 
   h1
     font-size: 60px
-    margin: 0px 0 10px 0
+    margin: 0
     padding: 0
 
   input 

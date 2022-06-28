@@ -6,14 +6,13 @@ import { onMount } from 'svelte'
 import { goto } from '$app/navigation'
   
 const SITE_KEY = import.meta.env.VITE_FRIENDLY_CAPTCHA_SITE_KEY
-const rerouteDir = '/noBots'
+const errorDir = '/noBots'
 
 let divCaptcha: HTMLDivElement
 
-export let captcha = (verification) => {}
+export let captcha = () => {}
 
 async function done(solution: string) {
-  console.log(solution)
   let verificationRes = await fetch(`//${ $page.url.host }/endpoints/friendlyCaptcha`, {
     method: 'POST',
     credentials: 'same-origin',
@@ -22,11 +21,14 @@ async function done(solution: string) {
   })
 
   const verification = await verificationRes.json()
-  captcha(verification)
+
+  if (verification.success === false) goto(errorDir)
+
+  captcha()
 }
 
 function error(e) {
-  goto(rerouteDir)
+  goto(errorDir)
 }
 
 onMount(() => {

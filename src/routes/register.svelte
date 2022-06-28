@@ -3,6 +3,7 @@
   import ErrorMsg from '$lib/components/ErrorMsg.svelte'
   import { auth } from '$lib/Auth/auth'
   import { writable } from 'svelte/store'
+  import Captcha from '$lib/components/Captcha.svelte'
 
   import GoogleSVG from '$lib/assets/google.svg'
   import AccountSVG from '$lib/assets/account.svg'
@@ -19,6 +20,7 @@
   let viewPassword = false
   
   let loading = false
+  let verified = false
   let username = ""
   let email = ""
   let password = ""
@@ -44,6 +46,7 @@
       if (username.length <= 2) throw "Your username must have 3 characters or more"
       validatePassword(password)
       if (password !== confirmPassword) throw "Your passwords do not match"
+      if (!verified) throw "Captcha must finish human verification"
 
       await auth.register(username, email, password)
 
@@ -73,34 +76,15 @@
     if (e.key === 'Enter') validateRegistration()
   }
 
-  let passwordFocus, confirmPasswordFocus
+  function captcha() { verified = true }
 
-  $: console.log(password, confirmPassword)
+  let passwordFocus, confirmPasswordFocus
 
 </script>
 
 <div id="register">
-
-  <Button mode="link" href="https://app.equipment-record.com" noPrefetch={true}>Link to main page</Button>
-
+  <Button mode="link" noPrefetch href="https://google.com">Equipment-Record</Button>
   <h1>Register</h1>
-
-  <!-- <input type="text" spellcheck="false" placeholder="Username" on:keypress={ enterRegister } on:input={ e => username = e.currentTarget.value }>
-  <div class="image"><AccountSVG /></div>
-  <input type="email" spellcheck="false" placeholder="Email" on:keypress={ enterRegister } on:input={ e => email = e.currentTarget.value }>
-  <div class="image"><EmailSVG /></div>
-  <input type={ viewPassword ? 'text' : 'password' } spellcheck="false" placeholder="Password" on:keypress={ enterRegister } on:input={ e => password = e.currentTarget.value }>
-  
-  {#if viewPassword} 
-    <div class="image" on:click={ () => viewPassword = !viewPassword } ><ViewSVG /></div>
-  {:else}
-    <div class="image" on:click={ () => viewPassword = !viewPassword } ><HideSVG /></div>
-  {/if}
-
-  <input type="password" spellcheck="false" placeholder="Confirm password" on:keypress={ enterRegister } on:input={ e => confirmPassword = e.currentTarget.value }>
-  <div class="image"><LockSVG /></div> -->
-
-
 
   <TextField label="Email*" on:keypress={ enterRegister } on:input={ e => email = e.currentTarget.value } startFocus><EmailSVG /></TextField>
   <TextField label="Username*" on:keypress={ enterRegister } on:input={ e => username = e.currentTarget.value } ><AccountSVG /></TextField>
@@ -124,18 +108,18 @@
   <span class="div-requirements">
     <span class={ `transition ${ (!confirmPasswordFocus || confirmPassword === password || !confirmPassword.length) ? 'hide' : ''}` } >Passwords do not match</span> 
   </span>
-  <!-- <p>Passwords do not match!</p> -->
-
-  <br>
+  <Captcha {captcha} />
 
   <Button on:click={ validateRegistration } bgColor="255, 14, 25" width="100%">Register</Button>
 
   <Button on:click={ loginGoogle } bgColor="66, 133, 244" width="100%" padding="0"><GoogleSVG /><p style="margin-left: 11px">Sign up with Google</p></Button>
 
-  Already have an account? <Button mode="link" href="/">Sign in</Button>
+  Already have an account? <Button mode="link" noPrefetch href="/">Sign in</Button>
 
 
   <ErrorMsg {errorMsg} />
+
+  <div style='height: 50vh' />
 
 </div>
 
@@ -144,15 +128,19 @@
 <style lang="sass">
 
 #register
-  position: relative
-  top: 5%
-  left: 5%
+  position: absolute
+  top: 0
+  left: 0
   width: 90%
+  height: 100%
+  padding: 0 5%
+  overflow-x: hidden
+  overflow-y: auto
   font-family: 'Roboto', sans-serif
 
   h1
     font-size: 60px
-    margin: 0 0 10px 0
+    margin: 0
     padding: 0
 
   button
