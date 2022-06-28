@@ -1,5 +1,8 @@
+<script lang="ts">
+  export let loading = false
+</script>
 
-
+{#if loading}
 <div class="showbox">
   <div class="loader">
     <svg class="circular" viewBox="25 25 50 50">
@@ -7,7 +10,7 @@
     </svg>
   </div>
 </div>
-
+{/if}
 <style lang="scss">
 $green: #008744;
 $blue: #0057e7;

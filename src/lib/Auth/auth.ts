@@ -79,9 +79,6 @@ const createAuth = () => {
     const { getDoc, doc, getFirestore } = await import('firebase/firestore/lite')
     const { app } = await import('../app')
 
-    // Filter parameters
-    if (!username || username.length < 2 || !password || password.length < 12) return
-
     // Get user from firestore
     const db = getFirestore(app)
     const userDoc = await getDoc(doc(db, 'users', username))
@@ -89,8 +86,6 @@ const createAuth = () => {
 
     // Get user's email
     const email = userDoc?.data()?.email
-
-    if (!email || email.length < 3) return
 
     await setPersistence(auth, browserLocalPersistence)
     await signInWithEmailAndPassword(auth, email, password)
@@ -101,13 +96,19 @@ const createAuth = () => {
     await signOut(auth)
   }
 
+  async function passwordResetEmail(email: string) {
+    const { sendPasswordResetEmail } = await import('firebase/auth')
+    await sendPasswordResetEmail(auth, email)
+  }
+
   return {
     subscribe,
     register,
     signInGoogle,
     signInEmail,
     signInUsername,
-    signOut
+    signOut,
+    passwordResetEmail
   }
 }
 

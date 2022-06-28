@@ -7,18 +7,17 @@
   import { session } from '$lib/storage'
   import Button from '$lib/components/materialish/Button.svelte'
   import Loading from '$lib/components/materialish/Loading.svelte'
+  import TextField from '$lib/components/materialish/TextField.svelte'
 
   import AccountSVG from '$lib/assets/account.svg'
   import ViewSVG from '$lib/assets/view.svg'
   import HideSVG from '$lib/assets/hide.svg'
   import GoogleSVG from '$lib/assets/google.svg'
-  import TextField from '$lib/components/materialish/TextField.svelte'
 
-  const loading = writable(false)
   const errorMsg = writable('')
-
+  
   let viewPassword = false
-
+  let loading = false
   let username = ""
   let password = ""
 
@@ -27,7 +26,7 @@
     try {
       validatePassword(password)
       
-      $loading = true
+      loading = true
       
       if (isEmail(username)) await auth.signInEmail(username, password)
       else await auth.signInUsername(username, password)
@@ -37,16 +36,19 @@
       $errorMsg = ""
       $errorMsg = "Incorrect username/email or password"
     }
-    finally { $loading = false }
+    finally { loading = false }
   }
 
   async function loginGoogle() {
     try {
-      $loading = true
+      loading = true
       await auth.signInGoogle()
     }
-    catch (e) { $errorMsg = e }
-    finally { $loading = false }
+    catch (e) { 
+      $errorMsg = ""
+      $errorMsg = e 
+    }
+    finally { loading = false }
   }
 
   function validatePassword(password: string) {
@@ -82,7 +84,7 @@
 <!-- Auth status unknown -->
 {#if $auth === undefined}
   Checking auth status &hellip
-  <Loading />
+  <Loading loading/>
 
 {:else if $auth === null} <!-- No auth found, register/sign in -->
 
@@ -113,9 +115,8 @@
 
   </div>
 
-  {#if $loading}
-    <Loading />
-  {/if}
+  <Loading {loading} />
+
 
 
 {:else} <!-- Auth found, Logged in  -->

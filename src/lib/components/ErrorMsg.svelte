@@ -41,7 +41,4 @@ import { writable } from "svelte/store";
     border-radius: 4px
     padding: 2px 4px
 
-
-
-
 </style>

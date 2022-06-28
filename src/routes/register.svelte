@@ -13,12 +13,12 @@
   import Button from '$lib/components/materialish/Button.svelte'
   import TextField from '$lib/components/materialish/TextField.svelte'
 
-  const loading = writable(false)
   const errorMsg = writable('')
   const PASSWORD_MIN_LENGTH = 12
-
+  
   let viewPassword = false
-
+  
+  let loading = false
   let username = ""
   let email = ""
   let password = ""
@@ -26,16 +26,19 @@
 
   async function loginGoogle() {
     try {
-      $loading = true
+      loading = true
       await auth.signInGoogle()
     }
-    catch (e) { $errorMsg = e }
-    finally { $loading = false }
+    catch (e) { 
+      $errorMsg = ''
+      $errorMsg = e 
+    }
+    finally { loading = false }
   }
 
   async function validateRegistration() {
     try {
-      $loading = true
+      loading = true
       if (email.length <= 3 || !isEmail(email)) throw "Please enter a valid email"
       if (username.length === 0) throw "Please enter a username"
       if (username.length <= 2) throw "Your username must have 3 characters or more"
@@ -45,8 +48,11 @@
       await auth.register(username, email, password)
 
     }
-    catch (e) { $errorMsg = e }
-    finally { $loading = false }
+    catch (e) { 
+      $errorMsg = ''
+      $errorMsg = e 
+    }
+    finally { loading = false }
   }
 
   function validatePassword(password: string) {
@@ -61,17 +67,7 @@
     return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
   }
 
-  $: {
-    if ($auth) {
-      // (async () => {
-
-      //   const token = await getIdTokenResult($auth)
-      //   session.clear()
-      //   session.setItem('accessLevel', token?.claims?.accessLevel || 0)
-      //   goto('/on/home')
-      // })()
-    }
-  }
+  $: if ($auth) {}
 
   function enterRegister(e) {
     if (e.key === 'Enter') validateRegistration()
@@ -139,13 +135,11 @@
   Already have an account? <Button mode="link" href="/">Sign in</Button>
 
 
-  <ErrorMsg errorMsg={errorMsg} />
+  <ErrorMsg {errorMsg} />
 
 </div>
 
-{#if $loading}
-  <Loading />
-{/if}
+<Loading {loading} />
 
 <style lang="sass">
 
