@@ -88,9 +88,9 @@
 
   <div id="auth">
     <Button mode="link" href="https://app.equipment-record.com" noPrefetch={true}>Link to main page</Button>
-    <h1>Sign In</h1>
+    <h1>Sign in</h1>
 
-    <TextField label="Username or email" on:keypress={ enterSignIn } on:input={ e => username = e.currentTarget.value }><AccountSVG /></TextField>
+    <TextField label="Username or email" on:keypress={ enterSignIn } on:input={ e => username = e.currentTarget.value } startFocus><AccountSVG /></TextField>
     <TextField label="Password" type={ viewPassword ? 'text' : 'password' } on:keypress={ enterSignIn } on:input={ e => password = e.currentTarget.value }>
       {#if viewPassword} 
         <div on:click={ () => viewPassword = !viewPassword } ><ViewSVG /></div>
@@ -102,18 +102,14 @@
 
     <br>
 
-    <Button on:click={ loginEmail } width="100%" bgColor="255, 14, 25">Sign In</Button>
+    <Button on:click={ loginEmail } bgColor="255, 14, 25" width="100%">Sign in</Button>
     
-    <Button on:click={ loginGoogle } width="100%" bgColor="20, 20, 25"><GoogleSVG />&nbsp;&nbsp;Google Sign In</Button>
+    <Button on:click={ loginGoogle } bgColor="66, 133, 244" width="100%" padding="0"><GoogleSVG /><p style="margin-left: 11px">Sign in with Google</p></Button>
 
 
-    <Button mode="link" href="/register">Create account</Button>
-
-
+    Need an account? <Button mode="link" href="/register">Create account</Button>
 
     <ErrorMsg errorMsg={errorMsg} />
-
-    
 
   </div>
 
@@ -135,7 +131,7 @@
   top: 5%
   left: 5%
   width: 90%
-  font-family: 'Poppins', sans-serif
+  font-family: 'Roboto', sans-serif
 
   h1
     font-size: 60px

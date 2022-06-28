@@ -10,7 +10,10 @@ import { writable } from 'svelte/store'
 						 speed = 10,
 						 sizeIn = 8,
 						 opacityIn = 1.0,
-             rippleColor='red'
+             rippleColor = 'red',
+             startFocus = false,
+             focus = false,
+             margin='40px 0 10px 0'
 
   function handleRipple() {
 		const ripples = writable([])
@@ -34,7 +37,7 @@ import { writable } from 'svelte/store'
 		 scale_ratio = Math.sqrt(Math.pow(deltaX, 2.2) + Math.pow(deltaY, 2.2))
 
   
-  let focussed = false, labelHighlight = false, focusInput = () => {}, focusTime = Date.now()
+  let activated = false, focusTime = Date.now()
 	function press(event) {
 		release(event)
 		if (event instanceof MouseEvent) 
@@ -44,37 +47,34 @@ import { writable } from 'svelte/store'
     else 
 			ripples.add({ x: w / 2, y: h / 2, size: scale_ratio, startEnd: false })
 
-    focussed = true
-    labelHighlight = true
+    focus = true
+    activated = true
     setTimeout(() => inputValue.focus(), 2) // Circumvent a11y restrictions
-    console.log('focus')
     focusTime = Date.now()
 	}
 
 	function release(event) {
-    console.log(Date.now() - focusTime)
     if (Date.now() - focusTime < 10) return
 		rippleComps.forEach(ripple => ripple.end())
-    if (!inputValue.value.length) focussed = false
-    labelHighlight = false
-    console.log('release__')
+    if (!inputValue.value.length) activated = false
+    focus = false
 	}
-	
+
 	onMount(()=> {
 		w = rippleUnderline.offsetWidth
     h = rippleUnderline.offsetHeight
 		rect = rippleUnderline.getBoundingClientRect()
 		locationY = rect.y
 		locationX = rect.x
+    if (startFocus) setTimeout(() => inputValue.focus(), 2) 
 	})
-
 
 </script>
 
 <svelte:window on:mousedown={ release } />
 
 
-<div class="textfield" on:mousedown={press}>
+<div class="textfield" on:mousedown={press} style="--margin: {margin}">
   <div class="main">
     <div class="slot"><slot /></div>
     <input { type } spellcheck="false" bind:this={ inputValue } on:focus={press} on:blur={release} on:keypress on:input>
@@ -87,8 +87,7 @@ import { writable } from 'svelte/store'
       {/each}
     </svg>
   </div>
-  <span class:transition={true} class:label-out={focussed} class:label={!focussed} class:label-highlight={labelHighlight}>{ label }</span>
-
+  <span class:transition={true} class:label-out={activated} class:label={!activated} class:label-highlight={focus}>{ label }</span>
 </div>
 
 <style lang="sass">
@@ -102,7 +101,7 @@ $labelOutColor: #888
 
 .textfield
   height: $height
-  margin: 30px 0 10px 0
+  margin: var(--margin)
   &:hover 
     & .underline
       background-color: $underlineHoverColor

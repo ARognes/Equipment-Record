@@ -15,8 +15,8 @@
 						 opacityFocus = '0.9',
 						 opacityActive = '0.8',
 						 rippleColor = '#fbb',
-						 round = '4px',
-						 height = '40px',
+						 round = '5px',
+						 height = '46px',
 					 	 width = 'auto',
 						 sizeIn = 8,
 						 opacityIn = 0.2,
@@ -27,6 +27,7 @@
 						 shadowHover = '0 5px 15px -2px rgba(0, 0, 0, 0.5)',
 						 shadowActive = '0 10px 20px -3px rgba(0, 0, 0, 0.6)',
 						 margin = '10px 0',
+						 padding = '0 8px',
 						 href='',
 						 noPrefetch = null
 
@@ -56,6 +57,7 @@
 		shadowActive = ''
 	}
 	else if (mode === 'link') {
+		height = '30px'
 		color = '#00f'
 		bgColor = '0, 0, 255',
 		rippleColor = 'rgba(0, 0, 255, 0.3)',
@@ -122,14 +124,14 @@
 
 {#if href.length}
 
-	<a href={ href } sveltekit:prefetch={noPrefetch ? undefined : true} class="link">
+	<a href={ href } sveltekit:prefetch={noPrefetch ? undefined : true} rel={noPrefetch ? 'external' : ''} class="link">
 		<button bind:this={ rippleBtn } 
 						on:touchstart={ press }  
 						on:mousedown={ press }
 						on:touchend={ release }  
 						on:mouseup={ release }
 						on:click
-						style="--color: {color};--font-size: {fontSize};--border: {border};--borderFocus: {borderFocus};--borderActive: {borderActive};--bg-color: {bgColor};--opacity: {opacity};--opacity-focus: {opacityFocus};--opacity-active: {opacityActive};--radius: {round};--ripple: {rippleColor};--height: {height};--width: {width};--shadow: { shadow };--shadow-h: { shadowHover };--shadow-a: { shadowActive };--margin: {margin}">
+						style="--color: {color};--font-size: {fontSize};--border: {border};--borderFocus: {borderFocus};--borderActive: {borderActive};--bg-color: {bgColor};--opacity: {opacity};--opacity-focus: {opacityFocus};--opacity-active: {opacityActive};--radius: {round};--ripple: {rippleColor};--height: {height};--width: {width};--shadow: { shadow };--shadow-h: { shadowHover };--shadow-a: { shadowActive };--margin: {margin};--padding: {padding}">
 			<span>
 				<slot></slot>
 			</span>	
@@ -149,7 +151,7 @@
 					on:touchend={ release }  
 					on:mouseup={ release }
 					on:click
-					style="--color: {color};--font-size: {fontSize};--border: {border};--borderFocus: {borderFocus};--borderActive: {borderActive};--bg-color: {bgColor};--opacity: {opacity};--opacity-focus: {opacityFocus};--opacity-active: {opacityActive};--radius: {round};--ripple: {rippleColor};--height: {height};--width: {width};--shadow: { shadow };--shadow-h: { shadowHover };--shadow-a: { shadowActive };--margin: {margin}">
+					style="--color: {color};--font-size: {fontSize};--border: {border};--borderFocus: {borderFocus};--borderActive: {borderActive};--bg-color: {bgColor};--opacity: {opacity};--opacity-focus: {opacityFocus};--opacity-active: {opacityActive};--radius: {round};--ripple: {rippleColor};--height: {height};--width: {width};--shadow: { shadow };--shadow-h: { shadowHover };--shadow-a: { shadowActive };--margin: {margin};--padding: {padding}">
 		<span>
 			<slot></slot>
 		</span>	
@@ -172,11 +174,11 @@
 		font-weight: normal
 		color: var(--color)
 		font-size: var(--font-size)
-		height: var(--height)
 		width: var(--width)
+		height: var(--height)
 		max-width: 100%
 		margin: var(--margin)
-		padding: 0 8px
+		padding: var(--padding)
 		position: relative
 		border-radius: var(--radius)
 		cursor: pointer
@@ -185,6 +187,7 @@
 		background-color: rgba(var(--bg-color), var(--opacity))
 		overflow: hidden
 		font-family: Roboto, sans-serif
+		font-weight: 500
 		box-shadow: var(--shadow)
 		-webkit-touch-callout: none
 		-webkit-user-select: none
@@ -213,7 +216,7 @@
 		width: 100%
 		display: flex
 		align-items: center
-		justify-content: center
+		justify-content: flex-start
 		margin: 0
 		padding: 0
 		z-index: 1

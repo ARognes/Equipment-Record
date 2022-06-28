@@ -29,16 +29,17 @@ import { writable } from "svelte/store";
 
   #errorMsg 
     position: absolute
-    color: #a00
+    color: #d00
     font-weight: bold
-    padding: 0 2px
+    padding: 2px 4px
 
   #errorMsg-active
     position: absolute
     color: white
     font-weight: bold
     background-color: #f00
-    padding: 0 2px
+    border-radius: 4px
+    padding: 2px 4px
 
 
 
