@@ -44,6 +44,7 @@
     "compressorjs": "^1.1.1",
     "cookie": "^0.4.2",
     "dotenv": "^16.0.1",
-    "encrypt-storage": "^2.2.6"
+    "encrypt-storage": "^2.2.6",
+    "friendly-challenge": "^0.9.4"
   }
 }

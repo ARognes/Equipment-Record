@@ -3,6 +3,7 @@
   import TextField from '$lib/components/materialish/TextField.svelte'
   import ErrorMsg from '$lib/components/ErrorMsg.svelte'
   import Loading from '$lib/components/materialish/Loading.svelte'
+	import Captcha from '$lib/components/Captcha.svelte'
   import { auth } from '$lib/Auth/auth'
   import { writable } from 'svelte/store'
   import EmailSVG from '$lib/assets/email.svg'
@@ -45,16 +46,21 @@
 	<h1>Forgot</h1>
 
 
-	{#if !sent }
-		<TextField label="Username or email" on:keypress={ () => {} } on:input={ e => value = e.currentTarget.value } startFocus><EmailSVG /></TextField>
-	{:else}
-		<h1>Sent!</h1>
-	{/if}
+
+		{#if !sent }
+			<TextField label="Username or email" on:keypress={ () => {} } on:input={ e => value = e.currentTarget.value } startFocus><EmailSVG /></TextField>
+		{:else}
+			<h1>Sent!</h1>
+		{/if}
+
+		<!-- <div bind:this={captcha} class="frc-captcha" data-sitekey="FCMJTEBHUU20DHJ9"></div> -->
+		<Captcha />
+
 
 
 
 	<Button on:click={ passwordResetEmail } bgColor="255, 14, 25" width="100%">Send confirmation</Button>
-	<Button mode="link" href="/" bgColor="255, 14, 25">Back</Button>
+	<Button mode="link" noPrefetch href="/" bgColor="255, 14, 25">Back</Button>
 
 	<ErrorMsg {errorMsg} />
 

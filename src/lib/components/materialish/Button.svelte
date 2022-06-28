@@ -29,7 +29,7 @@
 						 margin = '10px 0',
 						 padding = '0 8px',
 						 href='',
-						 noPrefetch = null
+						 noPrefetch = false
 
 	if (mode === 'outline') {
 		color = '#000'

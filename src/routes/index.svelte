@@ -82,11 +82,7 @@
 </script>
 
 <!-- Auth status unknown -->
-{#if $auth === undefined}
-  Checking auth status &hellip
-  <Loading loading/>
 
-{:else if $auth === null} <!-- No auth found, register/sign in -->
 
   <div id="auth">
     <Button mode="link" href="https://app.equipment-record.com" noPrefetch={true}>Link to main page</Button>
@@ -101,6 +97,7 @@
       {/if}
     </TextField>
     <Button mode="link" href="/forgot" margin="0 0 10px 0">Forgot password?</Button>
+
 
     <br>
 
@@ -119,11 +116,6 @@
 
 
 
-{:else} <!-- Auth found, Logged in  -->
-
-  <button on:click={ () => auth.signOut() }>Sign Out</button>{ $auth.displayName } ({ $auth.email })
-
-{/if}
 
 <style lang="sass">
 
