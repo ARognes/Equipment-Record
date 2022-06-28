@@ -10,13 +10,14 @@
 
 
 	let value = ''
-	let sent = false, loading = false
+	let sent = false, loading = false, verified = false
 	let errorMsg = writable('')
 
 	async function passwordResetEmail() {
 		loading = true
 		try {
 			if (value.length <= 3 || !isEmail(value)) throw 'Please enter a valid email'
+			if (!verified) throw 'Please verify that you are a human'
 			
 			try {	await auth.passwordResetEmail(value) }
 			catch(e) { throw 'Email not linked to an account'}
@@ -37,6 +38,20 @@
 
 	$: if ($auth) {}
 
+	function captcha(verification) {
+		console.log(verification)
+		if (!verification.success) {
+			$errorMsg = 'Bots are not allowed on this site'
+			// Redirect
+		}
+
+		verified = true
+	}
+
+	function captchaError(error) {
+		console.log(error)
+	}
+
 </script>
 
 <div id="forgot">
@@ -54,7 +69,7 @@
 		{/if}
 
 		<!-- <div bind:this={captcha} class="frc-captcha" data-sitekey="FCMJTEBHUU20DHJ9"></div> -->
-		<Captcha />
+		<Captcha {captcha} {captchaError} />
 
 
 

@@ -1,33 +1,33 @@
 <script lang="ts">
 
 import { WidgetInstance } from 'friendly-challenge'
+import { page } from '$app/stores'
 import { onMount } from 'svelte'  
   
-let captcha: HTMLDivElement
+const SITE_KEY = import.meta.env.VITE_FRIENDLY_CAPTCHA_SITE_KEY
 
-export let done = async (solution: string) => {
-	console.log('Solution:', solution)
+let divCaptcha: HTMLDivElement
 
-  await fetch('/friendlyCaptcha', {
+export let captcha = (verification) => {}, captchaError = (er) => {}
+
+async function done(solution: string) {
+  console.log(solution)
+  let verificationRes = await fetch(`//${ $page.url.host }/endpoints/friendlyCaptcha`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: {
-      solution: solution
-    }
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json' },
+    body: `{"solution":"${ solution }", "sitekey": "${ SITE_KEY }"}`
   })
-}
 
-export let error = (error: any) => {
-	console.error(error)
+  const verification = await verificationRes.json()
+  captcha(verification)
 }
 
 onMount(() => {
-  const widget = new WidgetInstance(captcha, {
+  const widget = new WidgetInstance(divCaptcha, {
   startMode: 'auto',
   doneCallback: done,
-  errorCallback: error,
+  errorCallback: captchaError,
 })
 
 return widget.destroy
@@ -36,7 +36,7 @@ return widget.destroy
 
 </script>
 
-<div bind:this={ captcha } class="frc-captcha" data-sitekey="FCMJTEBHUU20DHJ9" />
+<div bind:this={ divCaptcha } class="frc-captcha" data-sitekey={ SITE_KEY } />
 
 <style lang="sass">
 
