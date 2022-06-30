@@ -86,8 +86,8 @@
   <Button mode="link" noPrefetch href="https://google.com">Equipment-Record</Button>
   <h1>Register</h1>
 
-  <TextField label="Email*" on:keypress={ enterRegister } on:input={ e => email = e.currentTarget.value } startFocus><EmailSVG /></TextField>
-  <TextField label="Username*" on:keypress={ enterRegister } on:input={ e => username = e.currentTarget.value } ><AccountSVG /></TextField>
+  <TextField label="Email*" on:keypress={ enterRegister } on:input={ e => email = e.currentTarget.value }><EmailSVG /></TextField>
+  <TextField label="Username*" on:keypress={ enterRegister } on:input={ e => username = e.currentTarget.value }><AccountSVG /></TextField>
   <TextField label="Password*" type={ viewPassword ? 'text' : 'password' } on:keypress={ enterRegister } on:input={ e => password = e.currentTarget.value } bind:focus={ passwordFocus }>
     {#if viewPassword} 
       <div on:click={ () => viewPassword = !viewPassword } ><ViewSVG /></div>
@@ -119,7 +119,7 @@
 
   <ErrorMsg {errorMsg} />
 
-  <div style='height: 50vh' />
+  <div style='height: 25vh' />
 
 </div>
 

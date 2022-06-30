@@ -47,19 +47,13 @@
   <Button mode="link" href="https://app.equipment-record.com" noPrefetch={true}>Link to main page</Button>
 
 	<h1>Forgot</h1>
-
-
-
 		{#if !sent }
-			<TextField label="Username or email" on:keypress={ () => {} } on:input={ e => value = e.currentTarget.value } startFocus><EmailSVG /></TextField>
+			<TextField label="Username or email" on:keypress={ () => {} } on:input={ e => value = e.currentTarget.value }><EmailSVG /></TextField>
 		{:else}
 			<h1>Sent!</h1>
 		{/if}
 
-		<!-- <div bind:this={captcha} class="frc-captcha" data-sitekey="FCMJTEBHUU20DHJ9"></div> -->
 		<Captcha {captcha} />
-
-
 
 
 	<Button on:click={ passwordResetEmail } bgColor="255, 14, 25" width="100%">Send confirmation</Button>

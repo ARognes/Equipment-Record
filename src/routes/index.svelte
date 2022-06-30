@@ -88,7 +88,7 @@
     <Button mode="link" noPrefetch href="https://google.com">Equipment-Record</Button>
     <h1>Sign in</h1>
 
-    <TextField label="Username or email" on:keypress={ enterSignIn } on:input={ e => username = e.currentTarget.value } startFocus><AccountSVG /></TextField>
+    <TextField label="Username or email" on:keypress={ enterSignIn } on:input={ e => username = e.currentTarget.value }><AccountSVG /></TextField>
     <TextField label="Password" type={ viewPassword ? 'text' : 'password' } on:keypress={ enterSignIn } on:input={ e => password = e.currentTarget.value }>
       {#if viewPassword} 
         <div on:click={ () => viewPassword = !viewPassword } ><ViewSVG /></div>

@@ -126,8 +126,10 @@ $grid-gaps: 4px
 #searchItems
 	position: relative
 	display: block
-	height: calc(100% - 100px)
+	left: 0
 	top: 0
+	width: 100%
+	height: calc(100vh - 100px)
 	overflow-y: auto
 	overflow-x: hidden
 
