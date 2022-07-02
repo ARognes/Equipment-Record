@@ -1,10 +1,10 @@
 <script lang="ts">
   import ErrorMsg from '$lib/components/ErrorMsg.svelte'
-  import { auth } from '$lib/Auth/auth'
+	import { signInWith, signOut } from '$lib/firebase-client'
+
   import { writable } from 'svelte/store'
   import { goto } from '$app/navigation'
-  import { getIdTokenResult } from 'firebase/auth'
-  import { session } from '$lib/storage'
+  import { userStore } from '$lib/storage'
   import Button from '$lib/components/materialish/Button.svelte'
   import Loading from '$lib/components/materialish/Loading.svelte'
   import TextField from '$lib/components/materialish/TextField.svelte'
@@ -28,8 +28,8 @@
       
       loading = true
       
-      if (isEmail(username)) await auth.signInEmail(username, password)
-      else await auth.signInUsername(username, password)
+      // if (isEmail(username)) await auth.signInEmail(username, password)
+      // else await auth.signInUsername(username, password)
       console.log('login')
     }
     catch (e) { 
@@ -42,7 +42,8 @@
   async function loginGoogle() {
     try {
       loading = true
-      await auth.signInGoogle()
+      // await auth.signInGoogle()
+      await signInWith('google')
     }
     catch (e) { 
       $errorMsg = ""
@@ -63,17 +64,11 @@
   }
 
   $: {
-    if ($auth) {
-      (async () => {
-
-        const token = await getIdTokenResult($auth)
-        session.clear()
-        session.setItem('accessLevel', token?.claims?.accessLevel || 0)
-        goto('/on/home')
-      })()
+    if ($userStore) {
+      goto('/on/home')
+      console.log('Signed in:', $userStore)
     }
   }
-
   
   function enterSignIn(e) {
     if (e.key === 'Enter') loginEmail()

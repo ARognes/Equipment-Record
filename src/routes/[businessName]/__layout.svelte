@@ -1,8 +1,32 @@
-<script lang="ts">
-	import { auth } from '$lib/Auth/auth'
-  import { goto } from '$app/navigation'
+<script context="module" lang="ts">
+	import { UNPROTECTED_PAGES } from '$lib/constants-clients'
+	import { initializeFirebase } from '$lib/firebase-client'
+	// import { getDocuments } from '$lib/firebase-server'
+	import type { Load } from '@sveltejs/kit'
 	import { browser } from '$app/env'
-	import { app } from '$lib/app'
+
+	export const load: Load = async function load({ session, url }) {
+
+		// Ensure user is logged in
+		if (!session.user && !UNPROTECTED_PAGES.has(url.pathname)) return { redirect: '/', status: 302 } 
+
+		// Ensure user is in correct business namespace
+		console.log(session.user)
+		if (!browser) {
+			// const userDoc = await getDocuments('users', session.user.uid)
+
+			return {}
+		}
+
+		try { initializeFirebase(session.firebaseClientConfig) } 
+    catch (ex) { console.error(ex) }
+		return {}
+	}
+</script>
+
+
+<script lang="ts">
+  import { goto } from '$app/navigation'
 	import { getDoc, doc, getFirestore } from 'firebase/firestore/lite'
 	import { writable } from 'svelte/store'
 	import { setContext } from 'svelte'
@@ -13,30 +37,32 @@
 	setContext('userData', userDataStore)
 
 	
-	$: { 
-		(async () => {
-			try {
-				if (!$auth) return await goto('/')
-				if (!browser || $userDataStore) return
+	// $: { 
+	// 	(async () => {
+	// 		try {
+	// 			if (!$auth) return await goto('/')
+	// 			if (!browser || $userDataStore) return
 				
-				const db = getFirestore(app)
-				const userRef = doc(db, 'users', $auth?.displayName)
-				const userDoc = await getDoc(userRef)
+	// 			// Get user doc
+	// 			const db = getFirestore(app)
+	// 			const userRef = doc(db, 'users', $auth?.displayName)
+	// 			const userDoc = await getDoc(userRef)
 				
-				const userData = userDoc?.data()
-				userData.displayName = userRef.id
+	// 			const userData = userDoc?.data()
+	// 			userData.displayName = userRef.id
 			
-				userData.accessLevel = session.getItem('accessLevel') || 0
+	// 			userData.accessLevel = session.getItem('accessLevel') || 0
 
-				if (!userData) await goto('/business')
-				userDataStore.set(userData)
+	// 			// If no user data, assign to business
+	// 			if (!userData) await goto('/business')
+	// 			userDataStore.set(userData)
 
-				if (session.getItem('businessID') === $userDataStore.businessID) return
-				session.setItem('businessID', $userDataStore.businessID)
-			}
-			catch (e) { console.error(e) }
-		})()
-	}
+	// 			if (session.getItem('businessID') !== $userDataStore.businessID) 
+	// 				session.setItem('businessID', $userDataStore.businessID)
+	// 		}
+	// 		catch (e) { console.error(e) }
+	// 	})()
+	// }
 
 </script>
 

@@ -9,7 +9,7 @@ import { browser } from '$app/env'
 import { getDoc as getDocFB, getDocs, getFirestore, where, query, doc, collection, updateDoc as updateDocFB, addDoc as addDocFB } from 'firebase/firestore/lite'
 import { getBytes, getStorage, ref } from 'firebase/storage'
 import { session } from '$lib/storage'
-import { app } from '$lib/app'
+// import { app } from '$lib/app'
 import { encode } from 'base64-arraybuffer'
 import { log, error } from '$lib/logging'
 
@@ -41,7 +41,7 @@ export async function allDocs(businessID: string, col: string) {
   if (allDocs) return allDocs
   
   try {
-    const db = getFirestore(app)
+    const db = null // getFirestore(app)
     const queryDocs = await getDocs(query(collection(db, col),
                                     where('businessID', '==', businessID)))
     
@@ -68,7 +68,7 @@ export async function queryDocs(businessID: string, col: string, wheres: any) {
   // if (allDocs) return allDocs
   
   try {
-    const db = getFirestore(app)
+    const db = null // getFirestore(app)
     const queryDocs = await getDocs(query(collection(db, col),
                                     where('businessID', '==', businessID),
                                     ...wheres))
@@ -94,7 +94,7 @@ export async function getSRC(equipment, tiny: boolean, i: number): Promise<strin
   let img: string = null
 
   try {
-    const storage = getStorage(app)
+    const storage = null // getStorage(app)
     log('Downloading Image')
 
     const bytes = await getBytes(ref(storage, `${ equipment.businessID }/equipment/${ equipment.id }${tiny ? '/tiny_img_' : '/img_'}${ equipment.imageOrder[i] }`))
@@ -111,7 +111,7 @@ export async function allSRC(equipment, tiny: boolean): Promise<String[]> {
   let imgs: string[] = []
 
   try {
-    const storage = getStorage(app)
+    const storage = null // getStorage(app)
     log('Downloading Image')
     
     for (let i in equipment.imageOrder) {
@@ -128,7 +128,7 @@ export async function updateDoc(col: string, id: string, fields) {
   if (!browser) return null
 
   try {
-    const db = getFirestore(app)
+    const db = null // getFirestore(app)
     const ref = await updateDocFB(doc(db, col, id), fields)
     log(`Firestore Update 1 write`)
     return ref
@@ -141,7 +141,7 @@ export async function addDoc(col: string, fields) {
   if (!browser) return null
 
   try {
-    const db = getFirestore(app)
+    const db = null // getFirestore(app)
     const ref = await addDocFB(collection(db, col), fields)
     log(`Firestore Add 1 write`)
     return ref
@@ -158,7 +158,7 @@ export async function changeName(id: string, name: string) {
   let allDocs = null
 
   try {
-    const db = getFirestore(app)
+    const db = null // getFirestore(app)
     const queryDocs = await getDocs(query(collection(db, 'assignments'),
                                     where('equipmentID', '==', id)))
     

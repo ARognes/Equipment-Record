@@ -15,7 +15,7 @@ const createAuth = () => {
       // Send auth to browser
       // $: $auth  <- use to access from client ts
       if (browser) {
-        const { app } = await import('../app')
+        const app = null
         const { getAuth, onAuthStateChanged } = await import('firebase/auth')
         auth = getAuth(app)
 
@@ -30,7 +30,7 @@ const createAuth = () => {
   async function register(username: string, email: string, password: string) {
     const { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } = await import('firebase/auth')
     const { getDoc, doc, setDoc, serverTimestamp, getFirestore } = await import('firebase/firestore/lite')
-    const { app } = await import('../app')
+    const app = null
     
     // Get captcha
     // if (!grecaptcha.getResponse().length) return errorLog.innerText = 'Please verify with reCAPTCHA'
@@ -77,7 +77,7 @@ const createAuth = () => {
   async function signInUsername(username: string, password: string) {
     const { setPersistence, browserLocalPersistence, signInWithEmailAndPassword } = await import('firebase/auth')
     const { getDoc, doc, getFirestore } = await import('firebase/firestore/lite')
-    const { app } = await import('../app')
+    const app = null
 
     // Get user from firestore
     const db = getFirestore(app)

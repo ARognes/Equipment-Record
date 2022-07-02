@@ -2,7 +2,6 @@
 	import { auth } from '$lib/Auth/auth'
   import { goto } from '$app/navigation'
 	import { browser } from '$app/env'
-	import { app } from '$lib/app'
 	import { getDoc, doc, getFirestore } from 'firebase/firestore/lite'
 	import { writable } from 'svelte/store'
 	import { setContext } from 'svelte'
@@ -12,30 +11,30 @@
 	setContext('userData', userDataStore)
 
 	
-	$: { 
-		(async () => {
-			try {
-				if (!$auth) return await goto('/')
-				if (!browser || $userDataStore) return
+	// $: { 
+	// 	(async () => {
+	// 		try {
+	// 			if (!$auth) return await goto('/')
+	// 			if (!browser || $userDataStore) return
 				
-				const db = getFirestore(app)
-				const userRef = doc(db, 'users', $auth?.displayName)
-				const userDoc = await getDoc(userRef)
+	// 			const db = getFirestore(app)
+	// 			const userRef = doc(db, 'users', $auth?.displayName)
+	// 			const userDoc = await getDoc(userRef)
 				
-				const userData = userDoc?.data()
-				userData.displayName = userRef.id
+	// 			const userData = userDoc?.data()
+	// 			userData.displayName = userRef.id
 			
-				userData.accessLevel = session.getItem('accessLevel') || 0
+	// 			userData.accessLevel = session.getItem('accessLevel') || 0
 
-				if (!userData) await goto('/business')
-				userDataStore.set(userData)
+	// 			if (!userData) await goto('/business')
+	// 			userDataStore.set(userData)
 
-				if (session.getItem('businessID') === $userDataStore.businessID) return
-				session.setItem('businessID', $userDataStore.businessID)
-			}
-			catch (e) { console.error(e) }
-		})()
-	}
+	// 			if (session.getItem('businessID') === $userDataStore.businessID) return
+	// 			session.setItem('businessID', $userDataStore.businessID)
+	// 		}
+	// 		catch (e) { console.error(e) }
+	// 	})()
+	// }
 
 </script>
 
