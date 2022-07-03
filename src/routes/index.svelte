@@ -3,8 +3,6 @@
 
 	export const load: Load = async function load({ session }) {
 
-    console.log('/ SESSION', session !== null)
-
     // If user is logged in, reroute
     if (session.user) return { redirect: '/on/home', status: 302 } 
 
@@ -15,11 +13,9 @@
 
 <script lang="ts">
   import ErrorMsg from '$lib/components/ErrorMsg.svelte'
-	import { signInWith } from '$lib/firebase-client'
+	import { signInGoogle, signInEmail, signInUsername } from '$lib/firebase-client'
 
   import { writable } from 'svelte/store'
-  import { goto } from '$app/navigation'
-  import { userStore } from '$lib/storage'
   import Button from '$lib/components/materialish/Button.svelte'
   import Loading from '$lib/components/materialish/Loading.svelte'
   import TextField from '$lib/components/materialish/TextField.svelte'
@@ -28,7 +24,6 @@
   import ViewSVG from '$lib/assets/view.svg'
   import HideSVG from '$lib/assets/hide.svg'
   import GoogleSVG from '$lib/assets/google.svg'
-import { browser } from '$app/env';
 
   const errorMsg = writable('')
   
@@ -44,9 +39,8 @@ import { browser } from '$app/env';
       
       loading = true
       
-      // if (isEmail(username)) await auth.signInEmail(username, password)
-      // else await auth.signInUsername(username, password)
-      console.log('login')
+      if (isEmail(username)) await signInEmail(username, password)
+      else await signInUsername(username, password)
     }
     catch (e) { 
       $errorMsg = ""
@@ -58,8 +52,7 @@ import { browser } from '$app/env';
   async function loginGoogle() {
     try {
       loading = true
-      // await auth.signInGoogle()
-      await signInWith('google')
+      await signInGoogle()
     }
     catch (e) { 
       $errorMsg = ""
@@ -78,12 +71,6 @@ import { browser } from '$app/env';
   function isEmail(email: string): boolean {
     return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
   } 
-
-  $: if ($userStore && browser) {
-    console.log('Now moving to home')
-    // goto('/on/home') 
-    // location.reload()
-  }
   
   function enterSignIn(e) {
     if (e.key === 'Enter') loginEmail()

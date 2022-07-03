@@ -1,8 +1,4 @@
 <script lang="ts">
-	// import { auth } from '$lib/Auth/auth'
-	// import { getContext } from 'svelte'
-
-	// const userDataStore = getContext('userData')
 
 </script>
 

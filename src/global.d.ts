@@ -45,7 +45,6 @@ declare namespace App {
 
 	interface Session {
 		user: UserSession | undefined
-		firebaseClientConfig: FirebaseOptions
 	}
 
 	// interface Stuff {}

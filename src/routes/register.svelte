@@ -1,9 +1,22 @@
+<script context="module" lang="ts">
+	import type { Load } from '@sveltejs/kit'
+
+	export const load: Load = async function load({ session }) {
+
+    // If user is logged in, reroute
+    if (session.user) return { redirect: '/on/home', status: 302 } 
+
+		return {}
+	}
+
+</script>
+
 <script lang="ts">
   import Loading from '$lib/components/materialish/Loading.svelte'
   import ErrorMsg from '$lib/components/ErrorMsg.svelte'
-  import { auth } from '$lib/Auth/auth'
   import { writable } from 'svelte/store'
   import Captcha from '$lib/components/Captcha.svelte'
+  import { signInGoogle, register } from '$lib/firebase-client'
 
   import GoogleSVG from '$lib/assets/google.svg'
   import AccountSVG from '$lib/assets/account.svg'
@@ -20,16 +33,16 @@
   let viewPassword = false
   
   let loading = false
-  let verified = false
+  let verified = true // false
   let username = ""
   let email = ""
   let password = ""
   let confirmPassword = ""
 
-  async function loginGoogle() {
+  async function registerGoogle() {
     try {
       loading = true
-      await auth.signInGoogle()
+      await signInGoogle()
     }
     catch (e) { 
       $errorMsg = ''
@@ -48,7 +61,7 @@
       if (password !== confirmPassword) throw "Your passwords do not match"
       if (!verified) throw "Captcha must finish human verification"
 
-      await auth.register(username, email, password)
+      await register(username, email, password)
 
     }
     catch (e) { 
@@ -69,8 +82,6 @@
   function isEmail(email: string): boolean {
     return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
   }
-
-  $: if ($auth) {}
 
   function enterRegister(e) {
     if (e.key === 'Enter') validateRegistration()
@@ -108,11 +119,11 @@
   <span class="div-requirements">
     <span class={ `transition ${ (!confirmPasswordFocus || confirmPassword === password || !confirmPassword.length) ? 'hide' : ''}` } >Passwords do not match</span> 
   </span>
-  <Captcha {captcha} />
+  <!-- <Captcha {captcha} /> -->
 
   <Button on:click={ validateRegistration } bgColor="255, 14, 25" width="100%">Register</Button>
 
-  <Button on:click={ loginGoogle } bgColor="66, 133, 244" width="100%" padding="0"><GoogleSVG /><p style="margin-left: 11px">Sign up with Google</p></Button>
+  <Button on:click={ registerGoogle } bgColor="66, 133, 244" width="100%" padding="0"><GoogleSVG /><p style="margin-left: 11px">Sign up with Google</p></Button>
 
   Already have an account? <Button mode="link" noPrefetch href="/">Sign in</Button>
 
@@ -124,6 +135,7 @@
 </div>
 
 <Loading {loading} />
+
 
 <style lang="sass">
 

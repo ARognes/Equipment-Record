@@ -1,3 +1,4 @@
+
 <script context="module" lang="ts">
 	import { UNPROTECTED_PAGES } from '$lib/constants-clients'
 	import { initializeFirebase } from '$lib/firebase-client'
@@ -6,7 +7,7 @@
 
 	export const load: Load = async function load({ session, url }) {
 
-		console.log('/on/ SESSION', session !== null)
+		console.log(session)
 
 		// Ensure user is logged in
 		if (!session.user && !UNPROTECTED_PAGES.has(url.pathname)) return { redirect: '/', status: 302 } 
@@ -20,16 +21,11 @@
 
 </script>
 
-
 <script lang="ts">
 	import Navbar from '$lib/components/Navbar.svelte'
-	import { userStore } from '$lib/storage'
+	import { session } from '$app/stores'
+	$session  // Has to be initialized here to work in client firebase.ts
 
-	export let user
-
-	$userStore = user
-
-	console.log(user, $userStore)
 
 </script>
 

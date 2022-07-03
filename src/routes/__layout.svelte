@@ -16,13 +16,8 @@
 
 
 <script lang="ts">
-	import { userStore } from '$lib/storage'
-
-	export let user
-
-	$userStore = user
-
-	console.log(user, $userStore)
+	import { session } from '$app/stores'
+	$session  // Has to be initialized here to work in client firebase.ts
 
 </script>
 

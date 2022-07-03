@@ -10,11 +10,8 @@ export const getSession: GetSession = async (event) => {
 	const locals = event.locals
 	const decodedToken: DecodedIdToken | null = locals.decodedToken
 
-	console.log('session was requested!')
-
 	if (decodedToken) {
 		const { uid, name, email, accessLevel } = decodedToken
-
 		const userDoc = await getDoc('users', name)
 
 		return {
@@ -31,11 +28,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.decodedToken = await decodeToken(cookies.token)
 	const response = await resolve(event)
 
-	console.log(cookies.token, event.locals.decodedToken)
-
 	// Trying to access a protected page directly while not logged in, send to login
 	if (!event.locals.decodedToken && !UNPROTECTED_PAGES.has(event.url.pathname)) {
-		console.log('reroute to login')
 		response.headers.set('Location', '/')
 		response.headers.set('status', '302')
 	}

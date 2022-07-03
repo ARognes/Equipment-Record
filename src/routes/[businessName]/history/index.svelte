@@ -1,30 +1,14 @@
 <script lang="ts">
 
-	let assignmentData = []
-
 </script>
-
 
 <header>
 	<h1>History</h1>
 </header>
 
-<div id="menu">
 
-	{#if assignmentData}
-		{#each assignmentData as assignment (assignment.id)}
-			<div class={ assignment.nextAssignment ? 'old' : 'current' }>
-				<p>{ assignment.equipmentName }</p>
-				<p>{ assignment.username }</p>
-				<p>{ assignment.projectName }</p>
-				<p>{ assignment.createdAt }</p>
-				{#if assignment.lastProjectID}
-					<p>{ assignment.lastProjectName }</p>
-					<p>{ assignment.lastUsername }</p>
-				{/if}
-			</div>
-		{/each}
-	{/if}
+<div id="menu">
+	TODO
 </div>
 
 
@@ -45,6 +29,13 @@ header
 		text-size: 30px
 		text-align: center
 
+	button
+		position: absolute
+		left: 5px
+		top: 5px
+		width: 50px
+		height: 50px
+
 #settings
 	left: calc(100% - 55px)
 
@@ -53,9 +44,7 @@ header
 	position: relative
 	top: 0
 	left: 5%
-	width: 100vw
-	height: calc(100vh - 100px)
-	overflow-y: auto
+	width: 90%
 
 	button
 		display: block
@@ -73,13 +62,5 @@ header
 
 		&:active
 			background-color: #c00
-
-	.old
-		font-size: 10px
-		background-color: #fff
-
-	.current
-		font-size: 10px
-		background-color: #afa
 
 </style>

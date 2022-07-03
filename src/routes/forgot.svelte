@@ -4,22 +4,22 @@
   import ErrorMsg from '$lib/components/ErrorMsg.svelte'
   import Loading from '$lib/components/materialish/Loading.svelte'
 	import Captcha from '$lib/components/Captcha.svelte'
-  import { auth } from '$lib/Auth/auth'
   import { writable } from 'svelte/store'
   import EmailSVG from '$lib/assets/email.svg'
+	import { passwordResetEmail } from '$lib/firebase-client'
 
 
 	let value = ''
 	let sent = false, loading = false, verified = false
 	let errorMsg = writable('')
 
-	async function passwordResetEmail() {
+	async function sendPasswordResetEmail() {
 		loading = true
 		try {
 			if (value.length <= 3 || !isEmail(value)) throw 'Please enter a valid email'
 			if (!verified) throw 'Captcha must finish human verification'
 			
-			try {	await auth.passwordResetEmail(value) }
+			try {	await passwordResetEmail(value) }
 			catch(e) { throw 'Email not linked to an account'}
 
 			sent = true
@@ -36,8 +36,6 @@
     return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
   }
 
-	$: if ($auth) {}
-
 	function captcha() { verified = true }
 
 </script>
@@ -50,13 +48,13 @@
 		{#if !sent }
 			<TextField label="Username or email" on:keypress={ () => {} } on:input={ e => value = e.currentTarget.value }><EmailSVG /></TextField>
 		{:else}
-			<h1>Sent!</h1>
+			<h1>Email sent!</h1>
 		{/if}
 
 		<Captcha {captcha} />
 
 
-	<Button on:click={ passwordResetEmail } bgColor="255, 14, 25" width="100%">Send confirmation</Button>
+	<Button on:click={ sendPasswordResetEmail } bgColor="255, 14, 25" width="100%">Send confirmation</Button>
 	<Button mode="link" noPrefetch href="/" bgColor="255, 14, 25">Back</Button>
 
 	<ErrorMsg {errorMsg} />

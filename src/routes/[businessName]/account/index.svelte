@@ -1,14 +1,13 @@
 <script lang="ts">
-import { signOut } from "$lib/firebase-client";
+import Button from '$lib/components/materialish/Button.svelte'
+import { signOut } from "$lib/firebase-client"
 
-
-	// $: console.log('b', $userDataStore)
 
 </script>
 
 <header>
 	<h1>Account</h1>
-	<a sveltekit:prefetch href="/on/settings"><button id="settings">Settings</button></a>
+	<Button mode="link" href="/on/settings">Settings</Button>
 </header>
 
 <div id="menu">
@@ -16,8 +15,11 @@ import { signOut } from "$lib/firebase-client";
 	<button>Nothing</button>
 	<button>Nothing</button>
 	<button>Nothing</button>
-
-	<button id="sign-out" on:click={ signOut }>Sign out</button>
+	<Button on:click={ signOut } bgColor="255, 14, 25" width="100%" >Sign out</Button>
+	<p>name: { $session.user?.name || '' }</p>
+	<p>email: { $session.user?.email || '' }</p>
+	<p>businessName: { $session.user?.businessName || '' }</p>
+	<p>accessLevel: { $session.user?.accessLevel || '' }</p>
 </div>
 
 
@@ -26,6 +28,7 @@ header
 	background-color: #bbb
 	margin: 0
 	height: 60px
+	display: flex
 
 	h1
 		margin: 0
@@ -35,12 +38,6 @@ header
 		width: 50%
 		text-align: center
 
-	button
-		position: absolute
-		left: 5px
-		top: 5px
-		width: 50px
-		height: 50px
 
 #settings
 	left: calc(100% - 55px)
@@ -62,9 +59,6 @@ header
 		
 		&:active
 			background-color: #bbb
-
-	#sign-out
-		background-color: red
 
 		&:active
 			background-color: #c00
