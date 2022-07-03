@@ -1,51 +1,49 @@
-<script lang="ts">
-	import { auth } from '$lib/Auth/auth'
-  import { goto } from '$app/navigation'
+<script context="module" lang="ts">
+	import { UNPROTECTED_PAGES } from '$lib/constants-clients'
+	import { initializeFirebase } from '$lib/firebase-client'
+	import type { Load } from '@sveltejs/kit'
 	import { browser } from '$app/env'
-	// import { app } from '$lib/app'
-	import { getDoc, doc, getFirestore } from 'firebase/firestore/lite'
-	import { writable } from 'svelte/store'
-	import { setContext } from 'svelte'
 
-	const userDataStore = writable(null)
-	setContext('userData', userDataStore)
+	export const load: Load = async function load({ session, url }) {
 
-	// $auth will change from undefined to null, then to an object. Don't reroute on first pass
-	let firstPass = true
-	
-	// $: { 
-	// 	(async () => {
-	// 		try {
-	// 			if (!browser) return
-	// 			if (!$auth) {
-	// 				if (!firstPass) await goto('/')
-	// 				firstPass = false
-	// 				return
-	// 			}
+		// Ensure user is logged in
+		if (!session.user && !UNPROTECTED_PAGES.has(url.pathname)) return { redirect: '/', status: 302 } 
 
-	// 			if ($userDataStore) return
-				
-	// 			const db = getFirestore(app)
-	// 			const userRef = doc(db, 'users', $auth?.displayName)
-	// 			const userDoc = await getDoc(userRef)
-				
-	// 			const userData = userDoc?.data()
-	// 			userData.uid = userRef.id
+		if (!browser) return { props: { user: session.user } }
 
-	// 			userDataStore.set(userData)
-	// 			if (!$userDataStore) await goto('/business')
-	// 		}
-	// 		catch (e) { console.error(e) }
+		try { initializeFirebase() } 
+    catch (ex) { console.error(ex) }
+		return { props: { user: session.user } }
+	}
 
-	// 	})()
-	// }
-	
 </script>
+
+
+<script lang="ts">
+	import { userStore } from '$lib/storage'
+
+	export let user
+
+	$userStore = user
+
+	console.log(user, $userStore)
+
+</script>
+
+
+<svelte:head>
+	<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+	<link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Roboto">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+</svelte:head>
+
 
 <slot />
 
 
-<style>
+<style lang="sass">
+	:root 
+		font-family: 'Roboto', sans-serif
+	
+	</style>
 
-
-</style>

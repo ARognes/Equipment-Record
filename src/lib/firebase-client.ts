@@ -27,6 +27,7 @@ import { readable } from 'svelte/store'
 import { browser } from '$app/env'
 import type { AnyObject } from 'AppModule'
 import { FIREBASE_CLIENT_CONFIG } from './constants-clients'
+import { goto } from '$app/navigation'
 
 async function setToken(token: string) {
 	const options = {
@@ -49,23 +50,16 @@ function listenForAuthChanges() {
 				const IdTokenResult = await getIdTokenResult(user)
 				await setToken(IdTokenResult.token)
 
-				// if (userStore) return
-
-				// Get user doc client side, wrap this in function later
-				// const docRef = doc(db, 'users', user.displayName)
-				// const docSnap = await getDoc(docRef)
-				// const { businessName, businessID } = docSnap.data()
-
+				console.log('LOGIN', user)
 				userStore.set({
 					name: user.displayName,
 					email: user.email,
 					uid: user.uid,
 					accessLevel: IdTokenResult.claims.accessLevel,
-					// businessName,
-					// businessID
 				})
 				return
 			}
+
 			await setToken('')
 			userStore.set(undefined)
 		}, 
@@ -155,6 +149,8 @@ export async function signInWith(name: string) {
 export async function signOut() {
 	const auth = getAuth(app)
 	await _signOut(auth)
+	goto('/')
+	location.reload()
 }
 
 export async function deleteDocument(document: Document) {

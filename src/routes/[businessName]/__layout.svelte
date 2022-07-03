@@ -6,6 +6,8 @@
 
 	export const load: Load = async function load({ session, url }) {
 
+		console.log('/on/ SESSION', session !== null)
+
 		// Ensure user is logged in
 		if (!session.user && !UNPROTECTED_PAGES.has(url.pathname)) return { redirect: '/', status: 302 } 
 
@@ -28,7 +30,6 @@
 	$userStore = user
 
 	console.log(user, $userStore)
-
 
 </script>
 

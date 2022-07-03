@@ -1,7 +1,9 @@
 <script context="module" lang="ts">
 	import type { Load } from '@sveltejs/kit'
 
-	export const load: Load = async function load({ session, url }) {
+	export const load: Load = async function load({ session }) {
+
+    console.log('/ SESSION', session !== null)
 
     // If user is logged in, reroute
     if (session.user) return { redirect: '/on/home', status: 302 } 
@@ -77,7 +79,11 @@ import { browser } from '$app/env';
     return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
   } 
 
-  $: if ($userStore && browser) goto('/on/home')
+  $: if ($userStore && browser) {
+    console.log('Now moving to home')
+    // goto('/on/home') 
+    // location.reload()
+  }
   
   function enterSignIn(e) {
     if (e.key === 'Enter') loginEmail()

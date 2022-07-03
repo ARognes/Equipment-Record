@@ -1,13 +1,9 @@
 <script context="module" lang="ts">
-	import { UNPROTECTED_PAGES } from '$lib/constants-clients'
 	import { initializeFirebase } from '$lib/firebase-client'
 	import type { Load } from '@sveltejs/kit'
 	import { browser } from '$app/env'
 
-	export const load: Load = async function load({ session, url }) {
-
-		// Ensure user is logged in
-		if (!session.user && !UNPROTECTED_PAGES.has(url.pathname)) return { redirect: '/', status: 302 } 
+	export const load: Load = async function load({ session }) {
 
 		if (!browser) return { props: { user: session.user } }
 
@@ -27,7 +23,6 @@
 	$userStore = user
 
 	console.log(user, $userStore)
-
 
 </script>
 

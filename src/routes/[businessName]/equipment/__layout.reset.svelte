@@ -1,40 +1,32 @@
-<script lang="ts">
-	import { auth } from '$lib/Auth/auth'
-  import { goto } from '$app/navigation'
+<script context="module" lang="ts">
+	import { UNPROTECTED_PAGES } from '$lib/constants-clients'
+	import { initializeFirebase } from '$lib/firebase-client'
+	import type { Load } from '@sveltejs/kit'
 	import { browser } from '$app/env'
-	import { getDoc, doc, getFirestore } from 'firebase/firestore/lite'
-	import { writable } from 'svelte/store'
-	import { setContext } from 'svelte'
-	import { session } from '$lib/storage'
 
-	const userDataStore = writable(null)
-	setContext('userData', userDataStore)
+	export const load: Load = async function load({ session, url }) {
 
-	
-	// $: { 
-	// 	(async () => {
-	// 		try {
-	// 			if (!$auth) return await goto('/')
-	// 			if (!browser || $userDataStore) return
-				
-	// 			const db = getFirestore(app)
-	// 			const userRef = doc(db, 'users', $auth?.displayName)
-	// 			const userDoc = await getDoc(userRef)
-				
-	// 			const userData = userDoc?.data()
-	// 			userData.displayName = userRef.id
-			
-	// 			userData.accessLevel = session.getItem('accessLevel') || 0
+		// Ensure user is logged in
+		if (!session.user && !UNPROTECTED_PAGES.has(url.pathname)) return { redirect: '/', status: 302 } 
 
-	// 			if (!userData) await goto('/business')
-	// 			userDataStore.set(userData)
+		if (!browser) return { props: { user: session.user } }
 
-	// 			if (session.getItem('businessID') === $userDataStore.businessID) return
-	// 			session.setItem('businessID', $userDataStore.businessID)
-	// 		}
-	// 		catch (e) { console.error(e) }
-	// 	})()
-	// }
+		try { initializeFirebase() } 
+    catch (ex) { console.error(ex) }
+		return { props: { user: session.user } }
+	}
+
+</script>
+
+
+<script lang="ts">
+	import { userStore } from '$lib/storage'
+
+	export let user
+
+	$userStore = user
+
+	console.log(user, $userStore)
 
 </script>
 
@@ -54,3 +46,4 @@
 		font-family: 'Roboto', sans-serif
 	
 	</style>
+

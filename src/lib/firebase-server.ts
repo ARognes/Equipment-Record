@@ -18,10 +18,7 @@ export async function decodeToken(token: string): Promise<DecodedIdToken | null>
 	try {
 		initializeFirebase()
 		return await auth().verifyIdToken(token)
-	} catch (err) {
-		console.log(err)
-		return null
-	}
+	} catch (err) { return null }
 }
 
 export async function getDoc(collectionPath: string, uid: string): Promise<Document> {
