@@ -1,7 +1,6 @@
 <script context="module" lang="ts">
 	import { UNPROTECTED_PAGES } from '$lib/constants-clients'
 	import { initializeFirebase } from '$lib/firebase-client'
-	// import { getDocuments } from '$lib/firebase-server'
 	import type { Load } from '@sveltejs/kit'
 	import { browser } from '$app/env'
 
@@ -10,59 +9,26 @@
 		// Ensure user is logged in
 		if (!session.user && !UNPROTECTED_PAGES.has(url.pathname)) return { redirect: '/', status: 302 } 
 
-		// Ensure user is in correct business namespace
-		console.log(session.user)
-		if (!browser) {
-			// const userDoc = await getDocuments('users', session.user.uid)
+		if (!browser) return { props: { user: session.user } }
 
-			return {}
-		}
-
-		try { initializeFirebase(session.firebaseClientConfig) } 
+		try { initializeFirebase() } 
     catch (ex) { console.error(ex) }
-		return {}
+		return { props: { user: session.user } }
 	}
+
 </script>
 
 
 <script lang="ts">
-  import { goto } from '$app/navigation'
-	import { getDoc, doc, getFirestore } from 'firebase/firestore/lite'
-	import { writable } from 'svelte/store'
-	import { setContext } from 'svelte'
-	import { session } from '$lib/storage'
 	import Navbar from '$lib/components/Navbar.svelte'
+	import { userStore } from '$lib/storage'
 
-	const userDataStore = writable(null)
-	setContext('userData', userDataStore)
+	export let user
 
-	
-	// $: { 
-	// 	(async () => {
-	// 		try {
-	// 			if (!$auth) return await goto('/')
-	// 			if (!browser || $userDataStore) return
-				
-	// 			// Get user doc
-	// 			const db = getFirestore(app)
-	// 			const userRef = doc(db, 'users', $auth?.displayName)
-	// 			const userDoc = await getDoc(userRef)
-				
-	// 			const userData = userDoc?.data()
-	// 			userData.displayName = userRef.id
-			
-	// 			userData.accessLevel = session.getItem('accessLevel') || 0
+	$userStore = user
 
-	// 			// If no user data, assign to business
-	// 			if (!userData) await goto('/business')
-	// 			userDataStore.set(userData)
+	console.log(user, $userStore)
 
-	// 			if (session.getItem('businessID') !== $userDataStore.businessID) 
-	// 				session.setItem('businessID', $userDataStore.businessID)
-	// 		}
-	// 		catch (e) { console.error(e) }
-	// 	})()
-	// }
 
 </script>
 
@@ -76,7 +42,8 @@
 
 <slot />
 
-<Navbar path={ $userDataStore?.businessName }/>
+<!-- <Navbar path={ $userDataStore?.businessName }/> -->
+<Navbar path="on" />
 
 
 <style lang="sass">

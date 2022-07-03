@@ -29,6 +29,8 @@ npm install
 
 firebase login
 
+export GOOGLE_APPLICATION_CREDENTIALS="[./firebase-admin-service-account-credentials.json]"
+
 npm run build/deploy/deploy-debug
 
 ```

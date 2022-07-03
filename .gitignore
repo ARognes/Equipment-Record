@@ -10,3 +10,5 @@
 .firebase
 .svelte-kit
 build
+.gcloud-service-account.json
+gcloud-service-account.json

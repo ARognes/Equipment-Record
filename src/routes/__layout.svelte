@@ -5,20 +5,34 @@
 	import { browser } from '$app/env'
 
 	export const load: Load = async function load({ session, url }) {
-		if (!session.user && !UNPROTECTED_PAGES.has(url.pathname)) return { redirect: '/', status: 302 } 
-		console.log(session.user)
 
-		if (!browser) return {}
-		try { initializeFirebase(session.firebaseClientConfig) } 
+		// Ensure user is logged in
+		if (!session.user && !UNPROTECTED_PAGES.has(url.pathname)) return { redirect: '/', status: 302 } 
+
+		if (!browser) return { props: { user: session.user } }
+
+		try { initializeFirebase() } 
     catch (ex) { console.error(ex) }
-		return {}
+		return { props: { user: session.user } }
 	}
+
+</script>
+
+
+<script lang="ts">
+	import { userStore } from '$lib/storage'
+
+	export let user
+
+	$userStore = user
+
+	console.log(user, $userStore)
+
+
 </script>
 
 <svelte:head>
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
-  <!-- <link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Poppins" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins" /> -->
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Roboto" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto" />
 </svelte:head>

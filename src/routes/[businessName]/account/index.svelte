@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { auth } from '$lib/Auth/auth'
+import { signOut } from "$lib/firebase-client";
+
 
 	// $: console.log('b', $userDataStore)
 
@@ -16,7 +17,7 @@
 	<button>Nothing</button>
 	<button>Nothing</button>
 
-	<button id="sign-out" on:click={ auth.signOut }>Sign out</button>
+	<button id="sign-out" on:click={ signOut }>Sign out</button>
 </div>
 
 

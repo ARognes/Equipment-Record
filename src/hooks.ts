@@ -1,24 +1,27 @@
 import * as cookie from 'cookie'
-import { UNPROTECTED_PAGES, FIREBASE_CLIENT_CONFIG } from '$lib/constants-clients'
+import { UNPROTECTED_PAGES } from '$lib/constants-clients'
 import { decodeToken } from '$lib/firebase-server'
 import type { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier'
 import type { GetSession, Handle } from '@sveltejs/kit'
+import { getDoc } from '$lib/firebase-server'
 
 
 export const getSession: GetSession = async (event) => {
 	const locals = event.locals
 	const decodedToken: DecodedIdToken | null = locals.decodedToken
-	console.log('session decoded token', event.locals.decodedToken)
 
 	if (decodedToken) {
-		const { uid, name, email } = decodedToken
+		const { uid, name, email, accessLevel } = decodedToken
+
+		console.log('getSession')
+		const userDoc = await getDoc('users', name)
+
 		return {
-			user: { name: name || null, email: email || null, uid, claims: null },
-			firebaseClientConfig: FIREBASE_CLIENT_CONFIG
+			user: { name, email, uid, accessLevel, businessName: userDoc?.businessName, businessID: userDoc?.businessID }
 		}
 	}
 
-	return { user: undefined, firebaseClientConfig: FIREBASE_CLIENT_CONFIG }
+	return { user: undefined }
 }
 
 
@@ -26,7 +29,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const cookies = cookie.parse(event.request.headers.get('cookie') || '')
 	event.locals.decodedToken = await decodeToken(cookies.token)
 	const response = await resolve(event)
-	console.log('handle decode token', event.locals.decodedToken)
+	
 	// Trying to access a protected page directly, send them to the 403
 	if (!event.locals.decodedToken && !UNPROTECTED_PAGES.has(event.url.pathname)) {
 		response.headers.set('Location', '/403')

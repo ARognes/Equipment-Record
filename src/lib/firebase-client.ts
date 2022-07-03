@@ -7,6 +7,7 @@ import {
 	query,
 	where,
 	addDoc,
+	getDoc,
 	doc,
 	onSnapshot,
 	setDoc,
@@ -20,12 +21,12 @@ import {
 	onIdTokenChanged,
 	getIdTokenResult,
 } from 'firebase/auth'
-// import { session } from '$app/stores'
 import { userStore } from './storage'
 import type { Document } from '$lib/Document'
 import { readable } from 'svelte/store'
 import { browser } from '$app/env'
 import type { AnyObject } from 'AppModule'
+import { FIREBASE_CLIENT_CONFIG } from './constants-clients'
 
 async function setToken(token: string) {
 	const options = {
@@ -48,13 +49,21 @@ function listenForAuthChanges() {
 				const IdTokenResult = await getIdTokenResult(user)
 				await setToken(IdTokenResult.token)
 
+				// if (userStore) return
+
+				// Get user doc client side, wrap this in function later
+				// const docRef = doc(db, 'users', user.displayName)
+				// const docSnap = await getDoc(docRef)
+				// const { businessName, businessID } = docSnap.data()
+
 				userStore.set({
 					name: user.displayName,
 					email: user.email,
 					uid: user.uid,
-					claims: IdTokenResult?.claims,
+					accessLevel: IdTokenResult.claims.accessLevel,
+					// businessName,
+					// businessID
 				})
-
 				return
 			}
 			await setToken('')
@@ -67,9 +76,9 @@ function listenForAuthChanges() {
 
 export let app: FirebaseApp
 export let db: Firestore
-export function initializeFirebase(options: FirebaseOptions) {
+export function initializeFirebase() {
 	if (!app) {
-		app = initializeApp(options)
+		app = initializeApp(FIREBASE_CLIENT_CONFIG)
 		db = getFirestore(app)
 		listenForAuthChanges()
 	}
@@ -106,9 +115,7 @@ export function getDocumentStore<T extends Document>(
 		let unsubbed = false
 		const unsub = () => {
 			unsubbed = true
-			if (dbUnsubscribe) {
-				dbUnsubscribe()
-			}
+			if (dbUnsubscribe) dbUnsubscribe()
 		}
 		if (browser) {
 			(async () => {

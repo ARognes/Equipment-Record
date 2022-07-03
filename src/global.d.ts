@@ -28,7 +28,9 @@ interface UserSession {
 	name: string | null
 	email: string | null
 	uid: string
-	claims: object | null
+	accessLevel: number | null
+	businessName: string | null
+	businessID: string | null
 }
 
 // See https://kit.svelte.dev/docs/types#app

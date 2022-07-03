@@ -1,6 +1,19 @@
+<script context="module" lang="ts">
+	import type { Load } from '@sveltejs/kit'
+
+	export const load: Load = async function load({ session, url }) {
+
+    // If user is logged in, reroute
+    if (session.user) return { redirect: '/on/home', status: 302 } 
+
+		return {}
+	}
+
+</script>
+
 <script lang="ts">
   import ErrorMsg from '$lib/components/ErrorMsg.svelte'
-	import { signInWith, signOut } from '$lib/firebase-client'
+	import { signInWith } from '$lib/firebase-client'
 
   import { writable } from 'svelte/store'
   import { goto } from '$app/navigation'
@@ -13,6 +26,7 @@
   import ViewSVG from '$lib/assets/view.svg'
   import HideSVG from '$lib/assets/hide.svg'
   import GoogleSVG from '$lib/assets/google.svg'
+import { browser } from '$app/env';
 
   const errorMsg = writable('')
   
@@ -61,14 +75,9 @@
   
   function isEmail(email: string): boolean {
     return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
-  }
+  } 
 
-  $: {
-    if ($userStore) {
-      goto('/on/home')
-      console.log('Signed in:', $userStore)
-    }
-  }
+  $: if ($userStore && browser) goto('/on/home')
   
   function enterSignIn(e) {
     if (e.key === 'Enter') loginEmail()
