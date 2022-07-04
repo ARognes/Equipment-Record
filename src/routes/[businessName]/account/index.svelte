@@ -1,7 +1,8 @@
 <script lang="ts">
 import Button from '$lib/components/materialish/Button.svelte'
 import { signOut } from "$lib/firebase-client"
-
+import { session } from '$app/stores'
+$session
 
 </script>
 
