@@ -7,7 +7,7 @@
 
 	export const load: Load = async function load({ session, url }) {
 
-		console.log(session)
+		console.log('HOME session', session)
 
 		// Ensure user is logged in
 		if (!session.user && !UNPROTECTED_PAGES.has(url.pathname)) return { redirect: '/', status: 302 } 

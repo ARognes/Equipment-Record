@@ -1,15 +1,23 @@
 <script context="module" lang="ts">
+	import { initializeFirebase } from '$lib/firebase-client'
 	import type { Load } from '@sveltejs/kit'
+	import { browser } from '$app/env'
 
 	export const load: Load = async function load({ session }) {
+
+    console.log('Login session', session.user)
 
     // If user is logged in, reroute
     if (session.user) return { redirect: '/on/home', status: 302 } 
 
-		return {}
+    if (!browser) return { props: { user: session.user } }
+		try { initializeFirebase() } 
+    catch (ex) { console.error(ex) }
+		return { props: { user: session.user } }
 	}
 
 </script>
+
 
 <script lang="ts">
   import ErrorMsg from '$lib/components/ErrorMsg.svelte'
