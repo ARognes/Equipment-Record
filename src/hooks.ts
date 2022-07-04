@@ -1,9 +1,8 @@
 import * as cookie from 'cookie'
 import { UNPROTECTED_PAGES } from '$lib/constants-clients'
-import { decodeToken } from '$lib/firebase-server'
+import { decodeToken, getDoc } from '$lib/firebase-server'
 import type { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier'
 import type { GetSession, Handle } from '@sveltejs/kit'
-import { getDoc } from '$lib/firebase-server'
 
 
 export const getSession: GetSession = async (event) => {
