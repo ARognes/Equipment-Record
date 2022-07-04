@@ -27,7 +27,8 @@
   import { writable } from 'svelte/store'
   import EmailSVG from '$lib/assets/email.svg'
 	import { passwordResetEmail } from '$lib/firebase-client'
-
+	import { session } from '$app/stores'
+  $session
 
 	let value = ''
 	let sent = false, loading = false, verified = false

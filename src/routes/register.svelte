@@ -33,7 +33,8 @@
   import LockSVG from '$lib/assets/lock.svg'
   import Button from '$lib/components/materialish/Button.svelte'
   import TextField from '$lib/components/materialish/TextField.svelte'
-
+  import { session } from '$app/stores'
+  $session
   const errorMsg = writable('')
   const PASSWORD_MIN_LENGTH = 12
   

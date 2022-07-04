@@ -32,6 +32,8 @@
   import ViewSVG from '$lib/assets/view.svg'
   import HideSVG from '$lib/assets/hide.svg'
   import GoogleSVG from '$lib/assets/google.svg'
+  import { session } from '$app/stores'
+  $session
 
   const errorMsg = writable('')
   
