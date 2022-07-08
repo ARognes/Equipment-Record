@@ -93,17 +93,31 @@
     if (e.key === 'Enter') loginEmail()
   }
 
+  async function sleep(ms: number) { return new Promise(res => setTimeout(res, ms)) }
+  const recaptchaScriptId = browser && window.document.getElementById("googleRecaptchaScript")
+
 </script>
 
 <svelte:head>
-  <script src={ `https://www.google.com/recaptcha/api.js?render=${ RECAPTCHA_SITE_KEY }` }></script>
+  <script src={ `https://www.google.com/recaptcha/api.js?render=${ RECAPTCHA_SITE_KEY }` } async defer></script>
+
+  {#await sleep(0) then _}
+    {#if browser && !recaptchaScriptId}
+        <script
+            id="googleRecaptchaScript"
+            src="https://www.google.com/recaptcha/api.js?render={ RECAPTCHA_SITE_KEY }"
+            async
+            defer>
+        </script>
+    {/if}
+  {/await}
 </svelte:head>
 
 <!-- Auth status unknown -->
 
 
   <div id="auth">
-    <Button mode="link" noPrefetch href="https://google.com">Equipment-Record</Button>
+    <Button mode="link" noPrefetch href="/">Equipment-Record</Button>
     <h1>Login</h1>
 
     <TextField label="Username or email" on:keypress={ enterSignIn } on:input={ e => username = e.currentTarget.value }><AccountSVG /></TextField>

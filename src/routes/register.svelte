@@ -105,15 +105,29 @@
 
   let passwordFocus, confirmPasswordFocus
 
+  async function sleep(ms: number) { return new Promise(res => setTimeout(res, ms)) }
+  const recaptchaScriptId = browser && window.document.getElementById("googleRecaptchaScript")
+
 </script>
 
 <svelte:head>
-  <script src={ `https://www.google.com/recaptcha/api.js?render=${ RECAPTCHA_SITE_KEY }` }></script>
+  <script src={ `https://www.google.com/recaptcha/api.js?render=${ RECAPTCHA_SITE_KEY }` } async defer></script>
+
+  {#await sleep(0) then _}
+    {#if browser && !recaptchaScriptId}
+        <script
+            id="googleRecaptchaScript"
+            src="https://www.google.com/recaptcha/api.js?render={ RECAPTCHA_SITE_KEY }"
+            async
+            defer>
+        </script>
+    {/if}
+  {/await}
 </svelte:head>
 
 <div id="register">
 
-  <Button mode="link" noPrefetch href="https://google.com">Equipment-Record</Button>
+  <Button mode="link" noPrefetch href="/">Equipment-Record</Button>
   <h1>Register</h1>
 
   <TextField label="Email*" on:keypress={ enterRegister } on:input={ e => email = e.currentTarget.value }><EmailSVG /></TextField>
@@ -138,13 +152,12 @@
   <span class="div-requirements">
     <span class={ `transition ${ (!confirmPasswordFocus || confirmPassword === password || !confirmPassword.length) ? 'hide' : ''}` } >Passwords do not match</span> 
   </span>
-  <!-- <Captcha {captcha} /> -->
 
   <Button on:click={ validateRegistration } bgColor="255, 14, 25" width="100%">Register</Button>
 
   <Button on:click={ registerGoogle } bgColor="66, 133, 244" width="100%" padding="0"><GoogleSVG /><p style="margin-left: 11px">Sign up with Google</p></Button>
 
-  Already have an account? <Button mode="link" noPrefetch href="/login">Login</Button>
+  Already have an account? <Button mode="link" href="/login">Login</Button>
 
 
   <ErrorMsg {errorMsg} />

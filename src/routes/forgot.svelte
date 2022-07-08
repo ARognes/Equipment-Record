@@ -62,16 +62,30 @@
 	function isEmail(email: string): boolean {
     return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
   }
+	
+  async function sleep(ms: number) { return new Promise(res => setTimeout(res, ms)) }
+  const recaptchaScriptId = browser && window.document.getElementById("googleRecaptchaScript")
 
 </script>
 
 <svelte:head>
-  <script src={ `https://www.google.com/recaptcha/api.js?render=${ RECAPTCHA_SITE_KEY }` }></script>
+  <script src={ `https://www.google.com/recaptcha/api.js?render=${ RECAPTCHA_SITE_KEY }` } async defer></script>
+
+  {#await sleep(0) then _}
+    {#if browser && !recaptchaScriptId}
+        <script
+            id="googleRecaptchaScript"
+            src="https://www.google.com/recaptcha/api.js?render={ RECAPTCHA_SITE_KEY }"
+            async
+            defer>
+        </script>
+    {/if}
+  {/await}
 </svelte:head>
 
 <div id="forgot">
 
-  <Button mode="link" href="https://app.equipment-record.com" noPrefetch={true}>Link to main page</Button>
+  <Button mode="link" href="/" noPrefetch>Link to main page</Button>
 
 	<h1>Forgot</h1>
 		{#if !sent }
@@ -81,7 +95,7 @@
 		{/if}
 
 	<Button on:click={ sendPasswordResetEmail } bgColor="255, 14, 25" width="100%">Send confirmation</Button>
-	<Button mode="link" noPrefetch href="/login" bgColor="255, 14, 25">Back</Button>
+	<Button mode="link" href="/login" bgColor="255, 14, 25">Back</Button>
 
 	<ErrorMsg {errorMsg} />
 

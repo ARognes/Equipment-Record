@@ -45,9 +45,8 @@ async function setToken(token: string) {
 function listenForAuthChanges() {
 	const auth = getAuth(app)
 
-	
-	
 	onIdTokenChanged(auth, async (user) => {
+		console.log(user, 'TOKEN CHANGE')
 			if (user) {
 				const IdTokenResult = await getIdTokenResult(user)
 				await setToken(IdTokenResult.token)
