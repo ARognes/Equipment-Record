@@ -6,14 +6,13 @@ import 'dotenv/config'
 export const post: RequestHandler = async ({ request }) => {
 
   try {
-
     const { response } = await request.json()
     console.log(response, RECAPTCHA_SECRET_KEY)
 
     let res = await fetch('https://www.google.com/recaptcha/api/siteverify',  {
       method: 'POST',
-      headers: { "Content-Type": "application/json" },
-      body: `{"response":"${ response }", "secret": "${ RECAPTCHA_SECRET_KEY }"}`
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `secret=${ RECAPTCHA_SECRET_KEY }&response=${ response }`
     })
     
     const verification = await res.json()

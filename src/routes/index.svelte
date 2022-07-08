@@ -25,16 +25,19 @@
   import ErrorMsg from '$lib/components/ErrorMsg.svelte'
 	import { signInGoogle, signInEmail, signInUsername } from '$lib/firebase-client'
 
-  import { writable } from 'svelte/store'
   import Button from '$lib/components/materialish/Button.svelte'
   import Loading from '$lib/components/materialish/Loading.svelte'
   import TextField from '$lib/components/materialish/TextField.svelte'
-
+  
   import AccountSVG from '$lib/assets/account.svg'
   import ViewSVG from '$lib/assets/view.svg'
   import HideSVG from '$lib/assets/hide.svg'
   import GoogleSVG from '$lib/assets/google.svg'
-  import { session } from '$app/stores'
+  import recaptcha from '$lib/recaptcha'
+  import { RECAPTCHA_SITE_KEY } from '$lib/constants-clients'
+  import { writable } from 'svelte/store'
+  import { goto } from '$app/navigation'
+  import { page, session } from '$app/stores'
   $session
 
   const errorMsg = writable('')
@@ -48,8 +51,10 @@
   async function loginEmail() {
     try {
       validatePassword(password)
-      
       loading = true
+
+      const verified = await recaptcha($page.url.host, 'login')
+			if (!verified) return goto('/noBots')
       
       if (isEmail(username)) await signInEmail(username, password)
       else await signInUsername(username, password)
@@ -89,6 +94,10 @@
   }
 
 </script>
+
+<svelte:head>
+  <script src={ `https://www.google.com/recaptcha/api.js?render=${ RECAPTCHA_SITE_KEY }` }></script>
+</svelte:head>
 
 <!-- Auth status unknown -->
 

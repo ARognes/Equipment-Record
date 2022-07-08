@@ -26,11 +26,13 @@
   import TextField from '$lib/components/materialish/TextField.svelte'
   import ErrorMsg from '$lib/components/ErrorMsg.svelte'
   import Loading from '$lib/components/materialish/Loading.svelte'
-	import Captcha from '$lib/components/Captcha.svelte'
-  import { writable } from 'svelte/store'
   import EmailSVG from '$lib/assets/email.svg'
+	import recaptcha from '$lib/recaptcha'
+  import { writable } from 'svelte/store'
 	import { passwordResetEmail } from '$lib/firebase-client'
-	import { session } from '$app/stores'
+	import { RECAPTCHA_SITE_KEY } from '$lib/constants-clients'
+	import { page, session } from '$app/stores'
+	import { goto } from '$app/navigation'
   $session
 
 	let value = ''
@@ -41,7 +43,8 @@
 		loading = true
 		try {
 			if (value.length <= 3 || !isEmail(value)) throw 'Please enter a valid email'
-			if (!verified) throw 'Captcha must finish human verification'
+			const verified = await recaptcha($page.url.host, 'forgot')
+			if (!verified) return goto('/noBots')
 			
 			try {	await passwordResetEmail(value) }
 			catch(e) { throw 'Email not linked to an account'}
@@ -60,9 +63,11 @@
     return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
   }
 
-	function captcha() { verified = true }
-
 </script>
+
+<svelte:head>
+  <script src={ `https://www.google.com/recaptcha/api.js?render=${ RECAPTCHA_SITE_KEY }` }></script>
+</svelte:head>
 
 <div id="forgot">
 
@@ -74,9 +79,6 @@
 		{:else}
 			<h1>Email sent!</h1>
 		{/if}
-
-		<Captcha {captcha} />
-
 
 	<Button on:click={ sendPasswordResetEmail } bgColor="255, 14, 25" width="100%">Send confirmation</Button>
 	<Button mode="link" noPrefetch href="/" bgColor="255, 14, 25">Back</Button>
