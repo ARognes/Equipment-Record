@@ -2,26 +2,40 @@
 import Button from '$lib/components/materialish/Button.svelte'
 import { signOut } from "$lib/firebase-client"
 import { session } from '$app/stores'
+import Loading from '$lib/components/materialish/Loading.svelte'
+import SettingsSVG from '$lib/assets/settings.svg'
+
 $session
+
+let loading = false
+
+function signOutLoader() {
+	signOut()
+	loading = true
+}
 
 </script>
 
 <header>
 	<h1>Account</h1>
-	<Button mode="link" href="/on/settings">Settings</Button>
+	<Button mode="link" href="/on/settings"><SettingsSVG /></Button>
 </header>
 
 <div id="menu">
-	<button>Nothing</button>
-	<button>Nothing</button>
-	<button>Nothing</button>
-	<button>Nothing</button>
-	<Button on:click={ signOut } bgColor="255, 14, 25" width="100%" >Sign out</Button>
+	<Button bgColor="80, 80, 200" width="100%">Nothing</Button>
+	<Button bgColor="80, 80, 200" width="100%">Nothing</Button>
+	<Button bgColor="80, 80, 200" width="100%">Nothing</Button>
+	<Button bgColor="80, 80, 200" width="100%">Nothing</Button>
+
+	<Button on:click={ () => signOutLoader() } bgColor="255, 14, 25" width="100%" >Sign out</Button>
 	<p>name: { $session.user?.name || '' }</p>
 	<p>email: { $session.user?.email || '' }</p>
 	<p>businessName: { $session.user?.businessName || '' }</p>
 	<p>accessLevel: { $session.user?.accessLevel || '' }</p>
 </div>
+
+<Loading {loading} />
+
 
 
 <style lang="sass">
@@ -30,6 +44,7 @@ header
 	margin: 0
 	height: 60px
 	display: flex
+	flex-direction: row-reverse
 
 	h1
 		margin: 0

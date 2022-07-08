@@ -25,7 +25,6 @@ import { readable } from 'svelte/store'
 import { browser } from '$app/env'
 import type { AnyObject } from 'AppModule'
 import { FIREBASE_CLIENT_CONFIG } from './constants-clients'
-import { goto } from '$app/navigation'
 import { session } from '$app/stores';
 
 
@@ -46,7 +45,6 @@ function listenForAuthChanges() {
 	const auth = getAuth(app)
 
 	onIdTokenChanged(auth, async (user) => {
-		console.log(user, 'TOKEN CHANGE')
 			if (user) {
 				const IdTokenResult = await getIdTokenResult(user)
 				await setToken(IdTokenResult.token)
@@ -76,7 +74,7 @@ function listenForAuthChanges() {
 			await setToken('')
 			userStore.set(undefined)
 
-			session.set({ user: undefined })
+			session.set({ user: null })
 		}, 
 		err => console.error(err.message)
 	)

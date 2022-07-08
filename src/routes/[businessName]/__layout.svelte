@@ -7,7 +7,7 @@
 
 	export const load: Load = async function load({ session, url }) {
 
-		console.log('HOME session', session)
+		// console.log('HOME session', session)
 
 		// Ensure user is logged in
 		if (!session.user && !UNPROTECTED_PAGES.has(url.pathname)) return { redirect: '/login', status: 302 } 
@@ -25,6 +25,14 @@
 	import Navbar from '$lib/components/Navbar.svelte'
 	import { session } from '$app/stores'
 	$session  // Has to be initialized here to work in client firebase.ts
+	import { onMount } from "svelte"
+
+	onMount(() => {
+		Array.from(document.getElementsByClassName('grecaptcha-badge')).forEach(recaptchaDiv => recaptchaDiv.remove())
+
+		Array.from(document.getElementsByTagName('script')).filter(script => script.src.includes('recaptcha')).forEach(style => style.remove())
+	})
+
 
 
 </script>

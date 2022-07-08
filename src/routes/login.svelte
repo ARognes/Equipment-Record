@@ -5,8 +5,6 @@
 
 	export const load: Load = async function load({ session }) {
 
-    console.log('Login session', session.user)
-
     // If user is logged in, reroute
     if (session.user) return { redirect: '/on/home', status: 302 } 
 
@@ -99,7 +97,6 @@
 </script>
 
 <svelte:head>
-  <script src={ `https://www.google.com/recaptcha/api.js?render=${ RECAPTCHA_SITE_KEY }` } async defer></script>
 
   {#await sleep(0) then _}
     {#if browser && !recaptchaScriptId}
@@ -115,7 +112,9 @@
 
 <!-- Auth status unknown -->
 
-
+{#if $session.user === undefined}
+<Loading loading={ true }/>
+{:else}
   <div id="auth">
     <Button mode="link" noPrefetch href="/">Equipment-Record</Button>
     <h1>Login</h1>
@@ -145,7 +144,7 @@
   </div>
 
   <Loading {loading} />
-
+{/if}
 
 
 

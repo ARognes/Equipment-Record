@@ -62,14 +62,14 @@
 	function isEmail(email: string): boolean {
     return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
   }
-	
+
   async function sleep(ms: number) { return new Promise(res => setTimeout(res, ms)) }
   const recaptchaScriptId = browser && window.document.getElementById("googleRecaptchaScript")
 
 </script>
 
 <svelte:head>
-  <script src={ `https://www.google.com/recaptcha/api.js?render=${ RECAPTCHA_SITE_KEY }` } async defer></script>
+  <!-- <script src={ `https://www.google.com/recaptcha/api.js?render=${ RECAPTCHA_SITE_KEY }` } async defer></script> -->
 
   {#await sleep(0) then _}
     {#if browser && !recaptchaScriptId}
