@@ -16,6 +16,9 @@
 		return { props: { user: session.user } }
 	}
 
+  export const prerender = true
+
+
 </script>
 
 <script lang="ts">

@@ -16,6 +16,9 @@
 		return { props: { user: session.user } }
 	}
 
+  export const prerender = true
+
+
 </script>
 
 <script lang="ts">
@@ -24,6 +27,7 @@
   import { writable } from 'svelte/store'
   import Captcha from '$lib/components/Captcha.svelte'
   import { signInGoogle, register } from '$lib/firebase-client'
+  import { page } from '$app/stores'
 
   import GoogleSVG from '$lib/assets/google.svg'
   import AccountSVG from '$lib/assets/account.svg'
@@ -35,6 +39,7 @@
   import TextField from '$lib/components/materialish/TextField.svelte'
   import { session } from '$app/stores'
   $session
+
   const errorMsg = writable('')
   const PASSWORD_MIN_LENGTH = 12
   
@@ -61,12 +66,36 @@
 
   async function validateRegistration() {
     try {
+
+      grecaptcha.ready(function() {
+        grecaptcha.execute('6LfeItMgAAAAACuAI2TD_2BwMKbPNYOySVSj5goB', { action: 'submit' }).then(async token => {
+            console.log(token)
+
+            let verificationRes = await fetch(`//${ $page.url.host }/api/recaptcha`, {
+              method: 'POST',
+              credentials: 'same-origin',
+              headers: { 'Content-Type': 'application/json' },
+              body: `{"response":"${ token }"}`
+            })
+
+            const verification = await verificationRes.json()
+            console.log(verification)
+            // if (verification.success === false) goto(errorDir)
+        })
+      })
+      return
+
       loading = true
       if (email.length <= 3 || !isEmail(email)) throw "Please enter a valid email"
       if (username.length === 0) throw "Please enter a username"
       if (username.length <= 2) throw "Your username must have 3 characters or more"
       validatePassword(password)
       if (password !== confirmPassword) throw "Your passwords do not match"
+
+      
+
+      
+
       if (!verified) throw "Captcha must finish human verification"
 
       await register(username, email, password)
@@ -101,7 +130,20 @@
 
 </script>
 
+<svelte:head>
+  <!-- <script src="https://www.google.com/recaptcha/api.js"></script> -->
+  <script src="https://www.google.com/recaptcha/api.js?render=6LfeItMgAAAAACuAI2TD_2BwMKbPNYOySVSj5goB"></script>
+
+
+</svelte:head>
+
 <div id="register">
+
+  <!-- <button class="g-recaptcha" 
+        data-sitekey="6LfeItMgAAAAACuAI2TD_2BwMKbPNYOySVSj5goB" 
+        data-callback='onSubmit' 
+        data-action='submit'>Submit</button> -->
+
   <Button mode="link" noPrefetch href="https://google.com">Equipment-Record</Button>
   <h1>Register</h1>
 

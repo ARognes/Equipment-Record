@@ -1,4 +1,4 @@
-import { FRIENDLY_CAPTCHA_SECRET_KEY } from '$lib/constants-server'
+import { RECAPTCHA_SECRET_KEY } from '$lib/constants-server'
 import type { RequestHandler } from '@sveltejs/kit'
 import 'dotenv/config'
 
@@ -6,13 +6,14 @@ import 'dotenv/config'
 export const post: RequestHandler = async ({ request }) => {
 
   try {
-    const data = await request.json()
 
+    const { response } = await request.json()
+    console.log(response, RECAPTCHA_SECRET_KEY)
 
-    let res = await fetch('https://api.friendlycaptcha.com/api/v1/siteverify',  {
+    let res = await fetch('https://www.google.com/recaptcha/api/siteverify',  {
       method: 'POST',
       headers: { "Content-Type": "application/json" },
-      body: `{"solution":"${ data.solution }", "secret": "${ FRIENDLY_CAPTCHA_SECRET_KEY }", "sitekey": "${ data.sitekey }"}`
+      body: `{"response":"${ response }", "secret": "${ RECAPTCHA_SECRET_KEY }"}`
     })
     
     const verification = await res.json()
@@ -24,6 +25,7 @@ export const post: RequestHandler = async ({ request }) => {
       },
       body: verification
     }
+
   } catch(e) {
     return {
       status: 400,
