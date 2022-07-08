@@ -67,7 +67,7 @@
 
   async function validateRegistration() {
     try {
-      
+
       loading = true
       if (email.length <= 3 || !isEmail(email)) throw "Please enter a valid email"
       if (username.length === 0) throw "Please enter a username"
@@ -102,7 +102,6 @@
   function enterRegister(e) {
     if (e.key === 'Enter') validateRegistration()
   }
-
 
   let passwordFocus, confirmPasswordFocus
 
@@ -145,7 +144,7 @@
 
   <Button on:click={ registerGoogle } bgColor="66, 133, 244" width="100%" padding="0"><GoogleSVG /><p style="margin-left: 11px">Sign up with Google</p></Button>
 
-  Already have an account? <Button mode="link" noPrefetch href="/">Sign in</Button>
+  Already have an account? <Button mode="link" noPrefetch href="/login">Login</Button>
 
 
   <ErrorMsg {errorMsg} />

@@ -81,7 +81,7 @@
 		{/if}
 
 	<Button on:click={ sendPasswordResetEmail } bgColor="255, 14, 25" width="100%">Send confirmation</Button>
-	<Button mode="link" noPrefetch href="/" bgColor="255, 14, 25">Back</Button>
+	<Button mode="link" noPrefetch href="/login" bgColor="255, 14, 25">Back</Button>
 
 	<ErrorMsg {errorMsg} />
 

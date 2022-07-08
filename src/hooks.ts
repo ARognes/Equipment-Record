@@ -34,7 +34,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	// Trying to access a protected page directly while not logged in, send to login
 	if (!event.locals.decodedToken && !UNPROTECTED_PAGES.has(event.url.pathname)) {
-		response.headers.set('Location', '/')
+		response.headers.set('Location', '/login')
 		response.headers.set('status', '302')
 	}
 

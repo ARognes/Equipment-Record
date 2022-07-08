@@ -1,6 +1,6 @@
 import type { FirebaseOptions } from 'firebase/app'
 
-export const UNPROTECTED_PAGES: Set<string> = new Set(['/', '/register', '/forgot'])
+export const UNPROTECTED_PAGES: Set<string> = new Set(['/', '/login', '/register', '/forgot'])
 
 export const FRIENDLY_CAPTCHA_SITE_KEY: string = (import.meta.env.VITE_FRIENDLY_CAPTCHA_SITE_KEY || '').toString()
 

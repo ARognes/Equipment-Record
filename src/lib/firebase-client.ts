@@ -229,7 +229,6 @@ export async function signInUsername(username: string, password: string) {
 export async function signOut() {
 	const auth = getAuth(app)
 	await _signOut(auth)
-	// goto('/')
 	location.reload()
 }
 

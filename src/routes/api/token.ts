@@ -8,7 +8,7 @@ export const post: RequestHandler = async (event) => {
 	return {
 		headers: {
 			'set-cookie': cookie.serialize('token', token, {
-				path: '/',
+				path: '/login',
 				httpOnly: true
 			})
 		}
