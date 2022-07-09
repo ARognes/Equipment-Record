@@ -10,22 +10,19 @@
 	import Navbar from '$lib/components/Navbar.svelte';
 	import ItemContainer from '$lib/components/ItemContainer.svelte'
 	import { allDocs, getSRC } from '$lib/firebase'
-	import { getContext } from 'svelte'
 	import { session } from '$lib/storage'
 
 	let equipmentData = []
 
-	const userDataStore = getContext('userData')
-
 	let done = false
-	$: if ($userDataStore && !done) {
+	$: if ($session.user && !done) {
 		done = true
 		getEquipmentData()
 	}
 
 	async function getEquipmentData() {
 		
-		equipmentData = await allDocs($userDataStore.businessID, 'equipment')
+		equipmentData = await allDocs($session.businessID, 'equipment')
 		console.log(equipmentData)
 		
 		for (let i in equipmentData) {
@@ -41,11 +38,11 @@
 
 <ItemContainer bind:items={ equipmentData } />
 
-{#if $userDataStore?.accessLevel && $userDataStore?.accessLevel >= 2 }
+{#if $session?.user?.accessLevel >= 2 }
 	<a sveltekit:prefetch href="add/equipment" id="add-equipment"><AddSVG /></a>
 {/if}
 
-<Navbar path={ $userDataStore?.businessName }/>
+<Navbar />
 
 
 <style lang="sass">

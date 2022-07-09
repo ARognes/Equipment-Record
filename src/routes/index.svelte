@@ -6,6 +6,8 @@
 
 
 <script lang="ts">
+import Button from "$lib/components/materialish/Button.svelte";
+
 
 </script>
 
@@ -13,6 +15,7 @@
 
 This is the about page
 
+<Button mode="link" href="/login">Login</Button>
 
 
 <style lang="sass">

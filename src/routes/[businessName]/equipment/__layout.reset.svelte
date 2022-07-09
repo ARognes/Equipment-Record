@@ -9,24 +9,27 @@
 		// Ensure user is logged in
 		if (!session.user && !UNPROTECTED_PAGES.has(url.pathname)) return { redirect: '/login', status: 302 } 
 
-		if (!browser) return { props: { user: session.user } }
+		if (!browser) return {}
 
 		try { initializeFirebase() } 
     catch (ex) { console.error(ex) }
-		return { props: { user: session.user } }
+		return {}
 	}
 
 </script>
 
 
 <script lang="ts">
-	import { userStore } from '$lib/storage'
+	import { session } from '$app/stores'
+	import { onMount } from "svelte"
+	$session  // Has to be initialized here to work in client firebase.ts
 
-	export let user
 
-	$userStore = user
+	onMount(() => {
+		Array.from(document.getElementsByClassName('grecaptcha-badge')).forEach(recaptchaDiv => recaptchaDiv.remove())
 
-	console.log(user, $userStore)
+		Array.from(document.getElementsByTagName('script')).filter(script => script.src.includes('recaptcha')).forEach(style => style.remove())
+	})
 
 </script>
 

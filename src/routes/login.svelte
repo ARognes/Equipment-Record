@@ -8,10 +8,10 @@
     // If user is logged in, reroute
     if (session.user) return { redirect: '/on/home', status: 302 } 
 
-    if (!browser) return { props: { user: session.user } }
+    if (!browser) return {}
 		try { initializeFirebase() } 
     catch (ex) { console.error(ex) }
-		return { props: { user: session.user } }
+		return {}
 	}
 
   export const prerender = true

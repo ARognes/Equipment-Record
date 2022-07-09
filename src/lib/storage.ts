@@ -91,5 +91,3 @@ export const sessionStorage = <T = any>(key: string, value: T): Writable<T> => {
 
 	return { ...readableStore, set }
 }
-
-export const userStore: Writable<UserSession> = sessionStorage('user', undefined)

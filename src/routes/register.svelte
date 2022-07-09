@@ -111,7 +111,6 @@
 </script>
 
 <svelte:head>
-  <!-- <script src={ `https://www.google.com/recaptcha/api.js?render=${ RECAPTCHA_SITE_KEY }` } async defer></script> -->
 
   {#await sleep(0) then _}
     {#if browser && !recaptchaScriptId}

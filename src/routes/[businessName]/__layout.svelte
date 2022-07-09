@@ -7,16 +7,14 @@
 
 	export const load: Load = async function load({ session, url }) {
 
-		// console.log('HOME session', session)
-
 		// Ensure user is logged in
 		if (!session.user && !UNPROTECTED_PAGES.has(url.pathname)) return { redirect: '/login', status: 302 } 
 
-		if (!browser) return { props: { user: session.user } }
+		if (!browser) return {}
 
 		try { initializeFirebase() } 
     catch (ex) { console.error(ex) }
-		return { props: { user: session.user } }
+		return {}
 	}
 
 </script>
@@ -47,8 +45,7 @@
 
 <slot />
 
-<!-- <Navbar path={ $userDataStore?.businessName }/> -->
-<Navbar path="on" />
+<Navbar />
 
 
 <style lang="sass">

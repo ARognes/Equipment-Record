@@ -17,9 +17,7 @@ import {
 	signOut as _signOut,
 	onIdTokenChanged,
 	getIdTokenResult,
-	signInWithRedirect,
 } from 'firebase/auth'
-import { userStore } from './storage'
 import type { Document } from '$lib/Document'
 import { readable } from 'svelte/store'
 import { browser } from '$app/env'
@@ -49,14 +47,6 @@ function listenForAuthChanges() {
 				const IdTokenResult = await getIdTokenResult(user)
 				await setToken(IdTokenResult.token)
 
-				console.log('LOGIN', user)
-				userStore.set({
-					name: user.displayName,
-					email: user.email,
-					uid: user.uid,
-					accessLevel: IdTokenResult.claims.accessLevel,
-				})
-
 				session.set({ 
 					user: {
 						name: user.displayName,
@@ -72,7 +62,6 @@ function listenForAuthChanges() {
 			}
 			
 			await setToken('')
-			userStore.set(undefined)
 
 			session.set({ user: null })
 		}, 

@@ -2,6 +2,7 @@ import * as cookie from 'cookie'
 import { UNPROTECTED_PAGES } from '$lib/constants-clients'
 import type { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier'
 import type { GetSession, Handle } from '@sveltejs/kit'
+import { getDoc, decodeToken } from '$lib/firebase-server'
 import { browser } from '$app/env'
 
 
@@ -11,9 +12,7 @@ export const getSession: GetSession = async (event) => {
 
 	if (decodedToken && !browser) {
 		const { uid, name, email, accessLevel } = decodedToken
-		const { getDoc } = await import('$lib/firebase-server')
 		const userDoc = await getDoc('users', name)
-
 		return {
 			user: { name, email, uid, accessLevel, businessName: userDoc?.businessName, businessID: userDoc?.businessID }
 		}
@@ -23,20 +22,24 @@ export const getSession: GetSession = async (event) => {
 }
 
 
-export const handle: Handle = async ({ event, resolve }) => {
-	const cookies = cookie.parse(event.request.headers.get('cookie') || '')
+// export const handle: Handle = async ({ event, resolve }) => {
+// 	const cookies = cookie.parse(event.request.headers.get('cookie') || '')
+// 	event.locals.decodedToken = await decodeToken(cookies.token)
+// 	const response = await resolve(event)
 
-	if (!browser) return await resolve(event)
-	const { decodeToken } = await import('$lib/firebase-server')
-	event.locals.decodedToken = await decodeToken(cookies.token)
+// 	// console.log('ha lang="tsndle')
+// 	// Trying to access a protected page directly while not logged in, send to login
+// 	if (!event.locals.decodedToken) {
+// 		if (!UNPROTECTED_PAGES.has(event.url.pathname)) 
+// 		response.headers.set('Location', '/login')
+// 		response.headers.set('status', '302')
+// 		// return response
+// 			// return Response.redirect(`${ event.url.origin }/login`, 302)
+// 	}
+// 	// else {	// Trying to login while logged in? Send them in
+// 	// 	if (new Set(['/login', '/register']).has(event.url.pathname))
+// 	// 		return Response.redirect(`${ event.url.origin }/on/home`, 302)
+// 	// }
 
-	const response = await resolve(event)
-
-	// Trying to access a protected page directly while not logged in, send to login
-	if (!event.locals.decodedToken && !UNPROTECTED_PAGES.has(event.url.pathname)) {
-		response.headers.set('Location', '/login')
-		response.headers.set('status', '302')
-	}
-
-	return response
-}
+// 	return response
+// }
