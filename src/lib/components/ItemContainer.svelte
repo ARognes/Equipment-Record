@@ -1,8 +1,8 @@
 <script lang="ts">
 	import ItemList from '$lib/components/ItemList.svelte'
 	import ItemCard from '$lib/components/ItemCard.svelte'
-	import { getContext } from 'svelte';
-	import { goto } from '$app/navigation';
+	import { getContext } from 'svelte'
+	import { goto } from '$app/navigation'
 
 	export let items
 	

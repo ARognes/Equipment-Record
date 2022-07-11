@@ -36,6 +36,7 @@
   import { writable } from 'svelte/store'
   import { goto } from '$app/navigation'
   import { page, session } from '$app/stores'
+import Assignments from '$lib/components/Assignments.svelte'
   $session
 
   const errorMsg = writable('')
@@ -114,6 +115,7 @@
 
 {#if $session.user === undefined}
 <Loading loading={ true }/>
+<p>Checking auth status</p>
 {:else}
   <div id="auth">
     <Button mode="link" noPrefetch href="/">Equipment-Record</Button>

@@ -20,32 +20,40 @@ export async function decodeToken(token: string): Promise<DecodedIdToken | null>
 	} catch (err) { return null }
 }
 
-export async function getDoc(collectionPath: string, uid: string): Promise<Document> {
-	if (!uid || browser) return null
+export async function getDoc(collectionPath: string, did: string): Promise<Document> {
+	if (!did || browser) return null
 	const { firestore } = await import('firebase-admin')
 	initializeFirebase()
 	const db = firestore()
 
-	const doc = await db.collection(collectionPath).doc(uid).get()
+	const doc = await db.collection(collectionPath).doc(did).get()
 	if (!doc.exists) return null
 	const document: Document = <Document>doc.data()
 	document._id = doc.id
 	return document
 }
 
-// export async function getDocuments(collectionPath: string, uid: string): Promise<Array<Document>> {
-// 	if (!uid) return []
-// 	initializeFirebase()
-// 	const db = firestore()
-// 	const querySnapshot = await db.collection(collectionPath).where('uid', '==', uid).get()
-// 	const list: Array<Document> = []
-// 	querySnapshot.forEach((doc) => {
-// 		const document: Document = <Document>doc.data() // Just need the data on the server
-// 		document._id = doc.id
-// 		list.push(document)
-// 	});
-// 	return list
-// }
+export async function getDocs(collectionPath: string, businessID: string): Promise<Array<Document>> {
+	if (!businessID || browser) return []
+	const { firestore } = await import('firebase-admin')
+	initializeFirebase()
+	const db = firestore()
+
+	const querySnapshot = await db.collection(collectionPath).where('businessID', '==', businessID).get()
+	return querySnapshot.map(doc => {
+		const document: Document = <Document>doc.data()
+		document._id = doc.id
+		return document
+	})
+	
+	// const list: Array<Document> = []
+	// querySnapshot.forEach((doc) => {
+	// 	const document: Document = <Document>doc.data()
+	// 	document._id = doc.id
+	// 	list.push(document)
+	// })
+	// return list
+}
 
 // export async function createDocument(collectionPath: string, uid: string): Promise<Document> {
 // 	initializeFirebase()

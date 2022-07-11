@@ -5,6 +5,7 @@ import type { GetSession, Handle } from '@sveltejs/kit'
 import { getDoc, decodeToken } from '$lib/firebase-server'
 import { browser } from '$app/env'
 
+// request -> handle() -> stuff -> endpoint -> stuff -> getSession() -> client (I think)
 
 export const getSession: GetSession = async (event) => {
 	const locals = event.locals

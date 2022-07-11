@@ -1,16 +1,10 @@
 <script lang="ts">
-
-	/**
-	 * In the future, holding an item would allow multiple selection for a: grouping, b: deletion
-	 * 
-	 * 
-	 */
-	
 	import AddSVG from '$lib/assets/add.svg'
-	import Navbar from '$lib/components/Navbar.svelte';
+	import Navbar from '$lib/components/Navbar.svelte'
 	import ItemContainer from '$lib/components/ItemContainer.svelte'
 	import { allDocs, getSRC } from '$lib/firebase'
 	import { session } from '$lib/storage'
+	import Button from '$lib/components/materialish/Button.svelte'
 
 	let equipmentData = []
 
@@ -39,7 +33,7 @@
 <ItemContainer bind:items={ equipmentData } />
 
 {#if $session?.user?.accessLevel >= 2 }
-	<a sveltekit:prefetch href="add/equipment" id="add-equipment"><AddSVG /></a>
+	<Button mode="link" href="add/equipment"><AddSVG /></Button>
 {/if}
 
 <Navbar />
@@ -47,23 +41,23 @@
 
 <style lang="sass">
 
-	#add-equipment
-		position: fixed
-		right: 10px
-		bottom: 70px
-		width: 60px
-		height: 60px
-		padding: 0
-		border-radius: 50%
-		border: 0
-		background-color: #ccc
+	// #add-equipment
+	// 	position: fixed
+	// 	right: 10px
+	// 	bottom: 70px
+	// 	width: 60px
+	// 	height: 60px
+	// 	padding: 0
+	// 	border-radius: 50%
+	// 	border: 0
+	// 	background-color: #ccc
 
-		img
-			position: relative
-			width: 50%
-			height: 50%
-			margin: 0
-			left: 25%
-			top: 25%
+	// 	img
+	// 		position: relative
+	// 		width: 50%
+	// 		height: 50%
+	// 		margin: 0
+	// 		left: 25%
+	// 		top: 25%
 
 </style>
