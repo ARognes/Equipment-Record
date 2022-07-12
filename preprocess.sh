@@ -8,8 +8,6 @@ sed -i -e 's/"dependencies": {/"type": "module", "dependencies":  {/1' ./node_mo
 # source .env set
 
 echo $FIREBASE_ADMIN_CREDENTIALS > gcloud-service-account.json
-echo $FIREBASE_ADMIN_CREDENTIALS
-cat gcloud-service-account.json
 
-export GOOGLE_APPLICATION_CREDENTIALS="gcloud-service-account.json"
+# export GOOGLE_APPLICATION_CREDENTIALS="gcloud-service-account.json"
 
