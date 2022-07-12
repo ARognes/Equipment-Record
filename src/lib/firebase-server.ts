@@ -2,13 +2,17 @@ import type { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier'
 import { applicationDefault, initializeApp } from 'firebase-admin/app'
 import type { Document } from '$lib/Document'
 import { browser } from '$app/env'
+import { FIREBASE_PROJECT_ID } from './constants-server'
 
 
 async function initializeFirebase() {
 	if (browser) return
 	const { apps } = await import('firebase-admin')
 	if (apps.length) return
-	initializeApp({	credential: applicationDefault() })
+	initializeApp({	
+		credential: applicationDefault(),
+		projectId: FIREBASE_PROJECT_ID 
+	})
 }
 
 export async function decodeToken(token: string): Promise<DecodedIdToken | null> {
@@ -18,6 +22,25 @@ export async function decodeToken(token: string): Promise<DecodedIdToken | null>
 		initializeFirebase()
 		return await auth().verifyIdToken(token)
 	} catch (err) { return null }
+}
+
+export async function setAccessLevel(uid: string, accessLevel: number): Promise<boolean> {
+	return _setCustomClaims(uid, { accessLevel })
+}
+
+export async function setBusinessID(uid: string, businessID: string): Promise<boolean> {
+	return _setCustomClaims(uid, { businessID })
+}
+
+// Minimum access to token changing, highest security, check everything
+async function _setCustomClaims(uid: string, customClaims): Promise<boolean> {
+	if (!uid || !customClaims || browser) return null
+	try {
+		console.log('cc:', uid, customClaims)
+		const { auth } = await import('firebase-admin')
+		await auth().setCustomUserClaims(uid, customClaims)
+		return true
+	} catch (e) { console.error(e); return false }
 }
 
 export async function getDoc(collectionPath: string, did: string): Promise<Document> {
@@ -40,19 +63,13 @@ export async function getDocs(collectionPath: string, businessID: string): Promi
 	const db = firestore()
 
 	const querySnapshot = await db.collection(collectionPath).where('businessID', '==', businessID).get()
-	return querySnapshot.map(doc => {
+	const list: Array<Document> = []
+	querySnapshot.forEach((doc) => {
 		const document: Document = <Document>doc.data()
 		document._id = doc.id
-		return document
+		list.push(document)
 	})
-	
-	// const list: Array<Document> = []
-	// querySnapshot.forEach((doc) => {
-	// 	const document: Document = <Document>doc.data()
-	// 	document._id = doc.id
-	// 	list.push(document)
-	// })
-	// return list
+	return list
 }
 
 // export async function createDocument(collectionPath: string, uid: string): Promise<Document> {

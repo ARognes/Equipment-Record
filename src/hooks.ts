@@ -7,11 +7,25 @@ import { browser } from '$app/env'
 
 // request -> handle() -> stuff -> endpoint -> stuff -> getSession() -> client (I think)
 
+
+
+export const handle: Handle = async ({ event, resolve }) => {
+	const cookies = cookie.parse(event.request.headers.get('cookie') || '')
+	// console.log('ct->', cookies)
+	event.locals.decodedToken = await decodeToken(cookies.token)
+	const response = await resolve(event)
+	// console.log(event.locals.decodedToken)
+	// console.log(event.request.headers)
+	return response
+}
+
+
 export const getSession: GetSession = async (event) => {
 	const locals = event.locals
 	const decodedToken: DecodedIdToken | null = locals.decodedToken
 
 	if (decodedToken && !browser) {
+		console.log('Getting session')
 		const { uid, name, email, accessLevel } = decodedToken
 		const userDoc = await getDoc('users', name)
 		return {

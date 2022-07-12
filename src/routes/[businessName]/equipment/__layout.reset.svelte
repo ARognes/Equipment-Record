@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<!-- <script context="module" lang="ts">
 	import { UNPROTECTED_PAGES } from '$lib/constants-clients'
 	import { initializeFirebase } from '$lib/firebase-client'
 	import type { Load } from '@sveltejs/kit'
@@ -16,7 +16,7 @@
 		return {}
 	}
 
-</script>
+</script> -->
 
 
 <script lang="ts">

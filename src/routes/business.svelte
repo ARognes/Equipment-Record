@@ -1,6 +1,11 @@
+<script lang="ts">
+	
 
+	
 
-<h1>Enter business number</h1>
+</script>
+
+<h1>Enter business code</h1>
 
 
 <a sveltekit:prefetch href="/login">Login</a>

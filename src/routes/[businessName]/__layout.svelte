@@ -19,6 +19,7 @@
 
 </script>
 
+
 <script lang="ts">
 	import Navbar from '$lib/components/Navbar.svelte'
 	import { session } from '$app/stores'
@@ -30,8 +31,6 @@
 
 		Array.from(document.getElementsByTagName('script')).filter(script => script.src.includes('recaptcha')).forEach(style => style.remove())
 	})
-
-
 
 </script>
 

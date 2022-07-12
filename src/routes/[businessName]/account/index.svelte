@@ -46,16 +46,19 @@ function signOutLoader() {
 header
 	background-color: #bbb
 	margin: 0
-	height: 60px
+	height: 40px
 	display: flex
 	flex-direction: row-reverse
 
 	h1
-		margin: 0
 		position: absolute
-		left: 25%
+		margin: 0
 		top: 5px
-		width: 50%
+		left: 0
+		width: 100%
+		height: 30px
+		line-height: 30px
+		text-size: 30px
 		text-align: center
 
 

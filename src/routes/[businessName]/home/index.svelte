@@ -1,7 +1,11 @@
 <script lang="ts">
+	import Button from '$lib/components/materialish/Button.svelte'
+	import { session } from '$app/stores'
 
+	console.log($session)
 
 </script>
+
 
 <header>
 	<h1>Home</h1>
@@ -9,8 +13,8 @@
 
 
 <div id="menu">
-	<button>Scan</button>
-	<button>Download codes</button>
+	<Button width="100%">Scan</Button>
+	<Button width="100%">Download Codes</Button>
 </div>
 
 
@@ -31,38 +35,7 @@ header
 		text-size: 30px
 		text-align: center
 
-	button
-		position: absolute
-		left: 5px
-		top: 5px
-		width: 50px
-		height: 50px
-
-#settings
-	left: calc(100% - 55px)
-
-
 #menu
-	position: relative
-	top: 0
-	left: 5%
-	width: 90%
-
-	button
-		display: block
-		margin: 10px 0 0 0
-		width: 100%
-		height: 40px
-		border: 0
-		background-color: #ddd
-		
-		&:active
-			background-color: #bbb
-
-	#sign-out
-		background-color: red
-
-		&:active
-			background-color: #c00
+	margin: 5%
 
 </style>

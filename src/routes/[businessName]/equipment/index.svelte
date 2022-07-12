@@ -1,10 +1,33 @@
+<!-- <script context="module" lang="ts">
+	import { UNPROTECTED_PAGES } from '$lib/constants-clients'
+	import { initializeFirebase } from '$lib/firebase-client'
+	import type { Load } from '@sveltejs/kit'
+	import { browser } from '$app/env'
+
+	export const load: Load = async function load({ session, url }) {
+
+		// Ensure user is logged in
+		if (!session.user && !UNPROTECTED_PAGES.has(url.pathname)) return { redirect: '/login', status: 302 } 
+
+		if (!browser) return {}
+
+		try { initializeFirebase() } 
+    catch (ex) { console.error(ex) }
+		return {}
+	}
+
+</script> -->
+
 <script lang="ts">
 	import AddSVG from '$lib/assets/add.svg'
 	import Navbar from '$lib/components/Navbar.svelte'
 	import ItemContainer from '$lib/components/ItemContainer.svelte'
 	import { allDocs, getSRC } from '$lib/firebase'
-	import { session } from '$lib/storage'
+	// import { session } from '$lib/storage'
+	import { session } from '$app/stores'
 	import Button from '$lib/components/materialish/Button.svelte'
+
+	export let docs
 
 	let equipmentData = []
 
