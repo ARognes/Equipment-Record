@@ -29,7 +29,7 @@ function signOutLoader() {
 	<Button bgColor="80, 80, 200" width="100%">Nothing</Button>
 	<Button bgColor="80, 80, 200" width="100%">Nothing</Button>
 	<Button bgColor="80, 80, 200" width="100%">Nothing</Button>
-	<Button bgColor="80, 80, 200" width="100%">Nothing</Button>
+	<Button mode="link" href="/on/dev" width="100%">Dev</Button>
 
 	<Button on:click={ () => signOutLoader() } bgColor="255, 14, 25" width="100%" >Sign out</Button>
 	<p>name: { $session.user?.name || '' }</p>

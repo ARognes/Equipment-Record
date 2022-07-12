@@ -31,33 +31,33 @@
 
 	let equipmentData = []
 
-	let done = false
-	$: if ($session.user && !done) {
-		done = true
-		getEquipmentData()
-	}
+	// let done = false
+	// $: if ($session.user && !done) {
+	// 	done = true
+	// 	getEquipmentData()
+	// }
 
-	async function getEquipmentData() {
+	// async function getEquipmentData() {
 		
-		equipmentData = await allDocs($session.businessID, 'equipment')
-		console.log(equipmentData)
+	// 	equipmentData = await allDocs($session.businessID, 'equipment')
+	// 	console.log(equipmentData)
 		
-		for (let i in equipmentData) {
-			equipmentData[i].tinySRC = []
-			getSRC(equipmentData[i], true, 0).then(src => {
-				equipmentData[i].tinySRC[0] = src
-				if (+i === equipmentData.length - 1) session.setItem('equipment', equipmentData)
-			})
-		}
-	}
+	// 	for (let i in equipmentData) {
+	// 		equipmentData[i].tinySRC = []
+	// 		getSRC(equipmentData[i], true, 0).then(src => {
+	// 			equipmentData[i].tinySRC[0] = src
+	// 			if (+i === equipmentData.length - 1) session.setItem('equipment', equipmentData)
+	// 		})
+	// 	}
+	// }
 	
 </script>
 
-<ItemContainer bind:items={ equipmentData } />
+<!-- <ItemContainer bind:items={ equipmentData } />
 
 {#if $session?.user?.accessLevel >= 2 }
 	<Button mode="link" href="add/equipment"><AddSVG /></Button>
-{/if}
+{/if} -->
 
 <Navbar />
 

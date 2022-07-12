@@ -1,9 +1,6 @@
-
-
 <script lang="ts">
 import Button from "$lib/components/materialish/Button.svelte"
 import { session } from '$app/stores'
-
 console.log($session)
 
 const accessLevel = async () => {
