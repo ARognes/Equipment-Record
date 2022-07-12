@@ -10,7 +10,7 @@ sed -i -e 's/"dependencies": {/"type": "module", "dependencies":  {/1' ./node_mo
 echo $FIREBASE_ADMIN_CREDENTIALS > gcloud-service-account.json
 ls -la
 cd ..
-la -la
+ls -la
 # cd ..
 # ls -la
 
