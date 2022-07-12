@@ -5,11 +5,9 @@ import { session } from '$app/stores'
 import Loading from '$lib/components/materialish/Loading.svelte'
 import SettingsSVG from '$lib/assets/settings.svg'
 
-export let user
 $session
 
 console.log($session)
-$: console.log('user', user)
 
 let loading = false
 

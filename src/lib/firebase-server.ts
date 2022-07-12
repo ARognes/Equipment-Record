@@ -1,17 +1,19 @@
 import type { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier'
-import { applicationDefault, initializeApp } from 'firebase-admin/app'
+import { initializeApp } from 'firebase-admin/app'
 import type { Document } from '$lib/Document'
 import { browser } from '$app/env'
 import { FIREBASE_PROJECT_ID } from './constants-server'
 
 
+const adminCredentials = JSON.parse(process.env.FIREBASE_ADMIN_CREDENTIALS as string)
+
 async function initializeFirebase() {
 	if (browser) return
-	const { apps } = await import('firebase-admin')
+	const { apps, credential } = await import('firebase-admin')
 	if (apps.length) return
-	initializeApp({	
-		credential: applicationDefault(),
-		projectId: FIREBASE_PROJECT_ID 
+	initializeApp({
+		credential: credential.cert(adminCredentials),
+		projectId: FIREBASE_PROJECT_ID
 	})
 }
 
