@@ -38,6 +38,7 @@ async function _setCustomClaims(uid: string, customClaims): Promise<boolean> {
 	try {
 		console.log('cc:', uid, customClaims)
 		const { auth } = await import('firebase-admin')
+		initializeFirebase()
 		await auth().setCustomUserClaims(uid, customClaims)
 		return true
 	} catch (e) { console.error(e); return false }
