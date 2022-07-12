@@ -16,7 +16,7 @@ const accessLevel = async () => {
 	}
   const a = await fetch('/api/setAccessLevel', options)
   const b = await a.json()
-  console.log('accessLevel:', b)
+  console.log('accessLevel:', a, b)
 }
 
 const businessID = async () => {
