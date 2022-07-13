@@ -59,6 +59,10 @@
 	<Button mode="link" href="add/equipment"><AddSVG /></Button>
 {/if} -->
 
+{#each docs as doc}
+	{JSON.stringify(doc)}
+{/each}
+
 <Navbar />
 
 

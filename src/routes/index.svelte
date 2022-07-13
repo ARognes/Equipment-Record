@@ -17,7 +17,6 @@ This is the about page
 
 <Button mode="link" href="/login">Login</Button>
 
-1
 
 
 <style lang="sass">

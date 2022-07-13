@@ -19,6 +19,16 @@ const accessLevel = async () => {
 const businessID = async () => {
   // const a = await setBusinessID('FH7WH4M0a8wXCghNNDmH')
   // console.log('businessID:', a)
+  const options = {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json;charset=utf-8'
+		},
+		body: JSON.stringify({ businessID: 'FH7WH4M0a8wXCghNNDmH' })
+	}
+  const a = await fetch('/api/setBusinessID', options)
+  const b = await a.json()
+  console.log('businessID:', a, b)
 }
   
 </script>

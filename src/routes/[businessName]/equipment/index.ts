@@ -9,17 +9,12 @@
  
  export const get: RequestHandler = async (event) => {
   const cookies = cookie.parse(event.request.headers.get('cookie') || '')
-  const decodedToken = await decodeToken(cookies.token)
-  // console.log(cookies, decodedToken)
-  if (!decodedToken) 
+  const { businessID } = await decodeToken(cookies.token)
+
+  if (!businessID) 
     return { status: 401 }
   
-  // console.log(event)
-  console.log(decodedToken)
-
-  // const uid = decodedToken.businessID
-  
-  const docs = await getDocs('equipment', 'FH7WH4M0a8wXCghNNDmH')
+  const docs = await getDocs('equipment', businessID)
   return {
     status: 200,
     body: { docs }
