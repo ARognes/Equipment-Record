@@ -1,6 +1,6 @@
 import type { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier'
 import { initializeApp } from 'firebase-admin/app'
-import type { Document } from '$lib/Document'
+import type { Document } from '$lib/models/DocumentModel'
 import { browser } from '$app/env'
 import { FIREBASE_PROJECT_ID } from './constants-server'
 
@@ -27,21 +27,21 @@ export async function decodeToken(token: string): Promise<DecodedIdToken | null>
 }
 
 export async function setAccessLevel(uid: string, accessLevel: number): Promise<boolean> {
-	return _setCustomClaims(uid, { accessLevel })
+	return _createCustomUserClaim(uid, { accessLevel })
 }
 
 export async function setBusinessID(uid: string, businessID: string): Promise<boolean> {
-	return _setCustomClaims(uid, { businessID })
+	return _createCustomUserClaim(uid, { businessID })
 }
 
 // Minimum access to token changing, highest security, check everything
-async function _setCustomClaims(uid: string, customClaims): Promise<boolean> {
+async function _createCustomUserClaim(uid: string, customClaims): Promise<boolean> {
 	if (!uid || !customClaims || browser) return null
 	try {
 		console.log('cc:', uid, customClaims)
 		const { auth } = await import('firebase-admin')
 		initializeFirebase()
-		await auth().setCustomUserClaims(uid, customClaims)
+		await auth().createCustomToken(uid, customClaims)
 		return true
 	} catch (e) { console.error(e); return false }
 }

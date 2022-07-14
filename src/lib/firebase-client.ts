@@ -1,27 +1,25 @@
 import type { FirebaseApp } from 'firebase/app'
-import type { Firestore } from 'firebase/firestore'
 import { initializeApp } from 'firebase/app'
 import {
+	Firestore,
 	collection,
 	getFirestore,
 	query,
 	where,
-	addDoc,
-	getDoc,
-	doc,
-	setDoc,
-	deleteDoc
-} from 'firebase/firestore/lite'
+	onSnapshot,
+	QueryDocumentSnapshot,
+	type DocumentData,
+	getDocs as getDocsFB
+} from 'firebase/firestore'
 import {
 	getAuth,
 	signOut as _signOut,
 	onIdTokenChanged,
 	getIdTokenResult,
 } from 'firebase/auth'
-import type { Document } from '$lib/Document'
-import { readable } from 'svelte/store'
+import type { DocumentModel } from '$lib/models/DocumentModel'
+import { readable, type Readable } from 'svelte/store'
 import { browser } from '$app/env'
-import type { AnyObject } from 'AppModule'
 import { FIREBASE_CLIENT_CONFIG } from './constants-clients'
 import { session } from '$app/stores'
 
@@ -47,15 +45,35 @@ function listenForAuthChanges() {
 				const IdTokenResult = await getIdTokenResult(user)
 				await setToken(IdTokenResult.token)
 
-				session.set({ 
-					user: {
+				// session.set({ 
+				// 	user: {
+				// 		name: user.displayName,
+				// 		email: user.email,
+				// 		uid: user.uid,
+				// 		accessLevel: Number.parseInt(IdTokenResult?.claims?.accessLevel) as number,
+				// 		businessName: undefined,
+				// 		businessID: undefined
+				// 	}
+				// })
+
+				session.update(oldSession => {
+					// const _user = {
+					// 	name: oldSession?.user?.name || user.displayName,
+					// 	email: oldSession?.user?.email || user.email,
+					// 	uid: oldSession?.user?.uid || user.uid,
+					// 	accessLevel: oldSession?.user?.accessLevel || user.accessLevel,
+					// 	businessID: oldSession?.user?.businessID || user.businessID
+					// }
+
+					oldSession.user = oldSession.user || {
 						name: user.displayName,
 						email: user.email,
 						uid: user.uid,
-						accessLevel: IdTokenResult.claims.accessLevel,
-						businessName: undefined,
+						accessLevel: undefined, 
 						businessID: undefined
 					}
+					
+					return oldSession
 				})
 
 				return
@@ -64,6 +82,7 @@ function listenForAuthChanges() {
 			await setToken('')
 
 			session.set({ user: null })
+			console.log('Token Gone')
 		}, 
 		err => console.error(err.message)
 	)
@@ -224,43 +243,65 @@ export async function passwordResetEmail(email: string) {
 	await sendPasswordResetEmail(auth, email)
 }
 
-export async function deleteDocument(document: Document) {
-	if (!document._collection) throw Error('Objects that extends Document must specify __collection')
+// export async function deleteDocument(document: Document) {
+// 	if (!document._collection) throw Error('Objects that extends Document must specify __collection')
 
-	await deleteDoc(doc(db, document._collection, document._id))
+// 	await deleteDoc(doc(db, document._collection, document._id))
+// }
+
+
+// Model names reflect collection names, ex: EquipmentModel -> equipment
+function _modelNameToCollName(modelName: string): string {
+	return modelName.substring(0, modelName.length - 5).toLowerCase()
 }
 
-// export function getCollectionStore<T extends Document>(
-// 	type: { new (data: AnyObject): T },
-// 	collectionPath: string,
-// 	uid: string,
-// 	initialData: Array<T> = []
-// ) {
-// 	return readable<Array<T>>(initialData, (set) => {
-// 		let dbUnsubscribe: () => void
-// 		let unsubbed = false
-// 		const unsub = () => {
-// 			unsubbed = true
-// 			if (dbUnsubscribe) {
-// 				dbUnsubscribe()
-// 			}
-// 		}
-// 		if (browser) {
-// 			(async () => {
-// 				if (unsubbed) return
-// 				const q = query(collection(db, collectionPath), where('uid', '==', uid))
-// 				dbUnsubscribe = onSnapshot(q, (docs) => {
-// 					const newDocuments: Array<T> = []
-// 					docs.forEach((doc) => {
-// 						const newDoc = new type(doc.data())
-// 						newDoc._id = doc.id
-// 						newDocuments.push(newDoc)
-// 					})
-// 					set(newDocuments)
-// 				})
-// 			})()
-// 		}
+// DocumentModel wrapper for firebase's getDocs
+export async function getDocs<T extends DocumentModel>(
+	type: { new (data: QueryDocumentSnapshot<DocumentData>): T },
+	businessID: string
+): Promise<Array<T>> 
+{
+	// Model names reflect collection names, ex: EquipmentModel -> equipment
+	const collectionName: string = _modelNameToCollName(type.name)
+	const equipmentQuery = query(collection(db, collectionName), where('businessID', '==', businessID))
+	const querySnapshot = await getDocsFB(equipmentQuery)
+	const documents: Array<T> = querySnapshot.docs.map(doc => new type(doc))
+	return documents
+}
 
-// 		return unsub
-// 	})
-// }
+export async function getCollectionStore<T extends DocumentModel>(
+	type: { new (data: QueryDocumentSnapshot<DocumentData>): T },
+	businessID: string,
+) {
+	if (!browser) return null
+
+	// Get initial DocumentModels
+	// Model names reflect collection names, ex: EquipmentModel -> equipment
+	const collectionName: string = _modelNameToCollName(type.name)
+	const equipmentQuery = query(collection(db, collectionName), where('businessID', '==', businessID))
+	const querySnapshot = await getDocsFB(equipmentQuery)
+	const initialDocuments: Array<T> = querySnapshot.docs.map(doc => new type(doc))
+
+	return readable<Array<T>>(initialDocuments, set => {
+		let dbUnsubscribe: () => void
+		let unsubbed = false
+		
+		const unsub = () => {
+			unsubbed = true
+			if (dbUnsubscribe) dbUnsubscribe()
+		}
+
+		(async () => {
+			if (unsubbed) return
+
+			dbUnsubscribe = onSnapshot(equipmentQuery, docs => {
+				const newDocuments: Array<T> = docs.docs.map(doc => new type(doc))
+				set(newDocuments)
+			})
+		})()
+	
+
+		return unsub
+	})
+}
+

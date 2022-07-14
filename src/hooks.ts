@@ -26,10 +26,13 @@ export const getSession: GetSession = async (event) => {
 
 	if (decodedToken && !browser) {
 		console.log('Getting session')
-		const { uid, name, email, accessLevel } = decodedToken
-		const userDoc = await getDoc('users', name)
+		console.log(decodedToken)
+		const { uid, name, email, accessLevel, businessID } = decodedToken
+		// const userDoc = await getDoc('users', name)
+		console.log('al', accessLevel)
 		return {
-			user: { name, email, uid, accessLevel, businessName: userDoc?.businessName, businessID: userDoc?.businessID }
+			user: { name, email, uid, accessLevel, businessID }
+			// user: { name, email, uid, accessLevel, businessName: userDoc?.businessName, businessID: userDoc?.businessID }
 		}
 	}
 

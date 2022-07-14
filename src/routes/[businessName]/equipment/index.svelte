@@ -1,6 +1,6 @@
-<!-- <script context="module" lang="ts">
+<script context="module" lang="ts">
 	import { UNPROTECTED_PAGES } from '$lib/constants-clients'
-	import { initializeFirebase } from '$lib/firebase-client'
+	import { getDocs, initializeFirebase } from '$lib/firebase-client'
 	import type { Load } from '@sveltejs/kit'
 	import { browser } from '$app/env'
 
@@ -16,20 +16,25 @@
 		return {}
 	}
 
-</script> -->
+</script>
 
 <script lang="ts">
 	import AddSVG from '$lib/assets/add.svg'
 	import Navbar from '$lib/components/Navbar.svelte'
 	import ItemContainer from '$lib/components/ItemContainer.svelte'
-	import { allDocs, getSRC } from '$lib/firebase'
-	// import { session } from '$lib/storage'
-	import { session } from '$app/stores'
 	import Button from '$lib/components/materialish/Button.svelte'
+	import { getCollectionStore } from '$lib/firebase-client'
+	import { EquipmentModel } from '$lib/models/EquipmentModel'
+	import { session } from '$app/stores'
 
-	export let docs
+	// export let docs
 
-	let equipmentData = []
+	let equipmentStore
+	if ($session?.user?.businessID) (async () => equipmentStore = await getCollectionStore(EquipmentModel, $session.user.businessID))()
+
+	// (async () => console.log(await getDocs(EquipmentModel, $session.user.businessID)))()
+
+	console.log('E>', $session?.user)
 
 	// let done = false
 	// $: if ($session.user && !done) {
@@ -59,14 +64,24 @@
 	<Button mode="link" href="add/equipment"><AddSVG /></Button>
 {/if} -->
 
-{#each docs as doc}
-	{JSON.stringify(doc)}
-{/each}
+<div id="body">
+	{#each $equipmentStore || [] as doc}
+		<p>{ JSON.stringify(doc) }</p>
+		<!-- <p>arstarstr</p> -->
+	{/each}
+</div>
 
 <Navbar />
 
 
 <style lang="sass">
+
+#body
+	position: absolute
+	width: 100%
+	height: calc(100% - 60px)
+	overflow-x: hidden
+	overflow-y: auto
 
 	// #add-equipment
 	// 	position: fixed

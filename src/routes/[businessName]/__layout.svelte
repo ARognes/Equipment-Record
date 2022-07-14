@@ -22,9 +22,9 @@
 
 <script lang="ts">
 	import Navbar from '$lib/components/Navbar.svelte'
-	import { session } from '$app/stores'
+	// import { session } from '$app/stores'
 	import { onMount } from "svelte"
-	$session  // Has to be initialized here to work in client firebase.ts
+	// $session  // Has to be initialized here to work in client firebase.ts
 
 	onMount(() => {
 		Array.from(document.getElementsByClassName('grecaptcha-badge')).forEach(recaptchaDiv => recaptchaDiv.remove())
