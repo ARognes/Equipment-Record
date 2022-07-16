@@ -1,7 +1,10 @@
-import type { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore'
 
 export class DocumentModel {
-	constructor(doc: QueryDocumentSnapshot<DocumentData>) {
+	constructor(doc: DocumentData) {
+		this._load(doc)
+	}
+
+	_load(doc: DocumentData) {
 		if (doc) {
 			Object.assign(this, doc.data())
 			this._id = doc.id

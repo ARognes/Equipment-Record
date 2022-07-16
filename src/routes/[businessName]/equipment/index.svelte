@@ -1,6 +1,6 @@
 <script context="module" lang="ts">
 	import { UNPROTECTED_PAGES } from '$lib/constants-clients'
-	import { getDocs, initializeFirebase } from '$lib/firebase-client'
+	import { initializeFirebase } from '$lib/firebase-client'
 	import type { Load } from '@sveltejs/kit'
 	import { browser } from '$app/env'
 
@@ -19,42 +19,28 @@
 </script>
 
 <script lang="ts">
+
 	import AddSVG from '$lib/assets/add.svg'
 	import Navbar from '$lib/components/Navbar.svelte'
-	import ItemContainer from '$lib/components/ItemContainer.svelte'
-	import Button from '$lib/components/materialish/Button.svelte'
 	import { getCollectionStore } from '$lib/firebase-client'
 	import { EquipmentModel } from '$lib/models/EquipmentModel'
-	import { session } from '$app/stores'
-
-	// export let docs
+	import { session, page } from '$app/stores'
+	import { goto } from '$app/navigation'
+	import EquipmentCard from '$lib/components/materialish/EquipmentCard.svelte'
 
 	let equipmentStore
-	if ($session?.user?.businessID) (async () => equipmentStore = await getCollectionStore(EquipmentModel, $session.user.businessID))()
+	if ($session?.user?.businessID) init()
 
-	// (async () => console.log(await getDocs(EquipmentModel, $session.user.businessID)))()
+	async function init() {
+		equipmentStore = await getCollectionStore(EquipmentModel, $session.user.businessID)
+		searchDocs = $equipmentStore
+	}
 
-	console.log('E>', $session?.user)
+	type docView = 'card' | 'condensed'
 
-	// let done = false
-	// $: if ($session.user && !done) {
-	// 	done = true
-	// 	getEquipmentData()
-	// }
-
-	// async function getEquipmentData() {
-		
-	// 	equipmentData = await allDocs($session.businessID, 'equipment')
-	// 	console.log(equipmentData)
-		
-	// 	for (let i in equipmentData) {
-	// 		equipmentData[i].tinySRC = []
-	// 		getSRC(equipmentData[i], true, 0).then(src => {
-	// 			equipmentData[i].tinySRC[0] = src
-	// 			if (+i === equipmentData.length - 1) session.setItem('equipment', equipmentData)
-	// 		})
-	// 	}
-	// }
+	let view: docView = 'card'
+	let search = ''
+	let searchDocs: Array<EquipmentModel> = []
 	
 </script>
 
@@ -64,15 +50,24 @@
 	<Button mode="link" href="add/equipment"><AddSVG /></Button>
 {/if} -->
 
+<header>
+	<input type="text" placeholder="Search" bind:value={ search }>
+	<button id="view" on:click={ () => { view = view === 'card' ? 'condensed' : 'card' } }>{ view }</button>
+</header>
+
 <div id="body">
-	{#each $equipmentStore || [] as doc}
-		<p>{ JSON.stringify(doc) }</p>
-		<!-- <p>arstarstr</p> -->
+	{#each searchDocs as doc }
+		<div on:click={ async () => await goto(`//${ $page.url.host }/on/equipment/${ doc.name }`) }>
+			{#if view === 'card'}
+				<EquipmentCard bind:doc={ doc } />
+			{:else}
+				<!-- <ItemList bind:info={ doc } /> -->
+			{/if}
+		</div>
 	{/each}
 </div>
 
 <Navbar />
-
 
 <style lang="sass">
 

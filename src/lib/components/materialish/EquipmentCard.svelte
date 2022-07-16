@@ -1,33 +1,40 @@
 <script lang="ts">
   import ErrorSVG from '$lib/assets/error.svg'
   import Loading from '$lib/components/materialish/Loading.svelte'
+  import type { EquipmentModel } from '$lib/models/EquipmentModel'
+import { onMount } from 'svelte';
 
-  export let info
+  export let doc: EquipmentModel
+
+
+  onMount(async () => {
+    if (!doc?.tinyImage) doc.tinyImage = await doc.loadTinyImage()
+  })
 
 </script>
 
 <div class="item">
   <div class="left">
-    {#if info?.tinySRC?.length }
-      {#if info?.tinySRC[0]}
-        <img loading="lazy" src={ info?.tinySRC[0] } alt="">
+    {#if doc?.tinyImage }
+      {#if doc?.tinyImage }
+        <img loading="lazy" src={ doc?.tinyImage } alt="">
       {:else}
         <ErrorSVG width="40" height="40" />
       {/if}
     {:else}  
-      <Loading />
+      <Loading loading={true} width="80px" />
     {/if}
   </div>
-  <div class="middle">
+  <!-- <div class="middle">
 
     <div class="name">
-      {#each info?.nameHighlight as matches}
+      {#each doc?.nameHighlight as matches}
       <span class:highlight={ matches.highlight }>{ matches.text }</span>
       {/each}
     </div>
 
     <div class="attr">
-      {#each info?.attrHighlight as attr}
+      {#each doc?.attrHighlight as attr}
         <div>
           {#each attr as matches}
             <span class:highlight={ matches.highlight }>{ matches.text }</span>
@@ -36,16 +43,10 @@
       {/each}
     </div>
 
-    <!-- <div class="desc">
-      {#each info?.descHighlight as matches}
-      <span class:highlight={ matches.highlight }>{ matches.text }</span>
-      {/each}
-    </div> -->
-
   </div>
   <div class="right">
-    <p>{ info?.userAssigned || "" }<br>{ info?.projectAssigned || "" }</p>
-  </div>
+    <p>{ doc?.userAssigned || "" }<br>{ doc?.projectAssigned || "" }</p>
+  </div> -->
 </div>
 
 <style lang="sass">

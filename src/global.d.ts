@@ -59,3 +59,8 @@ interface UpdateCustomUserClaimElement {
 	name: string
 	value: string | number
 }
+
+// interface DocumentData extends QueryDocumentSnapshot<DocumentData>, DocumentSnapshot<DocumentData>, fbAdmin.firestore.DocumentSnapshot<fbAdmin.firestore.DocumentData> {
+// }
+
+type DocumentData = QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData> | fbAdmin.firestore.DocumentSnapshot<fbAdmin.firestore.DocumentData>

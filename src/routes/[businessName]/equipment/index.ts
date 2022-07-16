@@ -3,7 +3,7 @@
  * Prefetch equipment data for pagination without downloading the images
  */
 
-//  import { getDocs, decodeToken } from '$lib/firebase-server'
+//  import { allDocs, decodeToken } from '$lib/firebase-server'
 //  import type { RequestHandler } from '@sveltejs/kit'
 //  import cookie from 'cookie'
  
@@ -14,7 +14,7 @@
 //   if (!businessID) 
 //     return { status: 401 }
   
-//   const docs = await getDocs('equipment', businessID)
+//   const docs = await allDocs('equipment', businessID)
 //   return {
 //     status: 200,
 //     body: { docs }
