@@ -4,29 +4,29 @@ import { session } from '$app/stores'
 console.log($session)
 
 const accessLevel = async () => {
+	const updateElement: UpdateCustomUserClaimElement = { name: 'accessLevel', value: 2 }
   const options = {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json;charset=utf-8'
 		},
-		body: JSON.stringify({ accessLevel: 2 })
+		body: JSON.stringify(updateElement)
 	}
-  const a = await fetch('/api/setAccessLevel', options)
+  const a = await fetch('/api/setCustomUserClaims', options)
   const b = await a.json()
   console.log('accessLevel:', a, b)
 }
 
 const businessID = async () => {
-  // const a = await setBusinessID('FH7WH4M0a8wXCghNNDmH')
-  // console.log('businessID:', a)
+	const updateElement: UpdateCustomUserClaimElement = { name: 'businessID', value: 'FH7WH4M0a8wXCghNNDmH' }
   const options = {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json;charset=utf-8'
 		},
-		body: JSON.stringify({ businessID: 'FH7WH4M0a8wXCghNNDmH' })
+		body: JSON.stringify(updateElement)
 	}
-  const a = await fetch('/api/setBusinessID', options)
+  const a = await fetch('/api/setCustomUserClaims', options)
   const b = await a.json()
   console.log('businessID:', a, b)
 }

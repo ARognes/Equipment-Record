@@ -6,7 +6,7 @@
 
 
 <script lang="ts">
-import Button from "$lib/components/materialish/Button.svelte";
+import Button from "$lib/components/materialish/Button.svelte"
 
 
 </script>

@@ -54,3 +54,8 @@ declare module 'AppModule' {
 	type AnyObject = Record<string, unknown>
 	type Session = App.Session
 }
+
+interface UpdateCustomUserClaimElement {
+	name: string
+	value: string | number
+}
