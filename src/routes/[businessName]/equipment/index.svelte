@@ -23,24 +23,102 @@
 	import AddSVG from '$lib/assets/add.svg'
 	import Navbar from '$lib/components/Navbar.svelte'
 	import { getCollectionStore } from '$lib/firebase-client'
-	import { EquipmentModel } from '$lib/models/EquipmentModel'
+	import { AttributeSearchText, EquipmentModel, EquipmentSearchWrapper, SearchText } from '$lib/models/DocumentModels'
 	import { session, page } from '$app/stores'
 	import { goto } from '$app/navigation'
 	import EquipmentCard from '$lib/components/materialish/EquipmentCard.svelte'
-
-	let equipmentStore
-	if ($session?.user?.businessID) init()
-
-	async function init() {
-		equipmentStore = await getCollectionStore(EquipmentModel, $session.user.businessID)
-		searchDocs = $equipmentStore
-	}
-
+	import { deepcopy } from '$lib/lib'
+	import type { Readable } from 'svelte/store'
+	
 	type docView = 'card' | 'condensed'
-
 	let view: docView = 'card'
 	let search = ''
-	let searchDocs: Array<EquipmentModel> = []
+	let searchDocs: EquipmentSearchWrapper[] = []
+	let equipmentStore: Readable<EquipmentModel[]>
+
+	if ($session?.user?.businessID) init()
+	async function init() {
+		equipmentStore = await getCollectionStore(EquipmentModel, $session.user.businessID)
+		searchDocs = $equipmentStore.map(doc => new EquipmentSearchWrapper(doc))
+	}
+
+	$: searchBar(search)
+	function searchBar(search: string) {
+
+		// Reset equipment data shown
+		searchDocs = $equipmentStore?.map(doc => new EquipmentSearchWrapper(doc)) || []
+
+		if (!searchDocs || searchDocs.length === 0) return
+
+		search = search?.trim()
+		if (search == null || search.length == 0) return
+
+		// *_ search settings for * description search, _ case sensitive search
+		const settings1 = search?.charAt(0)
+		const settings2 = search?.charAt(1)
+		let attrSearch = 0, caseSens = 0
+
+		if (settings1 == ':' || settings2 == ':') attrSearch = 1
+		if (settings1 == '_' || settings2 == '_') caseSens = 1
+
+		// Clip settings off search
+		const searchVal = search?.substring(0 + attrSearch + caseSens).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+		// Empty search
+		if (searchVal == null || searchVal.length == 0) return
+
+		if (!attrSearch) {	// Name search
+			for (let i = 0; i < searchDocs.length; i++) {
+				const text = searchDocs[i].doc.name
+				if (text == null || text.length == 0 || !testSearch(searchVal, text, caseSens)) searchDocs.splice(i--, 1)
+				else searchDocs[i].nameHighlight = matchSearch(searchVal, text, caseSens)
+			}
+		}
+		else {	// Attribute search
+			for (let i = 0; i < searchDocs.length; i++) {
+				console.log(searchDocs[i])
+				searchDocs[i].attributeHighlight = []
+				for (const [key, value] of searchDocs[i].doc.attributes) {
+					if (key === null || key.length === 0 || !testSearch(searchVal, key, caseSens)) continue
+					const keySearch: SearchText[] = matchSearch(searchVal, key, caseSens)
+					const valueSearch: SearchText[] = matchSearch(searchVal, value, caseSens)
+					const attributeSearchText = new AttributeSearchText(keySearch, valueSearch)
+
+					searchDocs[i].attributeHighlight = [...searchDocs[i].attributeHighlight, attributeSearchText]
+				}
+				if (searchDocs[i].attributeHighlight.length == 0) searchDocs.splice(i--, 1)
+			}
+		}
+	}
+
+	function testSearch(search: string, text: string, caseSens: number): boolean {
+		return new RegExp(search, (caseSens == 1) ? "g" : "gi").test(text)
+	}
+
+	function matchSearch(search: string, text: string, caseSens: number): SearchText[] {
+
+		if (search == null || search.length == 0) return [{ highlight: false, text }]
+		const pattern = new RegExp(search, (caseSens == 1) ? 'g' : 'gi')
+		const matches: SearchText[] = []
+		let match
+
+		// Split name and add 'highlight' boolean parameter
+		while (match = pattern.exec(text)) {
+			const i = match.index, j = i + match[0].length
+			if (i) matches.push(new SearchText(text.substring(0, i), false))
+			matches.push(new SearchText(text.substring(i, j), true))
+			text = text.substring(j)
+		}
+		if (text) matches.push(new SearchText(text, false))
+
+		return matches
+	}
+
+	// Recopy searchDocs, reset highlighted items
+	// function resetSearchDocs() {
+		// searchDocs = $equipmentStore.map(doc => new EquipmentSearchWrapper(doc))
+		// searchDocs = searchDocs.sort((a, b) => a.doc.name.localeCompare(b.doc.name))
+	// }
 	
 </script>
 
@@ -56,10 +134,10 @@
 </header>
 
 <div id="body">
-	{#each searchDocs as doc }
-		<div on:click={ async () => await goto(`//${ $page.url.host }/on/equipment/${ doc.name }`) }>
+	{#each searchDocs as wrap }
+		<div on:click={ async () => await goto(`//${ $page.url.host }/on/equipment/${ wrap.doc.name }`) }>
 			{#if view === 'card'}
-				<EquipmentCard bind:doc={ doc } />
+				<EquipmentCard bind:wrap={ wrap } />
 			{:else}
 				<!-- <ItemList bind:info={ doc } /> -->
 			{/if}
@@ -74,7 +152,7 @@
 #body
 	position: absolute
 	width: 100%
-	height: calc(100% - 60px)
+	height: calc(100%)
 	overflow-x: hidden
 	overflow-y: auto
 

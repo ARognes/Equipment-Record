@@ -1,23 +1,25 @@
 <script lang="ts">
   import ErrorSVG from '$lib/assets/error.svg'
   import Loading from '$lib/components/materialish/Loading.svelte'
-  import type { EquipmentModel } from '$lib/models/EquipmentModel'
-import { onMount } from 'svelte';
+  import type { EquipmentSearchWrapper } from '$lib/models/DocumentModels'
+  import { onMount } from 'svelte'
 
-  export let doc: EquipmentModel
+  export let wrap: EquipmentSearchWrapper
 
+  let doc = wrap?.doc
+  // $: doc = wrap?.doc 
 
   onMount(async () => {
-    if (!doc?.tinyImage) doc.tinyImage = await doc.loadTinyImage()
+    if (!doc?._tinyImage) doc._tinyImage = await doc.loadTinyImage()
   })
 
 </script>
 
 <div class="item">
   <div class="left">
-    {#if doc?.tinyImage }
-      {#if doc?.tinyImage }
-        <img loading="lazy" src={ doc?.tinyImage } alt="">
+    {#if doc?._tinyImage !== undefined }
+      {#if doc?._tinyImage !== null }
+        <img loading="lazy" src={ doc?._tinyImage } alt="">
       {:else}
         <ErrorSVG width="40" height="40" />
       {/if}
@@ -25,19 +27,22 @@ import { onMount } from 'svelte';
       <Loading loading={true} width="80px" />
     {/if}
   </div>
-  <!-- <div class="middle">
+  <div class="middle">
 
     <div class="name">
-      {#each doc?.nameHighlight as matches}
+      {#each wrap.nameHighlight as matches}
       <span class:highlight={ matches.highlight }>{ matches.text }</span>
       {/each}
     </div>
 
     <div class="attr">
-      {#each doc?.attrHighlight as attr}
+      {#each wrap.attributeHighlight as { key, value } }
         <div>
-          {#each attr as matches}
-            <span class:highlight={ matches.highlight }>{ matches.text }</span>
+          {#each key as match}
+            <span class:highlight={ match.highlight }>{ match.text }</span>
+          {/each}
+          {#each value as match}
+            <span class:highlight={ match.highlight }>{ match.text }</span>
           {/each}
         </div>
       {/each}
@@ -46,7 +51,7 @@ import { onMount } from 'svelte';
   </div>
   <div class="right">
     <p>{ doc?.userAssigned || "" }<br>{ doc?.projectAssigned || "" }</p>
-  </div> -->
+  </div>
 </div>
 
 <style lang="sass">

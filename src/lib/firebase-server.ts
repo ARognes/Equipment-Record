@@ -1,6 +1,6 @@
 import type { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier'
 import { initializeApp } from 'firebase-admin/app'
-import { DocumentModel } from '$lib/models/DocumentModel'
+import { DocumentModel } from '$lib/models/DocumentModels'
 import { browser } from '$app/env'
 import { FIREBASE_PROJECT_ID } from './constants-server'
 import type { UserRecord } from 'firebase-admin/lib/auth/user-record'

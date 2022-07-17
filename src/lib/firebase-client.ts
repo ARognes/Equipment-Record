@@ -9,7 +9,10 @@ import {
 	onSnapshot,
 	QueryDocumentSnapshot,
 	type DocumentData,
-	getDocs
+	getDocs,
+	setDoc,
+	doc,
+	addDoc
 } from 'firebase/firestore'
 import {
 	getAuth,
@@ -19,8 +22,8 @@ import {
 	type IdTokenResult,
 	type ParsedToken,
 } from 'firebase/auth'
-import type { DocumentModel } from '$lib/models/DocumentModel'
-import { readable, type Readable } from 'svelte/store'
+import type { DocumentModel } from '$lib/models/DocumentModels'
+import { readable } from 'svelte/store'
 import { browser } from '$app/env'
 import { FIREBASE_CLIENT_CONFIG } from './constants-clients'
 import { session } from '$app/stores'
@@ -84,93 +87,18 @@ export function initializeFirebase() {
 	}
 }
 
-// function getDbObject(document: Document): Partial<Document> {
-// 	const obj: AnyObject = {}
-// 	Object.keys(document)
-// 		.filter((k) => document._dbFields.includes(k))
-// 		.forEach((k) => {
-// 			obj[k] = document[k as keyof Document]
-// 		})
-// 	return obj
-// }
-
-// export async function saveDocument(document: Document) {
-// 	const dbObject = getDbObject(document)
-// 	if (!document._collection) throw Error('Objects that extends Document must specify __collection')
-
-// 	if (document._id) {
-// 		await setDoc(doc(db, document._collection, document._id), dbObject)
-// 	} else {
-// 		const todoRef = await addDoc(collection(db, document._collection), dbObject)
-// 		document._id = todoRef.id
-// 	}
-// }
-
-// export function getDocumentStore<T extends Document>(
-// 	type: { new (data: AnyObject): T },
-// 	document: T
-// ) {
-// 	return readable<T | undefined>(document, (set) => {
-// 		let dbUnsubscribe: () => void
-// 		let unsubbed = false
-// 		const unsub = () => {
-// 			unsubbed = true
-// 			if (dbUnsubscribe) dbUnsubscribe()
-// 		}
-// 		if (browser) {
-// 			(async () => {
-// 				if (unsubbed) return
-// 				dbUnsubscribe = onSnapshot(doc(db, document._collection, document._id), (doc) => {
-// 					if (doc.exists()) {
-// 						const newDoc = new type(doc.data())
-// 						newDoc._id = doc.id
-// 						set(newDoc)
-// 					} else {
-// 						set(undefined)
-// 						dbUnsubscribe()
-// 					}
-// 				})
-// 			})()
-// 		}
-
-// 		return unsub
-// 	})
-// }
-
-// function providerFor(name: string) {
-// 	switch (name) {
-// 		case 'google':
-// 			return new GoogleAuthProvider()
-// 		default:
-// 			throw 'unknown provider ' + name
-// 	}
-// }
-
-// export async function signInWith(name: string, email: string = '', password: string = '') {
-// 	const auth = getAuth(app)
-// 	await setPersistence(auth, browserLocalPersistence)
-
-// 	if (name === 'google') await signInWithPopup(auth, new GoogleAuthProvider())
-// 	else if (name === 'email') await signInWithEmailAndPassword(auth, email, password)
-// 	else throw 'unknown provider: ' + name
-// }
 
 export async function register(username: string, email: string, password: string) {
 	const { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } = await import('firebase/auth')
 	const { doc, setDoc, serverTimestamp } = await import('firebase/firestore/lite')
-
+	// initializeFirebase()
 	const auth = getAuth(app)
 
 	await createUserWithEmailAndPassword(auth, email, password)
 	await updateProfile(auth.currentUser, { displayName: username })
 	await sendEmailVerification(auth.currentUser)
 
-	// const userSnap = await getDoc(userRef)
-	// if (userSnap.exists()) {
-		
-	// }
-
-	// Create user in firestore
+	// Create user in firestore, somewhat useless until connected with other collections
 	const userRef = doc(db, 'users', email)
 	await setDoc(userRef, {
 		businessID: '',
@@ -183,8 +111,9 @@ export async function register(username: string, email: string, password: string
 }
 
 export async function signInGoogle() {
-	const auth = getAuth(app)
 	const { setPersistence, browserLocalPersistence, signInWithRedirect, GoogleAuthProvider } = await import('firebase/auth')
+	// initializeFirebase()
+	const auth = getAuth(app)
 	
 	await setPersistence(auth, browserLocalPersistence)
 	
@@ -192,8 +121,9 @@ export async function signInGoogle() {
 }
 
 export async function signInEmail(email: string, password: string) {
-	const auth = getAuth(app)
 	const { setPersistence, browserLocalPersistence, signInWithEmailAndPassword } = await import('firebase/auth')
+	// initializeFirebase()
+	const auth = getAuth(app)
 	
 	await setPersistence(auth, browserLocalPersistence)
 
@@ -204,7 +134,10 @@ export async function signInEmail(email: string, password: string) {
 export async function signInUsername(username: string, password: string) {
 	const { setPersistence, browserLocalPersistence, signInWithEmailAndPassword } = await import('firebase/auth')
 	const { getDoc, doc } = await import('firebase/firestore/lite')
+	// initializeFirebase()
+
 	const auth = getAuth(app)
+
 
 	const userDoc = await getDoc(doc(db, 'users', username))
 	if (!userDoc.exists()) return
@@ -217,12 +150,14 @@ export async function signInUsername(username: string, password: string) {
 }
 
 export async function signOut() {
+	// initializeFirebase()
 	const auth = getAuth(app)
 	await _signOut(auth)
 	location.reload()
 }
 
 export async function passwordResetEmail(email: string) {
+	// initializeFirebase()
 	const auth = getAuth(app)
 	const { sendPasswordResetEmail } = await import('firebase/auth')
 	await sendPasswordResetEmail(auth, email)
@@ -234,23 +169,19 @@ export async function passwordResetEmail(email: string) {
 // 	await deleteDoc(doc(db, document._collection, document._id))
 // }
 
-
-// Model names reflect collection names, ex: EquipmentModel -> equipment
-function _modelNameToColName(modelName: string): string {
-	return modelName.substring(0, modelName.length - 5).toLowerCase()
-}
-
 // DocumentModel wrapper for firebase's getDocs
 export async function allDocs<T extends DocumentModel>(
 	type: { new (data: QueryDocumentSnapshot<DocumentData>): T },
 	businessID: string
-): Promise<Array<T>> 
+): Promise<T[]> 
 {
+	// initializeFirebase()
+
 	// Model names reflect collection names, ex: EquipmentModel -> equipment
-	const collectionName: string = _modelNameToColName(type.name)
-	const equipmentQuery = query(collection(db, collectionName), where('businessID', '==', businessID))
-	const querySnapshot = await getDocs(equipmentQuery)
-	const documents: Array<T> = querySnapshot.docs.map(doc => new type(doc))
+	const collectionName: string = type.getCollectionName()
+	const collectionPath = 'businesses/' + businessID + '/' + collectionName
+	const querySnapshot = await getDocs(collection(db, collectionPath))
+	const documents: T[] = querySnapshot.docs.map(doc => new type(doc))
 	return documents
 }
 
@@ -259,15 +190,16 @@ export async function getCollectionStore<T extends DocumentModel>(
 	businessID: string,
 ) {
 	if (!browser) return null
+	// initializeFirebase()
 
 	// Get initial DocumentModels
-	// Model names reflect collection names, ex: EquipmentModel -> equipment
-	const collectionName: string = _modelNameToColName(type.name)
-	const equipmentQuery = query(collection(db, collectionName), where('businessID', '==', businessID))
-	const querySnapshot = await getDocs(equipmentQuery)
-	const initialDocuments: Array<T> = querySnapshot.docs.map(doc => new type(doc))
+	const collectionName: string = type.getCollectionName()
+	const collectionPath = 'businesses/' + businessID + '/' + collectionName
+	const col = collection(db, collectionPath)
+	const querySnapshot = await getDocs(col)
+	const initialDocuments: T[] = querySnapshot.docs.map(doc => new type(doc))
 
-	return readable<Array<T>>(initialDocuments, set => {
+	return readable<T[]>(initialDocuments, set => {
 		let dbUnsubscribe: () => void
 		let unsubbed = false
 		
@@ -279,7 +211,7 @@ export async function getCollectionStore<T extends DocumentModel>(
 		(async () => {
 			if (unsubbed) return
 
-			dbUnsubscribe = onSnapshot(equipmentQuery, docs => {
+			dbUnsubscribe = onSnapshot(col, docs => {
 				const newDocuments: Array<T> = docs.docs.map(doc => new type(doc))
 				set(newDocuments)
 			})
@@ -292,6 +224,7 @@ export async function getCollectionStore<T extends DocumentModel>(
 export async function getImage(businessID: string, eid: string, index: number, tiny: boolean): Promise<string> {
 	if (!businessID || !eid || index === null || !browser) return null
 	try {
+		// initializeFirebase()
     const storage = getStorage(app)
 		console.log('Downloading image')
 	
@@ -309,6 +242,7 @@ export async function allImages(businessID: string, eid: string, imageOrder: Arr
 	if (!businessID || !eid || !imageOrder?.length || !browser) return null
 
 	try {
+		// initializeFirebase()
     const storage = getStorage(app)
 		const imgs: Array<string> = []
 		console.log('Downloading', imageOrder.length, 'images')
@@ -327,3 +261,12 @@ export async function allImages(businessID: string, eid: string, imageOrder: Arr
 }
 
 
+export async function saveDoc(docu: DocumentModel) {
+	if (!docu?._collectionPath?.length) throw Error('Classes that extend DocumentModel must specify _collectionPath')
+
+	if (docu._id) await setDoc(doc(db, docu._collectionPath, docu._id), docu.toDB())
+	else {
+		const todoRef = await addDoc(collection(db, docu._collectionPath), docu.toDB())
+		docu._id = todoRef.id
+	}
+}
