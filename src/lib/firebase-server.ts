@@ -22,7 +22,7 @@ export async function decodeToken(token: string): Promise<DecodedIdToken | null>
 	if (!token || token === 'null' || token === 'undefined' || browser) return null
 	try {
 		initializeFirebase()
-		return await auth().verifyIdToken(token)
+		return await fbAdmin?.auth().verifyIdToken(token)
 	} catch (err) { return null }
 }
 

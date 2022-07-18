@@ -51,7 +51,7 @@ function listenForAuthChanges() {
 				const IdTokenResult: IdTokenResult = await getIdTokenResult(user)
 				await setToken(IdTokenResult.token)
 				const claims: ParsedToken = IdTokenResult.claims
-				const accessLevel = parseInt(claims?.accessLevel as string)
+				const accessLevel = parseInt(claims?.accessLevel as string) || 0
 				const businessID = claims.businessID as string
 
 				session.set({ 

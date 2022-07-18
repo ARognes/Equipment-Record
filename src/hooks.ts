@@ -31,7 +31,7 @@ export const getSession: GetSession = async (event) => {
 		// const userDoc = await getDoc('users', name)
 		console.log('al', accessLevel)
 		return {
-			user: { name, email, uid, accessLevel, businessID }
+			user: { name, email, uid, accessLevel: accessLevel || 0, businessID }
 			// user: { name, email, uid, accessLevel, businessName: userDoc?.businessName, businessID: userDoc?.businessID }
 		}
 	}

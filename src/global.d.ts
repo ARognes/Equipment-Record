@@ -28,7 +28,7 @@ interface UserSession {
 	name: string | null
 	email: string | null
 	uid: string
-	accessLevel: number | null
+	accessLevel: number
 	businessID: string | null
 }
 

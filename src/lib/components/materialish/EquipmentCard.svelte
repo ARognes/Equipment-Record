@@ -15,44 +15,42 @@
 
 </script>
 
-<div class="item">
-  <div class="left">
-    {#if doc?._tinyImage !== undefined }
+{#if doc?._tinyImage !== undefined }
+  <div class="item" >
+    <div class="left">
       {#if doc?._tinyImage !== null }
         <img loading="lazy" src={ doc?._tinyImage } alt="">
       {:else}
         <ErrorSVG width="40" height="40" />
       {/if}
-    {:else}  
-      <Loading loading={true} width="80px" />
-    {/if}
-  </div>
-  <div class="middle">
-
-    <div class="name">
-      {#each wrap.nameHighlight as matches}
-      <span class:highlight={ matches.highlight }>{ matches.text }</span>
-      {/each}
     </div>
+    <div class="middle">
 
-    <div class="attr">
-      {#each wrap.attributeHighlight as { key, value } }
-        <div>
-          {#each key as match}
-            <span class:highlight={ match.highlight }>{ match.text }</span>
-          {/each}
-          {#each value as match}
-            <span class:highlight={ match.highlight }>{ match.text }</span>
-          {/each}
-        </div>
-      {/each}
+      <div class="name">
+        {#each wrap.nameHighlight as matches}
+        <span class:highlight={ matches.highlight }>{ matches.text }</span>
+        {/each}
+      </div>
+
+      <div class="attr">
+        {#each wrap.attributeHighlight as { key, value } }
+          <div>
+            {#each key as match}
+              <span class:highlight={ match.highlight }>{ match.text }</span>
+            {/each}
+            {#each value as match}
+              <span class:highlight={ match.highlight }>{ match.text }</span>
+            {/each}
+          </div>
+        {/each}
+      </div>
+
     </div>
-
+    <div class="right">
+      <p>{ doc?.userAssigned || "" }<br>{ doc?.projectAssigned || "" }</p>
+    </div>
   </div>
-  <div class="right">
-    <p>{ doc?.userAssigned || "" }<br>{ doc?.projectAssigned || "" }</p>
-  </div>
-</div>
+{/if}
 
 <style lang="sass">
 
