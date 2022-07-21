@@ -230,7 +230,6 @@
 		height: 60px
 		background-color: #0ff
 		border-radius: 50%
-		// margin: auto
 		display: flex
 		align-items: center
 		justify-content: center

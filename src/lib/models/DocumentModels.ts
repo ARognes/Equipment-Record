@@ -17,10 +17,11 @@ export class DocumentModel {
 		return Object.fromEntries(Object.entries(this).filter(entry => entry[0][0] !== '_'))
 	}
 
-	static getCollectionName(): string {
-		return this.name.substring(0, this.name.length - 5).toLowerCase()
+	getCollectionName(): string {
+		return this.constructor.name.substring(0, this.constructor.name.length - 5).toLowerCase()
 	}
 
+	// Full path of the document in firestore
 	_collectionPath: string = ''
 	_id = ''
 }
@@ -33,18 +34,18 @@ export class EquipmentModel extends DocumentModel {
 	}
 
 	_load(doc: DocumentData) {
-		if (doc) {
-			const data = doc.data()
-			this.attributes = new Map(data.attributes?.map(attr => [attr.key, attr.value]))
-			this.createdAt = data.createdAt?.toDate()
-			this.timeAssigned = data.timeAssigned?.toDate()
-			delete data.attributes
-			delete data.createdAt
-			delete data.timeAssigned
+		if (!doc?.data) return
 
-			Object.assign(this, data)
-			this._id = doc.id
-		}
+		const data = doc.data()
+		this.attributes = new Map(data.attributes?.map(attr => [attr.key, attr.value]))
+		this.createdAt = data.createdAt?.toDate()
+		this.timeAssigned = data.timeAssigned?.toDate()
+		delete data.attributes
+		delete data.createdAt
+		delete data.timeAssigned
+
+		Object.assign(this, data)
+		this._id = doc.id
 	}
 
 	// Client only!
@@ -85,7 +86,7 @@ export class EquipmentModel extends DocumentModel {
 	imageOrder: number[]
 	tags: string[]
 	attributes: Map<string, string>
-	
+
 
 	// Empty until method called
 	_tinyImage: string

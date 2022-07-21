@@ -4,8 +4,6 @@ import {
 	Firestore,
 	collection,
 	getFirestore,
-	query,
-	where,
 	onSnapshot,
 	QueryDocumentSnapshot,
 	type DocumentData,
@@ -23,7 +21,7 @@ import {
 	type ParsedToken,
 } from 'firebase/auth'
 import type { DocumentModel } from '$lib/models/DocumentModels'
-import { readable } from 'svelte/store'
+import { readable, type Readable } from 'svelte/store'
 import { browser } from '$app/env'
 import { FIREBASE_CLIENT_CONFIG } from './constants-clients'
 import { session } from '$app/stores'
@@ -91,7 +89,6 @@ export function initializeFirebase() {
 export async function register(username: string, email: string, password: string) {
 	const { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } = await import('firebase/auth')
 	const { doc, setDoc, serverTimestamp } = await import('firebase/firestore/lite')
-	// initializeFirebase()
 	const auth = getAuth(app)
 
 	await createUserWithEmailAndPassword(auth, email, password)
@@ -112,7 +109,6 @@ export async function register(username: string, email: string, password: string
 
 export async function signInGoogle() {
 	const { setPersistence, browserLocalPersistence, signInWithRedirect, GoogleAuthProvider } = await import('firebase/auth')
-	// initializeFirebase()
 	const auth = getAuth(app)
 	
 	await setPersistence(auth, browserLocalPersistence)
@@ -134,7 +130,6 @@ export async function signInEmail(email: string, password: string) {
 export async function signInUsername(username: string, password: string) {
 	const { setPersistence, browserLocalPersistence, signInWithEmailAndPassword } = await import('firebase/auth')
 	const { getDoc, doc } = await import('firebase/firestore/lite')
-	// initializeFirebase()
 
 	const auth = getAuth(app)
 
@@ -150,14 +145,12 @@ export async function signInUsername(username: string, password: string) {
 }
 
 export async function signOut() {
-	// initializeFirebase()
 	const auth = getAuth(app)
 	await _signOut(auth)
 	location.reload()
 }
 
 export async function passwordResetEmail(email: string) {
-	// initializeFirebase()
 	const auth = getAuth(app)
 	const { sendPasswordResetEmail } = await import('firebase/auth')
 	await sendPasswordResetEmail(auth, email)
@@ -175,56 +168,61 @@ export async function allDocs<T extends DocumentModel>(
 	businessID: string
 ): Promise<T[]> 
 {
-	// initializeFirebase()
+	if (!browser) return []
 
-	// Model names reflect collection names, ex: EquipmentModel -> equipment
-	const collectionName: string = type.getCollectionName()
-	const collectionPath = 'businesses/' + businessID + '/' + collectionName
-	const querySnapshot = await getDocs(collection(db, collectionPath))
-	const documents: T[] = querySnapshot.docs.map(doc => new type(doc))
-	return documents
+	try {
+
+		// Model names reflect collection names, ex: EquipmentModel -> equipment
+		const collectionName: string = new type({} as any).getCollectionName()
+		const collectionPath = 'businesses/' + businessID + '/' + collectionName
+		const querySnapshot = await getDocs(collection(db, collectionPath))
+		const documents: T[] = querySnapshot.docs.map(doc => new type(doc))
+		return documents
+
+	} catch (err) { console.error(err); return null }
 }
 
 export async function getCollectionStore<T extends DocumentModel>(
 	type: { new (data: QueryDocumentSnapshot<DocumentData>): T },
 	businessID: string,
-) {
+): Promise<Readable<T[]>> {
 	if (!browser) return null
-	// initializeFirebase()
+	try {
 
-	// Get initial DocumentModels
-	const collectionName: string = type.getCollectionName()
-	const collectionPath = 'businesses/' + businessID + '/' + collectionName
-	const col = collection(db, collectionPath)
-	const querySnapshot = await getDocs(col)
-	const initialDocuments: T[] = querySnapshot.docs.map(doc => new type(doc))
+		// Model names reflect collection names, ex: EquipmentModel -> equipment
+		const collectionName: string = new type({} as any).getCollectionName()
+		const collectionPath = 'businesses/' + businessID + '/' + collectionName
+		const col = collection(db, collectionPath)
+		const querySnapshot = await getDocs(col)
+		const initialDocuments: T[] = querySnapshot.docs.map(doc => new type(doc))
 
-	return readable<T[]>(initialDocuments, set => {
-		let dbUnsubscribe: () => void
-		let unsubbed = false
-		
-		const unsub = () => {
-			unsubbed = true
-			if (dbUnsubscribe) dbUnsubscribe()
-		}
+		return readable<T[]>(initialDocuments, set => {
+			let dbUnsubscribe: () => void
+			let unsubbed = false
+			
+			const unsub = () => {
+				unsubbed = true
+				if (dbUnsubscribe) dbUnsubscribe()
+			}
 
-		(async () => {
-			if (unsubbed) return
+			(async () => {
+				if (unsubbed) return
 
-			dbUnsubscribe = onSnapshot(col, docs => {
-				const newDocuments: Array<T> = docs.docs.map(doc => new type(doc))
-				set(newDocuments)
-			})
-		})()
-	
-		return unsub
-	})
+				dbUnsubscribe = onSnapshot(col, docs => {
+					const newDocuments: Array<T> = docs.docs.map(doc => new type(doc))
+					set(newDocuments)
+				})
+			})()
+			
+			return unsub
+		})
+
+	} catch (err) { console.error(err); return null }
 }
 
 export async function getImage(businessID: string, eid: string, index: number, tiny: boolean): Promise<string> {
 	if (!businessID || !eid || index === null || !browser) return null
 	try {
-		// initializeFirebase()
     const storage = getStorage(app)
 		console.log('Downloading image')
 	
@@ -242,7 +240,6 @@ export async function allImages(businessID: string, eid: string, imageOrder: Arr
 	if (!businessID || !eid || !imageOrder?.length || !browser) return null
 
 	try {
-		// initializeFirebase()
     const storage = getStorage(app)
 		const imgs: Array<string> = []
 		console.log('Downloading', imageOrder.length, 'images')
